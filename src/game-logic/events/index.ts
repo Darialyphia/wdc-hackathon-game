@@ -1,15 +1,26 @@
 import { z } from 'zod';
 import type { GameState } from '..';
 
-export const AnyEvent = z.object({
+export const anyEventSchema = z.object({
   playerId: z.string()
 });
 
-export const defineEventHandler = <T extends typeof AnyEvent>(
-  handler: GameEventHandler<T>
-) => handler;
+export type AnyEvent = z.infer<typeof anyEventSchema>;
 
-export type GameEventHandler<T extends typeof AnyEvent> = {
+export const defineEventHandler =
+  <T extends typeof anyEventSchema>({ input, handler }: GameEventHandler<T>) =>
+  (payload: unknown, state: GameState) => {
+    const validatedInput = input.safeParse(payload);
+
+    if (!validatedInput.success) return;
+
+    handler({
+      state,
+      input: validatedInput.data as any
+    });
+  };
+
+export type GameEventHandler<T extends typeof anyEventSchema> = {
   input: T;
   handler: (arg: { input: z.infer<T>; state: GameState }) => void;
 };

@@ -7,9 +7,6 @@ import { QueryCtx } from '../_generated/server';
 type Abilities = ['read' | 'edit' | 'create', 'user' | (User & ForcedSubject<'user'>)];
 
 export type UserAbility = PureAbility<Abilities>;
-export type UserAbilityBuilder = {
-  buildFor(user: Nullable<User>): Promise<UserAbility>;
-};
 
 const unAuthenticatedAbility = createAbility<UserAbility>(({ can, cannot }) => {
   can('read', 'user');
