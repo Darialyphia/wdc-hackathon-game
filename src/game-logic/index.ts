@@ -1,4 +1,4 @@
-import type { Size } from '../utils/geometry';
+import { type AnyZodObject, z } from 'zod';
 import { addEntity, type CharacterId, type Entity, type PlayerId } from './entity';
 import { createGameMap, type GameMap } from './map';
 

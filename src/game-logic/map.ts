@@ -13,16 +13,11 @@ export type GameMapCell = Point & {
 };
 
 export type GameMap = Size & {
-  cells: GameMapCell[];
+  cells: GameMapCell[][];
 };
 
-export const indexToPoint = (arr: any[], idx: number): Point => ({
-  x: idx % arr.length,
-  y: Math.floor(idx / length)
-});
-export const pointToIndex = ({ x, y }: Point, width: number) => width * y + x;
-export const pointToCell = (state: GameState, pt: Point): GameMapCell | undefined =>
-  state.map.cells[pointToIndex(pt, state.map.width)];
+export const getCellAt = (state: GameState, { x, y }: Point): GameMapCell | undefined =>
+  state.map.cells[y]?.[x];
 
 export const isWithinBounds = (state: GameState, { x, y }: Point) =>
   x >= 0 && y >= 0 && x < state.map.width && y < state.map.height;
@@ -32,7 +27,7 @@ export const isCellOccupied = (state: GameState, { x, y }: Point) => {
 export const isCellWalkable = (state: GameState, { x, y }: Point) => {
   return (
     !isCellOccupied(state, { x, y }) &&
-    pointToCell(state, { x, y })?.terrain === CELL_TYPES.GROUND
+    getCellAt(state, { x, y })?.terrain === CELL_TYPES.GROUND
   );
 };
 
@@ -47,7 +42,7 @@ export const createGameMap = (width: number, height: number): GameMap => {
 
       return cell;
     })
-  ).flat();
+  );
 
   return {
     width,
