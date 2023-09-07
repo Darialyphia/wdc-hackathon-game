@@ -1,6 +1,6 @@
 import type { Size } from '../utils/geometry';
 import { addEntity, type CharacterId, type Entity, type PlayerId } from './entity';
-import type { GameMap } from './map';
+import { createGameMap, type GameMap } from './map';
 
 export type GameState = {
   nextEntityId: number;
@@ -19,10 +19,7 @@ export type CreateGameOptions = {
 export const createGameState = (opts: CreateGameOptions): GameState => {
   const state: GameState = {
     nextEntityId: 0,
-    map: {
-      width: MAP_SIZE,
-      height: MAP_SIZE;
-    },
+    map: createGameMap(MAP_SIZE, MAP_SIZE),
     entities: []
   };
 

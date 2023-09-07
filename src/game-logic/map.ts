@@ -35,3 +35,23 @@ export const isCellWalkable = (state: GameState, { x, y }: Point) => {
     pointToCell(state, { x, y })?.terrain === CELL_TYPES.GROUND
   );
 };
+
+export const createGameMap = (width: number, height: number): GameMap => {
+  const cells = Array.from({ length: height }, (_, y) =>
+    Array.from({ length: width }, (_, x) => {
+      const cell: GameMapCell = {
+        x,
+        y,
+        terrain: CELL_TYPES.GROUND
+      };
+
+      return cell;
+    })
+  ).flat();
+
+  return {
+    width,
+    height,
+    cells
+  };
+};
