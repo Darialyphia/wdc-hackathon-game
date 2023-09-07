@@ -13,6 +13,6 @@ export const isDefined = <T>(arg: Nullable<T>): arg is Defined<T> =>
   arg !== undefined && arg !== null;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const isNever = (x: never) => {
+export const exhaustiveSwitch = (x: never) => {
   throw new Error('Missing case in exhaustive switch');
 };

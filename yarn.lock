@@ -2727,6 +2727,13 @@ ast-walker-scope@^0.4.1:
     "@babel/parser" "^7.22.4"
     "@babel/types" "^7.22.4"
 
+astar-typescript@^1.2.7:
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/astar-typescript/-/astar-typescript-1.2.7.tgz#bac3e8fa4b016c4ee55b3fb6c427b5cd7f1eea1c"
+  integrity sha512-1M9d8Mpu75oalRgdMi4QGdsEg1HMjvZXO4x31LIYR1uSyd8RKjfdQSYXQts2Nzg6PzxtGQvEYrikm+UjCATGWQ==
+  dependencies:
+    lodash "4.17.21"
+
 astral-regex@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/astral-regex/-/astral-regex-2.0.0.tgz#483143c567aeed4785759c0865786dc77d7d2e31"
@@ -4493,7 +4500,7 @@ lodash.uniq@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
   integrity sha512-xfBaXQd9ryd9dlSDvnvI0lvxfLJlYAZzXomUYzLKtUeOQvOP5piqAWuGtrhWeqaXK9hhoM/iyJc5AV+XfsX3HQ==
 
-lodash@^4.17.20, lodash@^4.17.21:
+lodash@4.17.21, lodash@^4.17.20, lodash@^4.17.21:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
