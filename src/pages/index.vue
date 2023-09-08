@@ -5,11 +5,14 @@ import { createMoveAction } from '@/game-logic/actions/move';
 import { createSummonAction } from '@/game-logic/actions/summon';
 import { reducer, type GameEvent } from '@/game-logic/events/reducer';
 import type { GameMapCell } from '@/game-logic/map';
-import type { SummonBlueprint } from '@/game-logic/summon';
 import { getActiveEntity } from '@/game-logic/utils/entity.helpers';
 import { createPathFinder } from '@/game-logic/utils/pathfinding.helpers';
 import type { Nullable } from '@/utils/types';
 import { subject } from '@casl/ability';
+import { isGeneral } from '@/game-logic/utils/entity.helpers';
+import type { SoldierData } from '@/resources/soldiers';
+import { swordsman } from '@/resources/soldiers/haven';
+import { skeleton } from '@/resources/soldiers/necro';
 
 definePage({
   name: 'Home'
@@ -21,51 +24,17 @@ const gameState = ref(
       {
         id: 'player 1',
         characterId: 'Hero 1',
-        summonBlueprints: [
-          {
-            characterId: 'Swordsman',
-            cost: 2
-          },
-          {
-            characterId: 'Archer',
-            cost: 2
-          },
-          {
-            characterId: 'Knight',
-            cost: 3
-          },
-          {
-            characterId: 'Angel',
-            cost: 4
-          }
-        ]
+        summonBlueprints: [swordsman]
       },
       {
         id: 'player 2',
         characterId: 'Hero 2',
-        summonBlueprints: [
-          {
-            characterId: 'Skeleton',
-            cost: 2
-          },
-          {
-            characterId: 'Zombie',
-            cost: 2
-          },
-          {
-            characterId: 'Vampire',
-            cost: 3
-          },
-          {
-            characterId: 'Bone Dragon',
-            cost: 4
-          }
-        ]
+        summonBlueprints: [skeleton]
       }
     ]
   })
 );
-const selectedSummon = ref<Nullable<SummonBlueprint>>();
+const selectedSummon = ref<Nullable<SoldierData>>();
 const activeEntity = computed(() => getActiveEntity(gameState.value));
 
 const pathFinder = computed(() =>
@@ -80,9 +49,7 @@ const canMoveTo = (cell: GameMapCell) => {
 
 const canSummonAt = (cell: GameMapCell) => {
   const ability = createPlayerAbility(gameState.value, activeEntity.value.owner);
-  const r = ability.can('summon_at', subject('position', cell));
-
-  return r;
+  return ability.can('summon_at', subject('position', cell));
 };
 
 const isHighlighted = (cell: GameMapCell) => {
@@ -90,9 +57,11 @@ const isHighlighted = (cell: GameMapCell) => {
   return canMoveTo(cell);
 };
 
+const eventLog = ref<GameEvent[]>([]);
 const processAction = (action: (state: GameState) => GameEvent[]) => {
   const events = action(gameState.value);
   events.forEach(event => {
+    eventLog.value.push(event);
     reducer(gameState.value, event);
   });
 };
@@ -116,7 +85,7 @@ const summonAction = (cell: GameMapCell) => {
 
   const action = createSummonAction({
     playerId: activeEntity.value.owner,
-    characterId: selectedSummon.value.characterId,
+    characterId: selectedSummon.value.id,
     position: { x: cell.x, y: cell.y }
   });
 
@@ -136,28 +105,38 @@ const availableSummons = computed(() => {
   if (activeEntity.value.kind !== 'general') return [];
   return Object.values(activeEntity.value.summonBlueprints);
 });
+
+const canSummon = (blueprint: SoldierData) => {
+  const ability = createPlayerAbility(gameState.value, activeEntity.value.owner);
+  return ability.can('summon', subject('soldier', blueprint));
+};
 </script>
 
 <template>
-  <main class="container space-y-3" style="--container-size: var(--size-xl)">
-    <aside>
+  <main>
+    <aside class="action-bar">
       <div>
+        <h2>{{ activeEntity.characterId }}</h2>
+        <h3>Summon</h3>
         <UiGhostButton
           v-for="summon in availableSummons"
-          :key="summon.characterId"
-          :disabled="activeEntity.ap < summon.cost"
+          :key="summon.id"
+          :disabled="!canSummon(summon)"
           :theme="{
-            colorHsl:
-              selectedSummon?.characterId === summon.characterId
-                ? 'color-primary-hsl'
-                : undefined
+            colorHsl: selectedSummon?.id === summon.id ? 'color-primary-hsl' : undefined
           }"
           @click="selectedSummon = summon"
         >
-          Summon {{ summon.characterId }} ({{ summon.cost }}AP)
+          Summon {{ summon.name }} ({{ summon.cost }}AP)
         </UiGhostButton>
+        <div
+          v-if="isGeneral(activeEntity) && activeEntity.hasSummonned"
+          class="p-2 bg-surface-2"
+        >
+          You already have summoned this turn
+        </div>
 
-        <pre>{{ activeEntity }}</pre>
+        <h3>Abilities</h3>
       </div>
     </aside>
     <div class="grid">
@@ -174,37 +153,66 @@ const availableSummons = computed(() => {
       <div
         v-for="entity in gameState.entities"
         :key="entity.id"
-        :style="{ '--x': entity.position.x + 1, '--y': entity.position.y + 1 }"
+        :style="{
+          '--x': entity.position.x + 1,
+          '--y': entity.position.y + 1,
+          '--color': entity.owner === gameState.players[0] ? '#550000' : '#000055'
+        }"
         :class="[
           'entity',
           entity.kind,
           { 'is-active': entity.id === gameState.activeEntityId }
         ]"
       >
+        <div class="i-mdi:crown icon" />
         {{ entity.characterId }}
-        <div>Owner: {{ entity.owner }}</div>
         <div>AP: {{ entity.ap }} / {{ entity.maxAp }}</div>
       </div>
     </div>
+    <aside class="event-logs-sidebar">
+      <h2>Event Logs</h2>
+      <TransitionGroup tag="div" name="log" class="event-logs">
+        <pre v-for="(event, index) in eventLog" :key="index">{{ event }}</pre>
+      </TransitionGroup>
+    </aside>
   </main>
 </template>
 
 <style scoped lang="postcss">
 main {
-  display: flex;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: var(--size-xs) 1fr var(--size-xs);
   gap: var(--size-3);
+
+  padding: 0;
 }
 
-aside {
-  flex-basis: var(--size-xxs);
-  flex-shrink: 0;
+h2 {
+  font-size: var(--font-size-5);
+}
+
+h3 {
+  font-size: var(--font-size-4);
+}
+.action-bar {
   > div {
     position: sticky;
     top: 0;
   }
 }
+
+.event-logs-sidebar {
+  overflow-y: auto;
+  font-size: var(--font-size-00);
+}
+
+.event-logs {
+  display: flex;
+  flex-direction: column-reverse;
+}
 .grid {
-  overflow: auto;
+  overflow-y: auto;
   display: grid;
   grid-template-columns: repeat(v-bind('gameState.map.width'), var(--size-9));
   grid-template-rows: repeat(v-bind('gameState.map.height'), var(--size-9));
@@ -218,6 +226,8 @@ aside {
     font-family: monospace;
     font-size: 0.7rem;
     text-align: center;
+
+    transition: grid-column 0.3s;
   }
 }
 
@@ -229,7 +239,42 @@ aside {
   }
 }
 
-.entity.is-active {
-  border: solid 2px red;
+.entity {
+  position: relative;
+  color: var(--gray-1);
+  background-color: var(--color);
+
+  &:not(.general) .icon {
+    display: none;
+  }
+
+  &.is-active {
+    border: solid 2px red;
+  }
+
+  .icon {
+    position: absolute;
+    top: calc(-1 * var(--size-1));
+    left: 0;
+
+    width: 1.5em !important;
+    height: 1.5em !important;
+  }
+}
+
+.log-move,
+.log-enter-active,
+.log-leave-active {
+  transition: all 0.3s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+.log-enter-from,
+.log-leave-to {
+  transform: translate(30px, 0);
+  opacity: 0;
+}
+
+.log-leave-active {
+  position: absolute;
 }
 </style>

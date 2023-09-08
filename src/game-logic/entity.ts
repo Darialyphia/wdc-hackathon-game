@@ -1,7 +1,7 @@
 import type { GameState } from '.';
 import type { Point } from '../utils/geometry';
 import { DEFAULT_GENERAL_AP, DEFAULT_SOLDIER_AP } from './constants';
-import type { SummonBlueprint } from './summon';
+import type { SoldierData } from '../resources/soldiers';
 
 export type EntityId = number;
 export type GameId = string;
@@ -24,21 +24,11 @@ export type Soldier = EntityBase & {
 };
 export type General = EntityBase & {
   kind: 'general';
-  summonBlueprints: Record<CharacterId, SummonBlueprint>;
+  summonBlueprints: Record<CharacterId, SoldierData>;
+  hasSummonned: boolean;
 };
 
 export type Entity = Soldier | General;
-
-const getDefaultAp = (kind: Entity['kind']) => {
-  switch (kind) {
-    case 'soldier':
-      return DEFAULT_SOLDIER_AP;
-    case 'general':
-      return DEFAULT_GENERAL_AP;
-    default:
-      return exhaustiveSwitch(kind);
-  }
-};
 
 export const addGeneral = (
   state: GameState,
@@ -50,6 +40,7 @@ export const addGeneral = (
     ...entity,
     kind: 'general',
     id: ++state.nextEntityId,
+    hasSummonned: false,
     atbSeed,
     atb: atbSeed,
     maxAp: DEFAULT_GENERAL_AP,

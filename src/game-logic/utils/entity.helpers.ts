@@ -1,5 +1,5 @@
 import { isObject } from '../../utils/assertions';
-
+import { exhaustiveSwitch } from '../../utils/assertions';
 import type { GameState } from '..';
 import type { Entity, EntityId, General, PlayerId, Soldier } from '../entity';
 import { tickUntilActiveEntity } from '../atb';
@@ -28,11 +28,25 @@ export const getActiveEntity = (state: GameState) =>
   state.entities.find(e => e.id === state.activeEntityId)!;
 
 export const endTurn = (state: GameState) => {
-  const active = getActiveEntity(state);
-  active.atb = active.atbSeed;
+  resetEntity(getActiveEntity(state));
 
   tickUntilActiveEntity(state);
 };
 
 export const getGeneral = (state: GameState, player: PlayerId) =>
   state.entities.find(e => e.owner === player && e.kind === 'general')! as General;
+
+export const resetEntity = (entity: Entity) => {
+  const { kind } = entity;
+  switch (kind) {
+    case 'general':
+      entity.atb = entity.atbSeed;
+      entity.hasSummonned = false;
+      break;
+    case 'soldier':
+      entity.atb = entity.atbSeed;
+      break;
+    default:
+      exhaustiveSwitch(kind);
+  }
+};

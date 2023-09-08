@@ -6,6 +6,10 @@
   "compilerOptions": {
     /* These settings are not required by Convex and can be modified. */
     "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["../src/*"]
+    },
 
     /* These compiler options are required by Convex */
     "target": "ESNext",

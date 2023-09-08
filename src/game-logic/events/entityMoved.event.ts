@@ -1,7 +1,7 @@
 import type { Point } from '@/utils/geometry';
 import type { EntityId } from '../entity';
 import { defineEvent } from '.';
-import { endTurn, getEntityById } from '../utils/entity.helpers';
+import { endTurn, getActiveEntity, getEntityById } from '../utils/entity.helpers';
 
 export const ENTITY_MOVED = 'entity_moved';
 
@@ -25,9 +25,10 @@ export const entityMovedEvent = defineEvent({
     entity.position = event.to;
     entity.ap--;
 
-    if (entity.ap === 0) {
+    if (getActiveEntity(state).ap === 0) {
       endTurn(state);
     }
+
     return state;
   }
 });

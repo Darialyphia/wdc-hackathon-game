@@ -20,60 +20,67 @@ const isMenuOpened = ref(false);
 const me = await useSuspenseQuery(api.users.me, []);
 </script>
 <template>
-  <header class="container lt-lg:p-inline-3">
-    <MenuContent.define>
-      <UiLinkButton v-if="!isAuthenticated" @click="loginWithRedirect()">
-        Log in
-      </UiLinkButton>
-      <template v-else>
-        <RouterLink
-          v-if="me"
-          v-slot="{ navigate, href }"
-          :to="{ name: 'Profile', params: { id: me._id } }"
-          custom
-        >
-          <UiLinkButton :href="href" @click="navigate">
-            {{ me.fullName }}
-          </UiLinkButton>
-        </RouterLink>
-        <UiLinkButton
-          left-icon="material-symbols:logout"
-          @click="logout({ logoutParams: { returnTo: location.origin } })"
-        >
-          Log out
+  <div class="layout">
+    <header class="container lt-lg:p-inline-3">
+      <MenuContent.define>
+        <UiLinkButton v-if="!isAuthenticated" @click="loginWithRedirect()">
+          Log in
         </UiLinkButton>
-      </template>
-      <DarkModeToggle />
-    </MenuContent.define>
-    <h1>
-      <RouterLink :to="{ name: 'Home' }">
-        <img src="img/pasduhring.png" class="inline" />
-        Hackathon Winning App
-      </RouterLink>
-    </h1>
+        <template v-else>
+          <RouterLink
+            v-if="me"
+            v-slot="{ navigate, href }"
+            :to="{ name: 'Profile', params: { id: me._id } }"
+            custom
+          >
+            <UiLinkButton :href="href" @click="navigate">
+              {{ me.fullName }}
+            </UiLinkButton>
+          </RouterLink>
+          <UiLinkButton
+            left-icon="material-symbols:logout"
+            @click="logout({ logoutParams: { returnTo: location.origin } })"
+          >
+            Log out
+          </UiLinkButton>
+        </template>
+        <DarkModeToggle />
+      </MenuContent.define>
+      <h1>
+        <RouterLink :to="{ name: 'Home' }">
+          <img src="img/pasduhring.png" class="inline" />
+          Hackathon Winning App
+        </RouterLink>
+      </h1>
 
-    <nav>
-      <MenuContent.reuse />
-    </nav>
+      <nav>
+        <MenuContent.reuse />
+      </nav>
 
-    <UiSimpleDrawer id="header-menu" v-model:is-opened="isMenuOpened" title="Menu">
-      <template #trigger="triggerProps">
-        <UiIconButton
-          class="md:hidden ml-auto"
-          v-bind="triggerProps"
-          title="open menu"
-          icon="octicon:three-bars"
-          :theme="{ size: 'font-size-5' }"
-        />
-      </template>
-      <MenuContent.reuse />
-    </UiSimpleDrawer>
-  </header>
+      <UiSimpleDrawer id="header-menu" v-model:is-opened="isMenuOpened" title="Menu">
+        <template #trigger="triggerProps">
+          <UiIconButton
+            class="md:hidden ml-auto"
+            v-bind="triggerProps"
+            title="open menu"
+            icon="octicon:three-bars"
+            :theme="{ size: 'font-size-5' }"
+          />
+        </template>
+        <MenuContent.reuse />
+      </UiSimpleDrawer>
+    </header>
 
-  <slot />
+    <slot />
+  </div>
 </template>
 
 <style scoped>
+.layout {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100vh;
+}
 header {
   display: flex;
   gap: var(--size-3);

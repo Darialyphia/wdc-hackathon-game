@@ -7,11 +7,12 @@ import { toUserDto } from './user.mapper';
 import { mutationWithZod } from '../utils/zod';
 import { signupInput } from '../utils/inputs';
 
+import { soldierSummonedEvent } from '@/game-logic/events/soldierSummoned.event';
+
 export const signUp = mutationWithZod({
   args: signupInput,
   handler: async ({ auth, db }, { name }) => {
     const identity = await ensureAuthenticated({ auth });
-
     const userAbility = await createUserability({ auth, db });
     await ensureAuthorized(userAbility.can('create', 'user'));
 

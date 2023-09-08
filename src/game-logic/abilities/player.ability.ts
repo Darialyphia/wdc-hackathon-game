@@ -2,9 +2,9 @@ import { PureAbility } from '@casl/ability';
 import type { GameState } from '..';
 import type { Entity, PlayerId } from '../entity';
 import { getGeneral, isActive, isOwnEntity } from '../utils/entity.helpers';
-import type { SummonBlueprint } from '../summon';
 import type { Point } from '@/utils/geometry';
 import { getCellAt, getSurroundingCells, isCellWalkable } from '../utils/map.helpers';
+import type { SoldierData } from '@/resources/soldiers';
 
 type EntityActions = 'move' | 'use_skill';
 type SummonActions = 'summon';
@@ -12,7 +12,7 @@ type SummonAtActions = 'summon_at';
 
 type Abilities =
   | [EntityActions, 'entity' | Entity]
-  | [SummonActions, 'soldier' | SummonBlueprint]
+  | [SummonActions, 'soldier' | SoldierData]
   | [SummonAtActions, 'position' | Point];
 
 export type PlayerAbility = PureAbility<Abilities>;
@@ -25,7 +25,7 @@ export const createPlayerAbility = (
 
   const isOwnedAndActive = (e: Entity) => isOwnEntity(playerId, e) && isActive(state, e);
 
-  return createAbility<PlayerAbility>(({ can }) => {
+  return createAbility<PlayerAbility>(({ can, cannot }) => {
     can('move', 'entity', (subject: Entity) => {
       return isOwnedAndActive(subject);
     });
@@ -34,9 +34,11 @@ export const createPlayerAbility = (
       return isOwnedAndActive(subject);
     });
 
-    can('summon', 'soldier', (subject: SummonBlueprint) => {
-      return isActive(state, general) && subject.cost <= general.ap;
-    });
+    if (!general.hasSummonned) {
+      can('summon', 'soldier', (subject: SoldierData) => {
+        return isActive(state, general) && subject.cost <= general.ap;
+      });
+    }
 
     can('summon_at', 'position', (subject: Point) => {
       if (!isCellWalkable(state, subject)) return false;

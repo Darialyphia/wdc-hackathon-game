@@ -1,40 +1,42 @@
 import type { Point } from '@/utils/geometry';
-import { addSoldier, type CharacterId, type EntityId } from '../entity';
+import { addSoldier } from '../entity';
 import { defineEvent } from '.';
-import {
-  endTurn,
-  getActiveEntity,
-  getEntityById,
-  getGeneral
-} from '../utils/entity.helpers';
-import type { SummonBlueprint } from '../summon';
+import { endTurn, getActiveEntity, getGeneral, isGeneral } from '../utils/entity.helpers';
+import type { SoldierData } from '../../resources/soldiers';
 
 export const SOLDIER_SUMMONED = 'soldier_summoned';
 
 export type SoldierSummonedEvent = {
   type: typeof SOLDIER_SUMMONED;
   payload: {
-    blueprint: SummonBlueprint;
+    blueprint: SoldierData;
     position: Point;
   };
 };
 
 export const soldierSummonedEvent = defineEvent({
-  create: (blueprint: SummonBlueprint, position: Point): SoldierSummonedEvent => ({
+  create: (blueprint: SoldierData, position: Point): SoldierSummonedEvent => ({
     type: SOLDIER_SUMMONED,
     payload: { blueprint, position }
   }),
   execute: (state, event) => {
-    const owner = getActiveEntity(state).owner;
+    const activeEntity = getActiveEntity(state);
+    if (!isGeneral(activeEntity)) return state;
 
-    const general = getGeneral(state, owner);
+    const general = getGeneral(state, activeEntity.owner);
     general.ap -= event.blueprint.cost;
 
     addSoldier(state, {
-      owner,
-      characterId: event.blueprint.characterId,
+      owner: activeEntity.owner,
+      characterId: event.blueprint.id,
       position: event.position
     });
+
+    activeEntity.hasSummonned = true;
+
+    if (activeEntity.ap === 0) {
+      endTurn(state);
+    }
     return state;
   }
 });
