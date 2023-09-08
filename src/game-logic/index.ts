@@ -7,7 +7,7 @@ import {
 } from './entity';
 import { createGameMap, type GameMap } from './map';
 import { tickUntilActiveEntity } from './atb';
-import { MAP_SIZE } from './constants';
+import { MAP_WIDTH, MAP_HEIGHT } from './constants';
 import type { SoldierData } from '../resources/soldiers';
 
 export type GameState = {
@@ -32,7 +32,7 @@ export const createGameState = ({ players }: CreateGameOptions): GameState => {
     players: [players[0].id, players[1].id],
     nextEntityId: 0,
     activeEntityId: 0,
-    map: createGameMap(MAP_SIZE, MAP_SIZE),
+    map: createGameMap(MAP_WIDTH, MAP_HEIGHT),
     entities: []
   };
 
@@ -43,7 +43,7 @@ export const createGameState = ({ players }: CreateGameOptions): GameState => {
       summonBlueprints: Object.fromEntries(
         player.summonBlueprints.map(blueprint => [blueprint.id, blueprint])
       ),
-      position: { y: Math.floor(MAP_SIZE / 2), x: i === 0 ? 2 : MAP_SIZE - 3 }
+      position: { y: Math.floor(MAP_HEIGHT / 2), x: i === 0 ? 2 : MAP_WIDTH - 3 }
     });
   });
 

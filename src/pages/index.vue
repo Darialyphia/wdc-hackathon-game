@@ -182,7 +182,7 @@ const canSummon = (blueprint: SoldierData) => {
 main {
   overflow: hidden;
   display: grid;
-  grid-template-columns: var(--size-xs) 1fr var(--size-xs);
+  grid-template-columns: 1fr max-content 1fr;
   gap: var(--size-3);
 
   padding: 0;
