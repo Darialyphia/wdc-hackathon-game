@@ -123,7 +123,7 @@ const canSummon = (blueprint: SoldierData) => {
           }"
           @click="selectedSummon = summon"
         >
-          Summon {{ summon.name }} ({{ summon.cost }}AP)
+          {{ summon.name }} ({{ summon.cost }}AP)
         </UiGhostButton>
         <div
           v-if="isGeneral(activeEntity) && activeEntity.hasSummonned"
@@ -133,6 +133,9 @@ const canSummon = (blueprint: SoldierData) => {
         </div>
 
         <h3>Abilities</h3>
+        <UiGhostButton v-for="skill in activeEntity.blueprint.skills" :key="skill.id">
+          {{ skill.name }} ({{ skill.cost }}AP)
+        </UiGhostButton>
       </div>
     </aside>
     <div class="grid">
@@ -183,6 +186,7 @@ main {
   gap: var(--size-3);
 
   padding: 0;
+  padding-inline: var(--size-4);
 }
 
 h2 {

@@ -7,7 +7,14 @@ export const swordsman: SoldierData = {
   factionId: FACTIONS_IDS.HAVEN,
   name: 'Swordsman',
   cost: 2,
-  initiative: 5
+  initiative: 5,
+  skills: [
+    {
+      id: 'swordsman_default_attack',
+      name: 'Normal attack',
+      cost: 1
+    }
+  ]
 };
 
 export const havenSoldiers = { swordsman };

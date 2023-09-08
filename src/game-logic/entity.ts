@@ -23,10 +23,12 @@ export type EntityBase = {
 
 export type Soldier = EntityBase & {
   kind: 'soldier';
+  blueprint: SoldierData;
 };
 export type General = EntityBase & {
   kind: 'general';
   summonBlueprints: Record<CharacterId, SoldierData>;
+  blueprint: GeneralData;
   hasSummonned: boolean;
 };
 
@@ -41,6 +43,7 @@ export const addGeneral = (
 
   state.entities.push({
     ...entity,
+    blueprint,
     kind: 'general',
     id: ++state.nextEntityId,
     hasSummonned: false,
@@ -61,6 +64,7 @@ export const addSoldier = (
 
   state.entities.push({
     ...entity,
+    blueprint,
     kind: 'soldier',
     id: ++state.nextEntityId,
     atbSeed,

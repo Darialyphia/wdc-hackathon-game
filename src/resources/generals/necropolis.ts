@@ -5,5 +5,12 @@ export const necroGeneral: GeneralData = {
   characterId: 'necro_hero',
   factionId: FACTIONS_IDS.NECRO,
   name: 'Borax',
-  initiative: 6
+  initiative: 6,
+  skills: [
+    {
+      id: 'necro_hero_default_attack',
+      name: 'Normal attack',
+      cost: 1
+    }
+  ]
 };

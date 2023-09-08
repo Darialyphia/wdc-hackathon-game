@@ -9,6 +9,14 @@ export type SoldierData = {
   name: string;
   cost: number;
   initiative: number;
+  skills: SkillData[];
+};
+
+export type SkillId = string;
+export type SkillData = {
+  id: SkillId;
+  name: string;
+  cost: number;
 };
 
 export const soldiersByFaction = {

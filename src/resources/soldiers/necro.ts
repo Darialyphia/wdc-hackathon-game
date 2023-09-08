@@ -6,7 +6,14 @@ export const skeleton: SoldierData = {
   factionId: FACTIONS_IDS.NECRO,
   name: 'Skeleton',
   cost: 2,
-  initiative: 5
+  initiative: 5,
+  skills: [
+    {
+      id: 'skeleton_default_attack',
+      name: 'Normal attack',
+      cost: 1
+    }
+  ]
 };
 
 export const necroSoldiers = { skeleton };
