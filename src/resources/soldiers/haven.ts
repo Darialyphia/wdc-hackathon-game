@@ -13,6 +13,6 @@ export const havenSoldiers: SoldierData[] = [
     maxHp: 12,
     attack: 2,
     defense: 2,
-    skills: [skills.meleeAttack]
+    skills: [skills.meleeAttack.id]
   }
 ];

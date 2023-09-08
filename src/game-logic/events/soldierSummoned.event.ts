@@ -36,10 +36,6 @@ export const soldierSummonedEvent = defineEvent({
 
     activeEntity.hasSummonned = true;
 
-    if (activeEntity.ap === 0) {
-      endTurn(state);
-    }
-
     return state;
   }
 });

@@ -2,6 +2,7 @@ import { PureAbility } from '@casl/ability';
 import type { GameState } from '..';
 import type { Entity, PlayerId } from '../entity';
 import {
+  getActiveEntity,
   getGeneral,
   getSummonBlueprints,
   isActive,
@@ -14,11 +15,12 @@ import type { SoldierData } from '@/resources/soldiers';
 type EntityActions = 'move' | 'use_skill';
 type SummonActions = 'summon';
 type SummonAtActions = 'summon_at';
-
+type EndTurnAction = 'end_turn';
 type Abilities =
   | [EntityActions, 'entity' | Entity]
   | [SummonActions, 'soldier' | SoldierData]
-  | [SummonAtActions, 'position' | Point];
+  | [SummonAtActions, 'position' | Point]
+  | [EndTurnAction, 'turn'];
 
 export type PlayerAbility = PureAbility<Abilities>;
 
@@ -30,7 +32,11 @@ export const createPlayerAbility = (
 
   const isOwnedAndActive = (e: Entity) => isOwnEntity(playerId, e) && isActive(state, e);
 
-  return createAbility<PlayerAbility>(({ can, cannot }) => {
+  return createAbility<PlayerAbility>(({ can }) => {
+    if (getActiveEntity(state).owner === playerId) {
+      can('end_turn', 'turn');
+    }
+
     can('move', 'entity', (subject: Entity) => {
       return isOwnedAndActive(subject);
     });

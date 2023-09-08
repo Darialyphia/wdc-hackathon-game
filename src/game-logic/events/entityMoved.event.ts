@@ -25,10 +25,6 @@ export const entityMovedEvent = defineEvent({
     entity.position = event.to;
     entity.ap--;
 
-    if (getActiveEntity(state).ap === 0) {
-      endTurn(state);
-    }
-
     return state;
   }
 });

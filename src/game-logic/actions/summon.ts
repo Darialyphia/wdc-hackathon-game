@@ -4,6 +4,8 @@ import { createPlayerAbility } from '../abilities/player.ability';
 import { getGeneral, getSummonBlueprints } from '../utils/entity.helpers';
 import { subject } from '@casl/ability';
 import { soldierSummonedEvent } from '../events/soldierSummoned.event';
+import { endTurnEvent } from '../events/endturn.event';
+import type { GameEvent } from '../events/reducer';
 
 export const createSummonAction = defineAction({
   input: z.object({
@@ -27,6 +29,14 @@ export const createSummonAction = defineAction({
 
     if (playerAbility.cannot('summon_at', subject('position', input.position))) {
       return [];
+    }
+
+    const events: GameEvent[] = [
+      soldierSummonedEvent.create(input.characterId, input.position)
+    ];
+
+    if (general.ap === blueprint.cost) {
+      events.push(endTurnEvent.create());
     }
 
     return [soldierSummonedEvent.create(input.characterId, input.position)];

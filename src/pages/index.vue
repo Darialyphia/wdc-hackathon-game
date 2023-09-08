@@ -12,6 +12,8 @@ import { subject } from '@casl/ability';
 import { isGeneral } from '@/game-logic/utils/entity.helpers';
 import type { SoldierData } from '@/resources/soldiers';
 import { getSummonBlueprints } from '@/game-logic/utils/entity.helpers';
+import { getSkillById } from '@/game-logic/utils/skill.helper';
+import { createEndTurnAction } from '@/game-logic/actions/endTurn';
 
 definePage({
   name: 'Home'
@@ -90,6 +92,14 @@ const summonAction = (cell: GameMapCell) => {
   selectedSummon.value = null;
 };
 
+const endTurnAction = () => {
+  const action = createEndTurnAction({
+    playerId: activeEntity.value.owner
+  });
+
+  processAction(action);
+};
+
 const onCellClick = (cell: GameMapCell) => {
   if (selectedSummon.value) {
     summonAction(cell);
@@ -108,6 +118,10 @@ const canSummon = (blueprint: SoldierData) => {
   const ability = createPlayerAbility(gameState.value, activeEntity.value.owner);
   return ability.can('summon', subject('soldier', blueprint));
 };
+
+const activeSkills = computed(() =>
+  activeEntity.value.blueprint.skills.map(getSkillById)
+);
 </script>
 
 <template>
@@ -116,20 +130,14 @@ const canSummon = (blueprint: SoldierData) => {
       <div>
         <h2>{{ activeEntity.blueprint.name }}</h2>
         <h3>Summon</h3>
-        <UiGhostButton
+        <UiButton
           v-for="summon in availableSummons"
           :key="summon.characterId"
           :disabled="!canSummon(summon)"
-          :theme="{
-            colorHsl:
-              selectedSummon?.characterId === summon.characterId
-                ? 'color-primary-hsl'
-                : undefined
-          }"
           @click="selectedSummon = summon"
         >
           {{ summon.name }} ({{ summon.cost }}AP)
-        </UiGhostButton>
+        </UiButton>
         <div
           v-if="isGeneral(activeEntity) && activeEntity.hasSummonned"
           class="p-2 bg-surface-2"
@@ -138,9 +146,12 @@ const canSummon = (blueprint: SoldierData) => {
         </div>
 
         <h3>Abilities</h3>
-        <UiGhostButton v-for="skill in activeEntity.blueprint.skills" :key="skill.id">
+        <UiButton v-for="skill in activeSkills" :key="skill.id">
           {{ skill.name }} ({{ skill.cost }}AP)
-        </UiGhostButton>
+        </UiButton>
+
+        <br />
+        <UiButton :theme="{ bg: 'red-9' }" @click="endTurnAction">End Turn</UiButton>
       </div>
     </aside>
     <div class="grid">

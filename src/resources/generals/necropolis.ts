@@ -10,5 +10,5 @@ export const necroGeneral: GeneralData = {
   maxHp: 30,
   attack: 4,
   defense: 2,
-  skills: [skills.meleeAttack]
+  skills: [skills.meleeAttack.id]
 };
