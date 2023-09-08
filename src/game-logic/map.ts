@@ -12,7 +12,7 @@ export type GameMapCell = Point & {
 };
 
 export type GameMap = Size & {
-  cells: GameMapCell[][];
+  rows: GameMapCell[][];
 };
 
 export const createGameMap = (width: number, height: number): GameMap => {
@@ -31,6 +31,6 @@ export const createGameMap = (width: number, height: number): GameMap => {
   return {
     width,
     height,
-    cells
+    rows: cells
   };
 };

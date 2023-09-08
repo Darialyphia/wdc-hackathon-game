@@ -14,6 +14,7 @@ export type EntityBase = {
   position: Point;
   ap: number;
   atbSeed: number;
+  maxAp: number;
   atb: number;
 };
 
@@ -39,7 +40,7 @@ const getDefaultAp = (kind: Entity['kind']) => {
 
 export const addEntity = (
   state: GameState,
-  entity: Omit<Entity, 'id' | 'atbSeed' | 'atb' | 'ap'>
+  entity: Omit<Entity, 'id' | 'atbSeed' | 'atb' | 'ap' | 'maxAp'>
 ) => {
   const atbSeed = Math.random();
 
@@ -48,6 +49,7 @@ export const addEntity = (
     id: ++state.nextEntityId,
     atbSeed,
     atb: atbSeed,
+    maxAp: getDefaultAp(entity.kind),
     ap: getDefaultAp(entity.kind)
   });
 };

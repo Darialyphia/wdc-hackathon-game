@@ -3,7 +3,7 @@ import type { GameState } from '..';
 import { type GameMapCell, CELL_TYPES } from '../map';
 
 export const getCellAt = (state: GameState, { x, y }: Point): GameMapCell | undefined =>
-  state.map.cells[y]?.[x];
+  state.map.rows[y]?.[x];
 
 export const isWithinBounds = (state: GameState, { x, y }: Point) =>
   x >= 0 && y >= 0 && x < state.map.width && y < state.map.height;

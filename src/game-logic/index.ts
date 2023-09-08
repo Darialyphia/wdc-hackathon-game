@@ -1,4 +1,3 @@
-import { type AnyZodObject, z } from 'zod';
 import {
   addEntity,
   type CharacterId,
@@ -8,8 +7,10 @@ import {
 } from './entity';
 import { createGameMap, type GameMap } from './map';
 import { tickUntilActiveEntity } from './atb';
+import { MAP_SIZE } from './constants';
 
 export type GameState = {
+  players: [PlayerId, PlayerId];
   nextEntityId: number;
   activeEntityId: EntityId;
   map: GameMap;
@@ -26,6 +27,7 @@ export type CreateGameOptions = {
 
 export const createGameState = ({ players }: CreateGameOptions): GameState => {
   const state: GameState = {
+    players: [players[0].id, players[1].id],
     nextEntityId: 0,
     activeEntityId: 0,
     map: createGameMap(MAP_SIZE, MAP_SIZE),

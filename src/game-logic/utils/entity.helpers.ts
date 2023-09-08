@@ -22,3 +22,6 @@ export const isSoldier = (e: unknown): e is Soldier =>
   isObject(e) && 'kind' in e && e.kind === 'soldier';
 export const isGeneral = (e: unknown): e is General =>
   isObject(e) && 'kind' in e && e.kind === 'general';
+
+export const getActiveEntity = (state: GameState) =>
+  state.entities.find(e => e.id === state.activeEntityId)!;

@@ -18,4 +18,5 @@ export const tickUntilActiveEntity = (state: GameState) => {
   }
 
   state.activeEntityId = activeEntity.id;
+  activeEntity.ap = activeEntity.maxAp;
 };
