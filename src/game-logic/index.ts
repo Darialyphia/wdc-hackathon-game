@@ -39,7 +39,7 @@ export const createGameState = ({ players }: CreateGameOptions): GameState => {
       kind: 'general',
       characterId: player.characterId,
       owner: player.id,
-      position: { x: Math.floor(MAP_SIZE / 2), y: i === 0 ? 2 : MAP_SIZE - 2 }
+      position: { y: Math.floor(MAP_SIZE / 2), x: i === 0 ? 2 : MAP_SIZE - 3 }
     });
   });
 

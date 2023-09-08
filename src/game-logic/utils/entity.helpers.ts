@@ -2,6 +2,7 @@ import { isObject } from '../../utils/assertions';
 
 import type { GameState } from '..';
 import type { Entity, EntityId, General, PlayerId, Soldier } from '../entity';
+import { tickUntilActiveEntity } from '../atb';
 
 export const getEntityById = (state: GameState, id: EntityId) =>
   state.entities.find(e => e.id === id);
@@ -25,3 +26,10 @@ export const isGeneral = (e: unknown): e is General =>
 
 export const getActiveEntity = (state: GameState) =>
   state.entities.find(e => e.id === state.activeEntityId)!;
+
+export const endTurn = (state: GameState) => {
+  const active = getActiveEntity(state);
+  active.atb = active.atbSeed;
+
+  tickUntilActiveEntity(state);
+};

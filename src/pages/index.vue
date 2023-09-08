@@ -15,11 +15,11 @@ const gameState = ref(
     players: [
       {
         id: 'player 1',
-        characterId: 'General 1'
+        characterId: 'Hero 1'
       },
       {
         id: 'player 2',
-        characterId: 'General 2'
+        characterId: 'Hero 2'
       }
     ]
   })
@@ -76,6 +76,7 @@ const onCellClick = (cell: GameMapCell) => {
         ]"
       >
         {{ entity.characterId }}
+        <div>x:{{ entity.position.x }},y:{{ entity.position.y }}</div>
         <div>AP: {{ entity.ap }} / {{ entity.maxAp }}</div>
       </div>
     </div>
@@ -94,7 +95,8 @@ const onCellClick = (cell: GameMapCell) => {
     grid-row: var(--y);
     place-content: center;
 
-    font-size: var(--font-size-0);
+    font-family: monospace;
+    font-size: 0.7rem;
     text-align: center;
   }
 }
