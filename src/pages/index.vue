@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { createGameState } from '@/game-logic';
+import { createGameState, type GameState } from '@/game-logic';
+import { createPlayerAbility } from '@/game-logic/abilities/player.ability';
 import { createMoveAction } from '@/game-logic/actions/move';
-import { reducer } from '@/game-logic/events/reducer';
+import { createSummonAction } from '@/game-logic/actions/summon';
+import { reducer, type GameEvent } from '@/game-logic/events/reducer';
 import type { GameMapCell } from '@/game-logic/map';
+import type { SummonBlueprint } from '@/game-logic/summon';
 import { getActiveEntity } from '@/game-logic/utils/entity.helpers';
 import { createPathFinder } from '@/game-logic/utils/pathfinding.helpers';
+import type { Nullable } from '@/utils/types';
 
 definePage({
   name: 'Home'
@@ -15,15 +19,52 @@ const gameState = ref(
     players: [
       {
         id: 'player 1',
-        characterId: 'Hero 1'
+        characterId: 'Hero 1',
+        summonBlueprints: [
+          {
+            characterId: 'Swordsman',
+            cost: 1
+          },
+          {
+            characterId: 'Archer',
+            cost: 2
+          },
+          {
+            characterId: 'Knight',
+            cost: 3
+          },
+          {
+            characterId: 'Angel',
+            cost: 4
+          }
+        ]
       },
       {
         id: 'player 2',
-        characterId: 'Hero 2'
+        characterId: 'Hero 2',
+        summonBlueprints: [
+          {
+            characterId: 'Skeleton',
+            cost: 1
+          },
+          {
+            characterId: 'Wraith',
+            cost: 2
+          },
+          {
+            characterId: 'Vampire',
+            cost: 3
+          },
+          {
+            characterId: 'Bone Dragon',
+            cost: 4
+          }
+        ]
       }
     ]
   })
 );
+const selectedSummon = ref<Nullable<SummonBlueprint>>();
 const activeEntity = computed(() => getActiveEntity(gameState.value));
 
 const pathFinder = computed(() =>
@@ -36,31 +77,88 @@ const canMoveTo = (cell: GameMapCell) => {
   return path.length > 0 && path.length <= activeEntity.value.ap;
 };
 
-const onCellClick = (cell: GameMapCell) => {
+const canSummonAt = (cell: GameMapCell) => {
+  const ability = createPlayerAbility(gameState.value, activeEntity.value.owner);
+  return ability.can('summon_at', cell);
+};
+
+const isHighlighted = (cell: GameMapCell) => {
+  if (selectedSummon.value) return canSummonAt(cell);
+  return canMoveTo(cell);
+};
+
+const processAction = (action: (state: GameState) => GameEvent[]) => {
+  const events = action(gameState.value);
+  events.forEach(event => {
+    reducer(gameState.value, event);
+  });
+};
+
+const moveAction = (cell: GameMapCell) => {
   if (!canMoveTo(cell)) return;
   const action = createMoveAction({
     playerId: activeEntity.value.owner,
     entityId: activeEntity.value.id,
     target: cell
   });
-  const events = action(gameState.value);
 
-  events.forEach(event => {
-    reducer(gameState.value, event);
-  });
+  processAction(action);
 };
+
+const summonAction = (cell: GameMapCell) => {
+  if (!canSummonAt(cell)) {
+    selectedSummon.value = null;
+  }
+  if (!selectedSummon.value) return;
+
+  const action = createSummonAction({
+    playerId: activeEntity.value.owner,
+    characterId: selectedSummon.value.characterId,
+    position: { x: cell.x, y: cell.y }
+  });
+
+  processAction(action);
+};
+
+const onCellClick = (cell: GameMapCell) => {
+  if (selectedSummon.value) {
+    summonAction(cell);
+  } else {
+    moveAction(cell);
+  }
+};
+
+const availableSummons = computed(() => {
+  if (activeEntity.value.kind !== 'general') return [];
+  return Object.values(activeEntity.value.summonBlueprints);
+});
 </script>
 
 <template>
-  <main class="container space-y-3">
-    <div>Active entity: {{ activeEntity.characterId }}</div>
+  <main class="container space-y-3" style="--container-size: var(--size-xl)">
+    <aside>
+      <UiGhostButton
+        v-for="summon in availableSummons"
+        :key="summon.characterId"
+        :disabled="activeEntity.ap < summon.cost"
+        :theme="{
+          colorHsl:
+            selectedSummon?.characterId === summon.characterId
+              ? 'color-primary-hsl'
+              : undefined
+        }"
+        @click="selectedSummon = summon"
+      >
+        Summon {{ summon.characterId }} ({{ summon.cost }}AP)
+      </UiGhostButton>
+    </aside>
     <div class="grid">
       <template v-for="row in gameState.map.rows">
         <div
           v-for="cell in row"
           :key="`${cell.x}:${cell.y}`"
           :style="{ '--x': cell.x + 1, '--y': cell.y + 1 }"
-          :class="['cell', { 'can-move': canMoveTo(cell) }]"
+          :class="['cell', { 'is-highlighted': isHighlighted(cell) }]"
           @click="onCellClick(cell)"
         />
       </template>
@@ -76,7 +174,7 @@ const onCellClick = (cell: GameMapCell) => {
         ]"
       >
         {{ entity.characterId }}
-        <div>x:{{ entity.position.x }},y:{{ entity.position.y }}</div>
+        <div>Owner: {{ entity.owner }}</div>
         <div>AP: {{ entity.ap }} / {{ entity.maxAp }}</div>
       </div>
     </div>
@@ -84,10 +182,14 @@ const onCellClick = (cell: GameMapCell) => {
 </template>
 
 <style scoped lang="postcss">
+main {
+  display: flex;
+  gap: var(--size-3);
+}
 .grid {
   display: grid;
-  grid-template-columns: repeat(v-bind('gameState.map.width'), var(--size-9));
-  grid-template-rows: repeat(v-bind('gameState.map.height'), var(--size-9));
+  grid-template-columns: repeat(v-bind('gameState.map.width'), var(--size-10));
+  grid-template-rows: repeat(v-bind('gameState.map.height'), var(--size-10));
 
   > * {
     display: grid;
@@ -104,7 +206,7 @@ const onCellClick = (cell: GameMapCell) => {
 .cell {
   border: solid 1px var(--primary);
 
-  &.can-move {
+  &.is-highlighted {
     background-color: hsl(var(--color-primary-hover-hsl) / 0.35);
   }
 }

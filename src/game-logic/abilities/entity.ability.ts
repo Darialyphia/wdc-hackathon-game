@@ -1,13 +1,12 @@
-import { PureAbility, type ForcedSubject } from '@casl/ability';
+import { PureAbility } from '@casl/ability';
 import type { GameState } from '..';
-import type { Entity, General, PlayerId, Soldier } from '../entity';
-import { isActive, isOwnEntity } from '../utils/entity.helpers';
+import type { PlayerId } from '../entity';
 import type { GameMapCell } from '../map';
 import { isCellWalkable } from '../utils/map.helpers';
 
 type MapActions = 'move';
 
-type Abilities = [MapActions, 'cell' | (GameMapCell & ForcedSubject<'cell'>)];
+type Abilities = [MapActions, 'cell' | GameMapCell];
 
 export type EntityAbility = PureAbility<Abilities>;
 

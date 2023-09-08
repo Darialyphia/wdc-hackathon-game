@@ -100,6 +100,10 @@ const tag = computed(() => {
     border: solid var(--border-size-1) var(--ui-button-borderColor);
     border-radius: var(--ui-button-base-radius);
 
+    &:disabled {
+      cursor: not-allowed;
+    }
+
     &:disabled:not(.is-loading) {
       color: var(--ui-button-base-disabled-color);
       background-color: var(--ui-button-base-disabled-bg);

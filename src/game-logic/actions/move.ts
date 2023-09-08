@@ -24,7 +24,7 @@ export const createMoveAction = defineAction({
     }
 
     const path = createPathFinder(state, entity.id).findPath(
-      entity?.position,
+      entity.position,
       input.target
     );
     if (path.length > entity.ap) return [];

@@ -3,7 +3,7 @@ import type { EntityId } from '../entity';
 import { defineEvent } from '.';
 import { endTurn, getEntityById } from '../utils/entity.helpers';
 
-export const ENTITY_MOVED = 'entity-moved';
+export const ENTITY_MOVED = 'entity_moved';
 
 export type EntityMovedEvent = {
   type: typeof ENTITY_MOVED;

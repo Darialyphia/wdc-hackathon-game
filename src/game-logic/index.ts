@@ -1,5 +1,5 @@
 import {
-  addEntity,
+  addGeneral,
   type CharacterId,
   type Entity,
   type EntityId,
@@ -8,6 +8,7 @@ import {
 import { createGameMap, type GameMap } from './map';
 import { tickUntilActiveEntity } from './atb';
 import { MAP_SIZE } from './constants';
+import type { SummonBlueprint } from './summon';
 
 export type GameState = {
   players: [PlayerId, PlayerId];
@@ -20,6 +21,7 @@ export type GameState = {
 type CreateGamOptionsPlayer = {
   id: PlayerId;
   characterId: CharacterId;
+  summonBlueprints: SummonBlueprint[];
 };
 export type CreateGameOptions = {
   players: [CreateGamOptionsPlayer, CreateGamOptionsPlayer];
@@ -35,10 +37,12 @@ export const createGameState = ({ players }: CreateGameOptions): GameState => {
   };
 
   players.forEach((player, i) => {
-    addEntity(state, {
-      kind: 'general',
+    addGeneral(state, {
       characterId: player.characterId,
       owner: player.id,
+      summonBlueprints: Object.fromEntries(
+        player.summonBlueprints.map(blueprint => [blueprint.characterId, blueprint])
+      ),
       position: { y: Math.floor(MAP_SIZE / 2), x: i === 0 ? 2 : MAP_SIZE - 3 }
     });
   });

@@ -53,6 +53,8 @@ const passthroughTheme = computed(() => {
     &:disabled {
       --ui-button-base-disabled-color: var(--text-disabled);
       --ui-button-base-disabled-bg: transparent;
+
+      opacity: 0.8;
     }
 
     @media (hover: hover) and (pointer: fine) {

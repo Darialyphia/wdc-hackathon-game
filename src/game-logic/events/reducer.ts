@@ -4,8 +4,9 @@ import {
   entityMovedEvent,
   type EntityMovedEvent
 } from './entityMoved.event';
+import type { SoldierSummonedEvent } from './soldierSummoned.event';
 
-export type GameEvent = EntityMovedEvent;
+export type GameEvent = EntityMovedEvent | SoldierSummonedEvent;
 
 export const reducer = (state: GameState, event: GameEvent) => {
   switch (event.type) {
