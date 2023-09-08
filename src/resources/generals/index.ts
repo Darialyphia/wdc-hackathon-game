@@ -1,14 +1,14 @@
 import type { CharacterId } from '@/game-logic/entity';
-import type { FactionId } from '../factions';
 import { necroGeneral } from './necropolis';
 import { havenGeneral } from './haven';
+import type { FactionId } from '../enums';
 
 export type GeneralData = {
   characterId: CharacterId;
   factionId: FactionId;
   name: string;
 };
-export const characters = { havenGeneral, necroGeneral } satisfies Record<
-  string,
-  GeneralData
->;
+
+export const generals = Object.fromEntries(
+  [necroGeneral, havenGeneral].map(g => [g.characterId, g])
+) satisfies Record<string, GeneralData>;

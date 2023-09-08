@@ -8,3 +8,5 @@ export const swordsman: SoldierData = {
   name: 'Swordsman',
   cost: 2
 };
+
+export const havenSoldiers = { swordsman };

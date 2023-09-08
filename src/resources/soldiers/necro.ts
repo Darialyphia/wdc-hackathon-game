@@ -7,3 +7,5 @@ export const skeleton: SoldierData = {
   name: 'Skeleton',
   cost: 2
 };
+
+export const necroSoldiers = { skeleton };

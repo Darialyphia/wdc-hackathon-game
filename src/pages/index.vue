@@ -11,8 +11,6 @@ import type { Nullable } from '@/utils/types';
 import { subject } from '@casl/ability';
 import { isGeneral } from '@/game-logic/utils/entity.helpers';
 import type { SoldierData } from '@/resources/soldiers';
-import { swordsman } from '@/resources/soldiers/haven';
-import { skeleton } from '@/resources/soldiers/necro';
 
 definePage({
   name: 'Home'
@@ -23,13 +21,11 @@ const gameState = ref(
     players: [
       {
         id: 'player 1',
-        characterId: 'Hero 1',
-        summonBlueprints: [swordsman]
+        characterId: 'haven_hero'
       },
       {
         id: 'player 2',
-        characterId: 'Hero 2',
-        summonBlueprints: [skeleton]
+        characterId: 'necro_hero'
       }
     ]
   })
@@ -167,6 +163,7 @@ const canSummon = (blueprint: SoldierData) => {
         <div class="i-mdi:crown icon" />
         {{ entity.characterId }}
         <div>AP: {{ entity.ap }} / {{ entity.maxAp }}</div>
+        <div class="atb" :style="{ '--filled': Math.min(100, entity.atb) }" />
       </div>
     </div>
     <aside class="event-logs-sidebar">
@@ -260,6 +257,16 @@ h3 {
     width: 1.5em !important;
     height: 1.5em !important;
   }
+}
+
+.atb {
+  position: absolute;
+  bottom: 0;
+
+  width: calc(1% * var(--filled));
+  height: 3px;
+
+  background-color: var(--text-1);
 }
 
 .log-move,
