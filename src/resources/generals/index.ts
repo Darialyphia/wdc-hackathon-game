@@ -1,16 +1,8 @@
-import type { CharacterId } from '@/game-logic/entity';
 import { necroGeneral } from './necropolis';
 import { havenGeneral } from './haven';
-import type { FactionId } from '../enums';
-import type { SkillData } from '../soldiers';
+import type { EntityData } from '../entity';
 
-export type GeneralData = {
-  characterId: CharacterId;
-  factionId: FactionId;
-  name: string;
-  initiative: number;
-  skills: SkillData[];
-};
+export type GeneralData = EntityData;
 
 export const generals = Object.fromEntries(
   [necroGeneral, havenGeneral].map(g => [g.characterId, g])

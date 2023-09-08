@@ -1,34 +1,36 @@
 import type { Point } from '@/utils/geometry';
-import { addSoldier } from '../entity';
+import { addSoldier, type CharacterId } from '../entity';
 import { defineEvent } from '.';
 import { endTurn, getActiveEntity, getGeneral, isGeneral } from '../utils/entity.helpers';
-import type { SoldierData } from '../../resources/soldiers';
+import { soldiers, type SoldierData } from '../../resources/soldiers';
 
 export const SOLDIER_SUMMONED = 'soldier_summoned';
 
 export type SoldierSummonedEvent = {
   type: typeof SOLDIER_SUMMONED;
   payload: {
-    blueprint: SoldierData;
+    characterId: CharacterId;
     position: Point;
   };
 };
 
 export const soldierSummonedEvent = defineEvent({
-  create: (blueprint: SoldierData, position: Point): SoldierSummonedEvent => ({
+  create: (characterId: CharacterId, position: Point): SoldierSummonedEvent => ({
     type: SOLDIER_SUMMONED,
-    payload: { blueprint, position }
+    payload: { characterId, position }
   }),
   execute: (state, event) => {
     const activeEntity = getActiveEntity(state);
     if (!isGeneral(activeEntity)) return state;
 
     const general = getGeneral(state, activeEntity.owner);
-    general.ap -= event.blueprint.cost;
+    const blueprint = soldiers[event.characterId];
 
-    addSoldier(state, event.blueprint, {
+    general.ap -= blueprint.cost;
+
+    addSoldier(state, blueprint, {
       owner: activeEntity.owner,
-      characterId: event.blueprint.id,
+      characterId: blueprint.characterId,
       position: event.position
     });
 

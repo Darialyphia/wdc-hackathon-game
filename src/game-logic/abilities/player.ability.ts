@@ -1,7 +1,12 @@
 import { PureAbility } from '@casl/ability';
 import type { GameState } from '..';
 import type { Entity, PlayerId } from '../entity';
-import { getGeneral, isActive, isOwnEntity } from '../utils/entity.helpers';
+import {
+  getGeneral,
+  getSummonBlueprints,
+  isActive,
+  isOwnEntity
+} from '../utils/entity.helpers';
 import type { Point } from '@/utils/geometry';
 import { getCellAt, getSurroundingCells, isCellWalkable } from '../utils/map.helpers';
 import type { SoldierData } from '@/resources/soldiers';
@@ -36,6 +41,9 @@ export const createPlayerAbility = (
 
     if (!general.hasSummonned) {
       can('summon', 'soldier', (subject: SoldierData) => {
+        const summonBlueprints = getSummonBlueprints(general);
+        if (!Object.values(summonBlueprints).includes(subject)) return false;
+
         return isActive(state, general) && subject.cost <= general.ap;
       });
     }

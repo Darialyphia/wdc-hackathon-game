@@ -6,6 +6,9 @@ export const necroGeneral: GeneralData = {
   factionId: FACTIONS_IDS.NECRO,
   name: 'Borax',
   initiative: 6,
+  maxHp: 30,
+  attack: 4,
+  defense: 2,
   skills: [
     {
       id: 'necro_hero_default_attack',

@@ -3,6 +3,7 @@ import { exhaustiveSwitch } from '../../utils/assertions';
 import type { GameState } from '..';
 import type { Entity, EntityId, General, PlayerId, Soldier } from '../entity';
 import { tickUntilActiveEntity } from '../atb';
+import { soldiersByFaction } from '@/resources/soldiers';
 
 export const getEntityById = (state: GameState, id: EntityId) =>
   state.entities.find(e => e.id === id);
@@ -50,3 +51,6 @@ export const resetEntity = (entity: Entity) => {
       exhaustiveSwitch(kind);
   }
 };
+
+export const getSummonBlueprints = (entity: General) =>
+  soldiersByFaction[entity.blueprint.factionId];

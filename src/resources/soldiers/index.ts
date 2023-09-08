@@ -2,14 +2,10 @@ import type { CharacterId } from '@/game-logic/entity';
 import { FACTIONS_IDS, type FactionId } from '../enums';
 import { havenSoldiers } from './haven';
 import { necroSoldiers } from './necro';
+import type { EntityData } from '../entity';
 
-export type SoldierData = {
-  id: CharacterId;
-  factionId: FactionId;
-  name: string;
+export type SoldierData = EntityData & {
   cost: number;
-  initiative: number;
-  skills: SkillData[];
 };
 
 export type SkillId = string;
@@ -20,10 +16,13 @@ export type SkillData = {
 };
 
 export const soldiersByFaction = {
-  [FACTIONS_IDS.HAVEN]: havenSoldiers,
-  [FACTIONS_IDS.NECRO]: necroSoldiers
-};
+  [FACTIONS_IDS.HAVEN]: Object.fromEntries(havenSoldiers.map(e => [e.characterId, e])),
+  [FACTIONS_IDS.NECRO]: Object.fromEntries(necroSoldiers.map(e => [e.characterId, e]))
+} satisfies Record<FactionId, Record<CharacterId, SoldierData>>;
 
 export const soldiers = Object.fromEntries(
-  [...Object.values(havenSoldiers), ...Object.values(necroSoldiers)].map(g => [g.id, g])
+  [...Object.values(havenSoldiers), ...Object.values(necroSoldiers)].map(g => [
+    g.characterId,
+    g
+  ])
 ) satisfies Record<CharacterId, SoldierData>;

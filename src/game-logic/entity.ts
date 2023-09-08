@@ -12,23 +12,22 @@ export type CharacterId = string;
 export type EntityBase = {
   owner: PlayerId;
   characterId: CharacterId;
-  id: EntityId;
+  readonly id: EntityId;
   position: Point;
   ap: number;
-  atbSeed: number;
+  readonly atbSeed: number;
   maxAp: number;
   atb: number;
   initiative: number;
 };
 
 export type Soldier = EntityBase & {
-  kind: 'soldier';
-  blueprint: SoldierData;
+  readonly kind: 'soldier';
+  readonly blueprint: SoldierData;
 };
 export type General = EntityBase & {
-  kind: 'general';
-  summonBlueprints: Record<CharacterId, SoldierData>;
-  blueprint: GeneralData;
+  readonly kind: 'general';
+  readonly blueprint: GeneralData;
   hasSummonned: boolean;
 };
 
@@ -37,7 +36,7 @@ export type Entity = Soldier | General;
 export const addGeneral = (
   state: GameState,
   blueprint: GeneralData,
-  entity: Pick<General, 'owner' | 'characterId' | 'position' | 'summonBlueprints'>
+  entity: Pick<General, 'owner' | 'characterId' | 'position'>
 ) => {
   const atbSeed = Math.random();
 

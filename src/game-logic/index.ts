@@ -41,7 +41,6 @@ export const createGameState = ({ players }: CreateGameOptions): GameState => {
     addGeneral(state, general, {
       characterId: player.characterId,
       owner: player.id,
-      summonBlueprints: soldiersByFaction[general.factionId],
       position: { y: Math.floor(MAP_HEIGHT / 2), x: i === 0 ? 2 : MAP_WIDTH - 3 }
     });
   });

@@ -11,6 +11,7 @@ import type { Nullable } from '@/utils/types';
 import { subject } from '@casl/ability';
 import { isGeneral } from '@/game-logic/utils/entity.helpers';
 import type { SoldierData } from '@/resources/soldiers';
+import { getSummonBlueprints } from '@/game-logic/utils/entity.helpers';
 
 definePage({
   name: 'Home'
@@ -81,7 +82,7 @@ const summonAction = (cell: GameMapCell) => {
 
   const action = createSummonAction({
     playerId: activeEntity.value.owner,
-    characterId: selectedSummon.value.id,
+    characterId: selectedSummon.value.characterId,
     position: { x: cell.x, y: cell.y }
   });
 
@@ -99,7 +100,8 @@ const onCellClick = (cell: GameMapCell) => {
 
 const availableSummons = computed(() => {
   if (activeEntity.value.kind !== 'general') return [];
-  return Object.values(activeEntity.value.summonBlueprints);
+
+  return Object.values(getSummonBlueprints(activeEntity.value));
 });
 
 const canSummon = (blueprint: SoldierData) => {
@@ -112,14 +114,17 @@ const canSummon = (blueprint: SoldierData) => {
   <main>
     <aside class="action-bar">
       <div>
-        <h2>{{ activeEntity.characterId }}</h2>
+        <h2>{{ activeEntity.blueprint.name }}</h2>
         <h3>Summon</h3>
         <UiGhostButton
           v-for="summon in availableSummons"
-          :key="summon.id"
+          :key="summon.characterId"
           :disabled="!canSummon(summon)"
           :theme="{
-            colorHsl: selectedSummon?.id === summon.id ? 'color-primary-hsl' : undefined
+            colorHsl:
+              selectedSummon?.characterId === summon.characterId
+                ? 'color-primary-hsl'
+                : undefined
           }"
           @click="selectedSummon = summon"
         >
@@ -164,7 +169,7 @@ const canSummon = (blueprint: SoldierData) => {
         ]"
       >
         <div class="i-mdi:crown icon" />
-        {{ entity.characterId }}
+        {{ entity.blueprint.name }}
         <div>AP: {{ entity.ap }} / {{ entity.maxAp }}</div>
         <div class="atb" :style="{ '--filled': Math.min(100, entity.atb) }" />
       </div>

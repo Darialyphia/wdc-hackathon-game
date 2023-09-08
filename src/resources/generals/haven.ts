@@ -6,6 +6,9 @@ export const havenGeneral: GeneralData = {
   factionId: FACTIONS_IDS.HAVEN,
   name: 'Daria',
   initiative: 6,
+  maxHp: 30,
+  attack: 4,
+  defense: 2,
   skills: [
     {
       id: 'haven_hero_default_attack',
