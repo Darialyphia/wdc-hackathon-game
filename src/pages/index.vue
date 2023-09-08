@@ -262,11 +262,15 @@ h3 {
 .atb {
   position: absolute;
   bottom: 0;
+  transform-origin: center left;
+  transform: scaleX(calc(1% * var(--filled)));
 
-  width: calc(1% * var(--filled));
+  width: 100%;
   height: 3px;
 
   background-color: var(--text-1);
+
+  transition: transform 0.3s;
 }
 
 .log-move,

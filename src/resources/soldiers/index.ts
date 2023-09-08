@@ -8,6 +8,7 @@ export type SoldierData = {
   factionId: FactionId;
   name: string;
   cost: number;
+  initiative: number;
 };
 
 export const soldiersByFaction = {
@@ -15,7 +16,6 @@ export const soldiersByFaction = {
   [FACTIONS_IDS.NECRO]: necroSoldiers
 };
 
-export const soldiers = {
-  ...havenSoldiers,
-  ...necroSoldiers
-};
+export const soldiers = Object.fromEntries(
+  [...Object.values(havenSoldiers), ...Object.values(necroSoldiers)].map(g => [g.id, g])
+) satisfies Record<CharacterId, SoldierData>;

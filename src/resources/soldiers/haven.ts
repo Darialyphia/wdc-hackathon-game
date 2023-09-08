@@ -6,7 +6,8 @@ export const swordsman: SoldierData = {
   id: 'swordsman',
   factionId: FACTIONS_IDS.HAVEN,
   name: 'Swordsman',
-  cost: 2
+  cost: 2,
+  initiative: 5
 };
 
 export const havenSoldiers = { swordsman };

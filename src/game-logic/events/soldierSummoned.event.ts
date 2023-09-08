@@ -26,7 +26,7 @@ export const soldierSummonedEvent = defineEvent({
     const general = getGeneral(state, activeEntity.owner);
     general.ap -= event.blueprint.cost;
 
-    addSoldier(state, {
+    addSoldier(state, event.blueprint, {
       owner: activeEntity.owner,
       characterId: event.blueprint.id,
       position: event.position
@@ -37,6 +37,7 @@ export const soldierSummonedEvent = defineEvent({
     if (activeEntity.ap === 0) {
       endTurn(state);
     }
+
     return state;
   }
 });

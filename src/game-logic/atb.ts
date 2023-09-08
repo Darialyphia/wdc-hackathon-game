@@ -1,5 +1,5 @@
 import type { GameState } from '.';
-import { ATB_STEP, MAX_ATB } from './constants';
+import { MAX_ATB } from './constants';
 
 const getReadyEntity = (state: GameState) => {
   const readyEntities = state.entities
@@ -13,7 +13,7 @@ export const tickUntilActiveEntity = (state: GameState) => {
   let activeEntity = getReadyEntity(state);
 
   while (!activeEntity) {
-    state.entities.forEach(e => (e.atb += ATB_STEP));
+    state.entities.forEach(e => (e.atb += e.initiative));
     activeEntity = getReadyEntity(state);
   }
 

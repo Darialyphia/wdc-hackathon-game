@@ -8,7 +8,7 @@ import {
 import { createGameMap, type GameMap } from './map';
 import { tickUntilActiveEntity } from './atb';
 import { MAP_WIDTH, MAP_HEIGHT } from './constants';
-import { soldiersByFaction, type SoldierData } from '../resources/soldiers';
+import { soldiersByFaction } from '../resources/soldiers';
 import { generals } from '@/resources/generals';
 
 export type GameState = {
@@ -38,7 +38,7 @@ export const createGameState = ({ players }: CreateGameOptions): GameState => {
 
   players.forEach((player, i) => {
     const general = generals[player.characterId];
-    addGeneral(state, {
+    addGeneral(state, general, {
       characterId: player.characterId,
       owner: player.id,
       summonBlueprints: soldiersByFaction[general.factionId],

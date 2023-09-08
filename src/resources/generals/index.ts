@@ -7,6 +7,7 @@ export type GeneralData = {
   characterId: CharacterId;
   factionId: FactionId;
   name: string;
+  initiative: number;
 };
 
 export const generals = Object.fromEntries(
