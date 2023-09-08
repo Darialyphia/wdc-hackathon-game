@@ -1,5 +1,6 @@
 import type { GeneralData } from '.';
 import { FACTIONS_IDS } from '../enums';
+import { skills } from '../skills';
 
 export const necroGeneral: GeneralData = {
   characterId: 'necro_hero',
@@ -9,11 +10,5 @@ export const necroGeneral: GeneralData = {
   maxHp: 30,
   attack: 4,
   defense: 2,
-  skills: [
-    {
-      id: 'necro_hero_default_attack',
-      name: 'Normal attack',
-      cost: 1
-    }
-  ]
+  skills: [skills.meleeAttack]
 };
