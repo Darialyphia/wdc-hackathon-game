@@ -9,6 +9,7 @@ import type { SummonBlueprint } from '@/game-logic/summon';
 import { getActiveEntity } from '@/game-logic/utils/entity.helpers';
 import { createPathFinder } from '@/game-logic/utils/pathfinding.helpers';
 import type { Nullable } from '@/utils/types';
+import { subject } from '@casl/ability';
 
 definePage({
   name: 'Home'
@@ -23,7 +24,7 @@ const gameState = ref(
         summonBlueprints: [
           {
             characterId: 'Swordsman',
-            cost: 1
+            cost: 2
           },
           {
             characterId: 'Archer',
@@ -45,10 +46,10 @@ const gameState = ref(
         summonBlueprints: [
           {
             characterId: 'Skeleton',
-            cost: 1
+            cost: 2
           },
           {
-            characterId: 'Wraith',
+            characterId: 'Zombie',
             cost: 2
           },
           {
@@ -79,7 +80,9 @@ const canMoveTo = (cell: GameMapCell) => {
 
 const canSummonAt = (cell: GameMapCell) => {
   const ability = createPlayerAbility(gameState.value, activeEntity.value.owner);
-  return ability.can('summon_at', cell);
+  const r = ability.can('summon_at', subject('position', cell));
+
+  return r;
 };
 
 const isHighlighted = (cell: GameMapCell) => {
@@ -118,6 +121,7 @@ const summonAction = (cell: GameMapCell) => {
   });
 
   processAction(action);
+  selectedSummon.value = null;
 };
 
 const onCellClick = (cell: GameMapCell) => {
@@ -137,20 +141,24 @@ const availableSummons = computed(() => {
 <template>
   <main class="container space-y-3" style="--container-size: var(--size-xl)">
     <aside>
-      <UiGhostButton
-        v-for="summon in availableSummons"
-        :key="summon.characterId"
-        :disabled="activeEntity.ap < summon.cost"
-        :theme="{
-          colorHsl:
-            selectedSummon?.characterId === summon.characterId
-              ? 'color-primary-hsl'
-              : undefined
-        }"
-        @click="selectedSummon = summon"
-      >
-        Summon {{ summon.characterId }} ({{ summon.cost }}AP)
-      </UiGhostButton>
+      <div>
+        <UiGhostButton
+          v-for="summon in availableSummons"
+          :key="summon.characterId"
+          :disabled="activeEntity.ap < summon.cost"
+          :theme="{
+            colorHsl:
+              selectedSummon?.characterId === summon.characterId
+                ? 'color-primary-hsl'
+                : undefined
+          }"
+          @click="selectedSummon = summon"
+        >
+          Summon {{ summon.characterId }} ({{ summon.cost }}AP)
+        </UiGhostButton>
+
+        <pre>{{ activeEntity }}</pre>
+      </div>
     </aside>
     <div class="grid">
       <template v-for="row in gameState.map.rows">
@@ -186,10 +194,20 @@ main {
   display: flex;
   gap: var(--size-3);
 }
+
+aside {
+  flex-basis: var(--size-xxs);
+  flex-shrink: 0;
+  > div {
+    position: sticky;
+    top: 0;
+  }
+}
 .grid {
+  overflow: auto;
   display: grid;
-  grid-template-columns: repeat(v-bind('gameState.map.width'), var(--size-10));
-  grid-template-rows: repeat(v-bind('gameState.map.height'), var(--size-10));
+  grid-template-columns: repeat(v-bind('gameState.map.width'), var(--size-9));
+  grid-template-rows: repeat(v-bind('gameState.map.height'), var(--size-9));
 
   > * {
     display: grid;

@@ -19,7 +19,7 @@ export type SoldierSummonedEvent = {
   };
 };
 
-export const entityMovedEvent = defineEvent({
+export const soldierSummonedEvent = defineEvent({
   create: (blueprint: SummonBlueprint, position: Point): SoldierSummonedEvent => ({
     type: SOLDIER_SUMMONED,
     payload: { blueprint, position }
@@ -35,7 +35,6 @@ export const entityMovedEvent = defineEvent({
       characterId: event.blueprint.characterId,
       position: event.position
     });
-
     return state;
   }
 });

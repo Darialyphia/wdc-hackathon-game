@@ -39,7 +39,6 @@ export const createPlayerAbility = (
     });
 
     can('summon_at', 'position', (subject: Point) => {
-      console.log('!');
       if (!isCellWalkable(state, subject)) return false;
 
       const cell = getCellAt(state, subject);
