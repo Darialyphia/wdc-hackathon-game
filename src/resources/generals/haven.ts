@@ -7,8 +7,8 @@ export const havenGeneral: GeneralData = {
   factionId: FACTIONS_IDS.HAVEN,
   name: 'Paladin',
   initiative: 6,
-  maxHp: 30,
+  maxHp: 12,
   attack: 4,
-  defense: 2,
+  defense: 1,
   skills: [skills.meleeAttack.id]
 };

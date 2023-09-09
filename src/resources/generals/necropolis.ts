@@ -7,8 +7,8 @@ export const necroGeneral: GeneralData = {
   factionId: FACTIONS_IDS.NECRO,
   name: 'Necromancer',
   initiative: 6,
-  maxHp: 30,
+  maxHp: 12,
   attack: 4,
-  defense: 2,
+  defense: 1,
   skills: [skills.meleeAttack.id]
 };

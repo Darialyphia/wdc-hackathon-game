@@ -22,8 +22,18 @@ import { generals } from '@/resources/generals';
 import { soldiers } from '@/resources/soldiers';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { factions } from '@/resources/factions';
+import type { Nullable, Values } from '@/utils/types';
+
+export const GAME_LIFECYCLE_STATES = {
+  STARTED: 'STARTED',
+  FINISHED: 'FINISHED'
+} as const;
+
+export type GameLifecycleState = Values<typeof GAME_LIFECYCLE_STATES>;
 
 export type GameState = {
+  lifecycleState: GameLifecycleState;
+  winner: Nullable<PlayerId>;
   players: [PlayerId, PlayerId];
   nextEntityId: number;
   activeEntityId: EntityId;
@@ -46,6 +56,8 @@ export const createGameState = ({
   history = []
 }: CreateGameOptions): GameState => {
   const state: GameState = {
+    winner: null,
+    lifecycleState: GAME_LIFECYCLE_STATES.STARTED,
     players: [players[0].id, players[1].id],
     nextEntityId: 0,
     activeEntityId: 0,

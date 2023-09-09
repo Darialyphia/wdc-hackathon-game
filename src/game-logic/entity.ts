@@ -3,16 +3,25 @@ import type { Point } from '../utils/geometry';
 import { DEFAULT_GENERAL_AP, DEFAULT_SOLDIER_AP } from './constants';
 import type { SoldierData } from '../resources/soldiers';
 import type { GeneralData } from '@/resources/generals';
+import type { Values } from '@/utils/types';
 
 export type EntityId = number;
 export type GameId = string;
 export type PlayerId = string;
 export type CharacterId = string;
 
+export const ENTITY_STATES = {
+  ALIVE: 'ALIVE',
+  DEAD: 'DEAD'
+} as const;
+
+export type EntityState = Values<typeof ENTITY_STATES>;
+
 export type EntityBase = {
-  owner: PlayerId;
   characterId: CharacterId;
   readonly id: EntityId;
+  owner: PlayerId;
+  state: EntityState;
   position: Point;
   readonly maxAp: number;
   ap: number;
@@ -43,6 +52,7 @@ export const addGeneral = (
 
   state.entities.push({
     ...entity,
+    state: ENTITY_STATES.ALIVE,
     blueprint,
     kind: 'general',
     id: ++state.nextEntityId,
@@ -65,6 +75,7 @@ export const addSoldier = (
 
   state.entities.push({
     ...entity,
+    state: ENTITY_STATES.ALIVE,
     blueprint,
     kind: 'soldier',
     id: ++state.nextEntityId,

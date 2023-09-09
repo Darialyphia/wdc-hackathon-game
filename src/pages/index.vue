@@ -13,7 +13,7 @@ import {
 import { createPathFinder } from '@/game-logic/utils/pathfinding.helpers';
 import type { Nullable } from '@/utils/types';
 import { subject } from '@casl/ability';
-import { soldiers, type SoldierData } from '@/resources/soldiers';
+import { type SoldierData } from '@/resources/soldiers';
 import { getSummonBlueprints } from '@/game-logic/utils/entity.helpers';
 import { getSkillById } from '@/game-logic/utils/skill.helper';
 import { createEndTurnAction } from '@/game-logic/actions/endTurn';
@@ -46,7 +46,7 @@ const getEventLabel = ({ type, payload }: GameEvent) => {
   const getName = (id: EntityId) => getEntityById(gameState.value, id)?.blueprint.name;
   switch (type) {
     case 'end_turn':
-      return `--------------------------------`;
+      return `------------------------`;
     case 'entity_moved':
       return `${getName(payload.sourceId)} moved.`;
     case 'soldier_summoned':
@@ -80,6 +80,11 @@ watch(
 
 const selectedSummon = ref<Nullable<SoldierData>>();
 const selectedSkill = ref<Nullable<SkillData>>();
+const selectedEntity = ref<Entity>(getActiveEntity(gameState.value));
+
+watchEffect(() => {
+  selectedEntity.value = getActiveEntity(gameState.value);
+});
 
 const selectSummon = (summon: SoldierData) => {
   selectedSummon.value = summon;
@@ -203,6 +208,12 @@ const onCellClick = (cell: GameMapCell) => {
   }
 };
 
+const onEntityClick = (entity: Entity) => {
+  if (selectedSkill.value || selectedSummon.value) return;
+
+  selectedEntity.value = entity;
+};
+
 const availableSummons = computed(() => {
   if (activeEntity.value.kind !== 'general') return [];
 
@@ -233,8 +244,18 @@ watch(
 
 <template>
   <main>
+    <UiModal
+      id="game-resullt"
+      :is-opened="gameState.lifecycleState === 'FINISHED'"
+      :is-closable="false"
+    >
+      <UiModalHeader>A general has fallen</UiModalHeader>
+
+      <UiModalContent>{{ gameState.winner }} is victorious</UiModalContent>
+    </UiModal>
     <EntityView.define v-slot="{ entity }">
       <div
+        tabindex="0"
         :style="{
           '--color': entity.owner === gameState.players[0] ? '#550000' : '#000055'
         }"
@@ -243,6 +264,7 @@ watch(
           entity.kind,
           { 'is-active': entity.id === gameState.activeEntityId }
         ]"
+        @click="onEntityClick(entity)"
       >
         <div class="i-mdi:crown icon" />
         {{ entity.blueprint.name }}
@@ -256,8 +278,8 @@ watch(
     </EntityView.define>
     <aside class="action-bar">
       <div>
-        <h2>{{ activeEntity.blueprint.name }}</h2>
-        <pre>{{ activeEntity }}</pre>
+        <h2>{{ selectedEntity.blueprint.name }}</h2>
+        <pre>{{ selectedEntity }}</pre>
       </div>
     </aside>
     <div class="grid" @contextmenu.prevent="resetSelected">
@@ -279,15 +301,15 @@ watch(
 
     <aside class="event-logs-sidebar">
       <h2>Event Logs</h2>
-      <TransitionGroup tag="div" name="log" class="event-logs">
-        <p v-for="(event, index) in logs" :key="index">
-          {{ event }}
-        </p>
-        <div ref="logSentinel" key="sentinel" />
-      </TransitionGroup>
+      <!-- <TransitionGroup tag="div" name="log" class="event-logs"> -->
+      <p v-for="(event, index) in logs" :key="index">
+        {{ event }}
+      </p>
+      <div ref="logSentinel" key="sentinel" />
+      <!-- </TransitionGroup> -->
     </aside>
 
-    <footer class="flex gap-5 align-start p-4">
+    <footer class="flex gap-5 align-start">
       <section class="flex gap-2">
         <h3>Summon</h3>
         <UiButton
@@ -351,11 +373,15 @@ h3 {
   font-size: var(--font-size-00);
 }
 
+.event-logs {
+  overflow-x: hidden;
+}
 .grid {
   overflow: auto;
   display: grid;
   grid-template-columns: repeat(v-bind('gameState.map.width'), 64px);
   grid-template-rows: repeat(v-bind('gameState.map.height'), 64px);
+  align-self: center;
 
   max-width: calc(64px * v-bind('gameState.map.width'));
 }
@@ -375,6 +401,9 @@ h3 {
 }
 
 .entity {
+  cursor: pointer;
+  user-select: none;
+
   position: relative;
 
   display: grid;

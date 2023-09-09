@@ -1,5 +1,7 @@
 import { defineEvent } from '.';
-import type { EntityId } from '../entity';
+import { GAME_LIFECYCLE_STATES } from '..';
+import { ENTITY_STATES, type EntityId } from '../entity';
+import { getEntityById, isGeneral } from '../utils/entity.helpers';
 
 export const ENTITY_DIED = 'entity_died';
 
@@ -17,7 +19,15 @@ export const entityDiedEvent = defineEvent({
     payload: { sourceId, targetId }
   }),
   execute: (state, { targetId }) => {
-    state.entities = state.entities.filter(e => e.id !== targetId);
+    const entity = getEntityById(state, targetId)!;
+    entity.state = ENTITY_STATES.DEAD;
+    entity.position = { x: -1, y: -1 };
+
+    if (isGeneral(entity)) {
+      state.lifecycleState = GAME_LIFECYCLE_STATES.FINISHED;
+      state.winner =
+        state.players[0] === entity.owner ? state.players[1] : state.players[0];
+    }
 
     return state;
   }
