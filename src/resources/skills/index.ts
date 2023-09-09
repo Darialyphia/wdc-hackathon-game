@@ -3,7 +3,6 @@ import type { TargetType } from './enums';
 import { meleeAttack } from './meleeAttack';
 import type { Entity } from '@/game-logic/entity';
 import type { Point } from '@/utils/geometry';
-import type { GameEvent } from '@/game-logic/events/reducer';
 
 export type SkillId = string;
 export type SkillData = {
@@ -12,7 +11,7 @@ export type SkillData = {
   cost: number;
   range: number;
   targetType: TargetType;
-  execute(state: GameState, caster: Entity, target: Point): GameEvent[];
+  execute(state: GameState, caster: Entity, target: Point): void;
 };
 
 export const skills = { meleeAttack };

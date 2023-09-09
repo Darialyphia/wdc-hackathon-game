@@ -1,8 +1,12 @@
 import type { Point } from '@/utils/geometry';
 import { addSoldier, type CharacterId, type EntityId } from '../entity';
 import { defineEvent } from '.';
-import { getActiveEntity, getGeneral, isGeneral } from '../utils/entity.helpers';
-import { soldiers } from '../../resources/soldiers';
+import {
+  getActiveEntity,
+  getGeneral,
+  getSoldierById,
+  isGeneral
+} from '../utils/entity.helpers';
 
 export const SOLDIER_SUMMONED = 'soldier_summoned';
 
@@ -29,7 +33,8 @@ export const soldierSummonedEvent = defineEvent({
     if (!isGeneral(activeEntity)) return state;
 
     const general = getGeneral(state, activeEntity.owner);
-    const blueprint = soldiers[event.characterId];
+    const blueprint = getSoldierById(event.characterId);
+    if (!blueprint) return state;
 
     general.ap -= blueprint.cost;
 

@@ -1,11 +1,18 @@
 import { isObject } from '../../utils/assertions';
 import { exhaustiveSwitch } from '../../utils/assertions';
 import type { GameState } from '..';
-import type { Entity, EntityId, General, PlayerId, Soldier } from '../entity';
+import type {
+  CharacterId,
+  Entity,
+  EntityId,
+  General,
+  PlayerId,
+  Soldier
+} from '../entity';
 import { tickUntilActiveEntity } from '../atb';
-import { soldiersByFaction } from '@/resources/soldiers';
-import type { GameMapCell } from '../map';
+import { soldiers, soldiersByFaction } from '@/resources/soldiers';
 import type { Point } from '@/utils/geometry';
+import { generals } from '@/resources/generals';
 
 export const getEntityById = (state: GameState, id: EntityId) =>
   state.entities.find(e => e.id === id);
@@ -59,3 +66,8 @@ export const getSummonBlueprints = (entity: General) =>
 
 export const getEntityAt = (state: GameState, { x, y }: Point) =>
   state.entities.find(e => e.position.x === x && e.position.y === y);
+
+export const getSoldierById = (characterId: CharacterId) =>
+  Object.values(soldiers).find(s => s.characterId === characterId);
+export const getGeneralById = (characterId: CharacterId) =>
+  Object.values(generals).find(s => s.characterId === characterId);

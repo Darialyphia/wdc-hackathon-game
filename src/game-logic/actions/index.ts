@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import type { GameState } from '..';
-import { reducer, type GameEvent } from '../events/reducer';
 
 export const anyActionSchema = z.object({
   playerId: z.string()

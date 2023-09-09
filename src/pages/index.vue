@@ -1,15 +1,18 @@
 <script setup lang="ts">
-import { createGameState, type GameState } from '@/game-logic';
+import { createGameState } from '@/game-logic';
 import { createPlayerAbility } from '@/game-logic/abilities/player.ability';
 import { createMoveAction } from '@/game-logic/actions/move';
 import { createSummonAction } from '@/game-logic/actions/summon';
-import { reducer, type GameEvent } from '@/game-logic/events/reducer';
+import { type GameEvent } from '@/game-logic/events/reducer';
 import type { GameMapCell } from '@/game-logic/map';
-import { getActiveEntity, getEntityById } from '@/game-logic/utils/entity.helpers';
+import {
+  getActiveEntity,
+  getEntityById,
+  getSoldierById
+} from '@/game-logic/utils/entity.helpers';
 import { createPathFinder } from '@/game-logic/utils/pathfinding.helpers';
 import type { Nullable } from '@/utils/types';
 import { subject } from '@casl/ability';
-import { isGeneral } from '@/game-logic/utils/entity.helpers';
 import { soldiers, type SoldierData } from '@/resources/soldiers';
 import { getSummonBlueprints } from '@/game-logic/utils/entity.helpers';
 import { getSkillById } from '@/game-logic/utils/skill.helper';
@@ -17,7 +20,7 @@ import { createEndTurnAction } from '@/game-logic/actions/endTurn';
 import type { SkillData } from '@/resources/skills';
 import { createSkillAbility } from '@/game-logic/abilities/skill.ability';
 import { createSkillAction } from '@/game-logic/actions/skill';
-import type { Entity } from '@/game-logic/entity';
+import type { Entity, EntityId } from '@/game-logic/entity';
 import { getEntityAt } from '@/game-logic/utils/entity.helpers';
 import { createEntityAbility } from '@/game-logic/abilities/entity.ability';
 
@@ -40,22 +43,25 @@ const gameState = ref(
   })
 );
 const getEventLabel = ({ type, payload }: GameEvent) => {
+  const getName = (id: EntityId) => getEntityById(gameState.value, id)?.blueprint.name;
   switch (type) {
     case 'end_turn':
       return `--------------------------------`;
     case 'entity_moved':
-      return `${getEntityById(gameState.value, payload.sourceId)?.blueprint.name} moved.`;
+      return `${getName(payload.sourceId)} moved.`;
     case 'soldier_summoned':
-      return `${getEntityById(gameState.value, payload.sourceId)?.blueprint
-        .name} summoned ${soldiers[payload.characterId].name}.`;
+      return `${getName(payload.sourceId)} summoned ${getSoldierById(payload.characterId)
+        ?.name}.`;
     case 'deal_damage':
-      return `${getEntityById(gameState.value, payload.sourceId)?.blueprint.name} dealt ${
-        payload.amount
-      } damage to ${getEntityById(gameState.value, payload.targetId)?.blueprint.name}.`;
+      return `${getName(payload.sourceId)} dealt ${payload.amount} damage to ${getName(
+        payload.targetId
+      )}.`;
     case 'skill_used':
-      return `${getEntityById(gameState.value, payload.sourceId)?.blueprint
-        .name} used ${getSkillById(payload.skillId)?.name}.`;
+      return `${getName(payload.sourceId)} used ${getSkillById(payload.skillId)?.name}.`;
+    case 'entity_died':
+      return `${getName(payload.targetId)} got killed by ${getName(payload.sourceId)}.`;
     default:
+      exhaustiveSwitch(type);
       throw new Error(`exhaustive switch error, unhandled case ${type}`);
   }
 };

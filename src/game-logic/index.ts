@@ -8,9 +8,20 @@ import {
 import { createGameMap, type GameMap } from './map';
 import { tickUntilActiveEntity } from './atb';
 import { MAP_WIDTH, MAP_HEIGHT } from './constants';
-import { soldiersByFaction } from '../resources/soldiers';
-import { generals } from '@/resources/generals';
 import { reducer, type GameEvent } from './events/reducer';
+import { getGeneralById } from './utils/entity.helpers';
+
+// We do nothing with those imports in this file
+// If we remove them we get circular import issues and underfined variables
+// I'd look how to fix it but I HAVE BETTER THINGS TO DO
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { skills } from '@/resources/skills';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { generals } from '@/resources/generals';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { soldiers } from '@/resources/soldiers';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { factions } from '@/resources/factions';
 
 export type GameState = {
   players: [PlayerId, PlayerId];
@@ -44,7 +55,7 @@ export const createGameState = ({
   };
 
   players.forEach((player, i) => {
-    const general = generals[player.characterId];
+    const general = getGeneralById(player.characterId)!;
     addGeneral(state, general, {
       characterId: player.characterId,
       owner: player.id,

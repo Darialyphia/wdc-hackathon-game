@@ -1,12 +1,12 @@
 import { z } from 'zod';
 import { defineAction } from '.';
-import { getActiveEntity, getEntityById } from '../utils/entity.helpers';
+import { getActiveEntity } from '../utils/entity.helpers';
 import { createPlayerAbility } from '../abilities/player.ability';
 import { subject } from '@casl/ability';
 import { entityMovedEvent } from '../events/entityMoved.event';
 import { createPathFinder } from '../utils/pathfinding.helpers';
 import { endTurnEvent } from '../events/endTurn.event';
-import { reducer, type GameEvent } from '../events/reducer';
+import { reducer } from '../events/reducer';
 
 export const createMoveAction = defineAction({
   input: z.object({

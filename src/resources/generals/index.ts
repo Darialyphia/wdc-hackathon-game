@@ -4,6 +4,4 @@ import type { EntityData } from '../entity';
 
 export type GeneralData = EntityData;
 
-export const generals = Object.fromEntries(
-  [necroGeneral, havenGeneral].map(g => [g.characterId, g])
-) satisfies Record<string, GeneralData>;
+export const generals = { havenGeneral, necroGeneral };
