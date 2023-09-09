@@ -1,6 +1,7 @@
 import type { GameState } from '..';
 import { DEAL_DAMAGE, dealDamageEvent, type DealDamageEvent } from './dealDamage.event';
 import { END_TURN, endTurnEvent, type EndTurnEvent } from './endTurn.event';
+import { ENTITY_DIED, entityDiedEvent, type EntityDiedEvent } from './entityDied.event';
 import {
   ENTITY_MOVED,
   entityMovedEvent,
@@ -16,6 +17,7 @@ import { exhaustiveSwitch } from '@/utils/assertions';
 
 export type GameEvent =
   | EntityMovedEvent
+  | EntityDiedEvent
   | SoldierSummonedEvent
   | EndTurnEvent
   | DealDamageEvent
@@ -39,6 +41,9 @@ export const reducer = (state: GameState, event: GameEvent) => {
       break;
     case SKILL_USED:
       skillUsedEvent.execute(state, payload);
+      break;
+    case ENTITY_DIED:
+      entityDiedEvent.execute(state, payload);
       break;
     default:
       exhaustiveSwitch(type);

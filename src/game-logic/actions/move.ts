@@ -6,7 +6,7 @@ import { subject } from '@casl/ability';
 import { entityMovedEvent } from '../events/entityMoved.event';
 import { createPathFinder } from '../utils/pathfinding.helpers';
 import { endTurnEvent } from '../events/endTurn.event';
-import type { GameEvent } from '../events/reducer';
+import { reducer, type GameEvent } from '../events/reducer';
 
 export const createMoveAction = defineAction({
   input: z.object({
@@ -21,23 +21,21 @@ export const createMoveAction = defineAction({
     const playerAbility = createPlayerAbility(state, input.playerId);
 
     if (!entity || playerAbility.cannot('move', subject('entity', entity))) {
-      return [];
+      return;
     }
 
     const path = createPathFinder(state, entity.id).findPath(
       entity.position,
       input.target
     );
-    if (path.length > entity.ap) return [];
+    if (path.length > entity.ap) return;
 
-    const events: GameEvent[] = path.map(([x, y]) =>
-      entityMovedEvent.create(entity.id, { x, y })
+    path.forEach(([x, y]) =>
+      reducer(state, entityMovedEvent.create(entity.id, { x, y }))
     );
 
-    if (entity.ap === events.length) {
-      events.push(endTurnEvent.create(state.activeEntityId));
+    if (entity.ap === 0) {
+      reducer(state, endTurnEvent.create(state.activeEntityId));
     }
-
-    return events;
   }
 });

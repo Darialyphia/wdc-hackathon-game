@@ -1,7 +1,7 @@
 import type { Point } from '@/utils/geometry';
 import type { EntityId } from '../entity';
 import { defineEvent } from '.';
-import { endTurn, getActiveEntity, getEntityById } from '../utils/entity.helpers';
+import { getEntityById } from '../utils/entity.helpers';
 
 export const ENTITY_MOVED = 'entity_moved';
 

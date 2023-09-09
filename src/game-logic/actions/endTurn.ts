@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { defineAction } from '.';
 import { createPlayerAbility } from '../abilities/player.ability';
 import { endTurnEvent } from '../events/endTurn.event';
+import { reducer } from '../events/reducer';
 
 export const createEndTurnAction = defineAction({
   input: z.object({
@@ -12,6 +13,6 @@ export const createEndTurnAction = defineAction({
 
     if (playerAbility.cannot('end_turn', 'turn')) return [];
 
-    return [endTurnEvent.create(state.activeEntityId)];
+    reducer(state, endTurnEvent.create(state.activeEntityId));
   }
 });

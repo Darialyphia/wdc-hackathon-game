@@ -6,7 +6,7 @@ import { subject } from '@casl/ability';
 import { entityMovedEvent } from '../events/entityMoved.event';
 import { createPathFinder } from '../utils/pathfinding.helpers';
 import { endTurnEvent } from '../events/endTurn.event';
-import type { GameEvent } from '../events/reducer';
+import { reducer, type GameEvent } from '../events/reducer';
 import { getSkillById } from '../utils/skill.helper';
 import { createEntityAbility } from '../abilities/entity.ability';
 import { createSkillAbility } from '../abilities/skill.ability';
@@ -24,33 +24,30 @@ export const createSkillAction = defineAction({
   handler: ({ input, state }) => {
     const entity = getActiveEntity(state);
     const skill = getSkillById(input.skillId);
-    if (!skill) return [];
+    if (!skill) return;
 
     const playerAbility = createPlayerAbility(state, input.playerId);
     if (!entity || playerAbility.cannot('use_skill', subject('entity', entity))) {
-      return [];
+      return;
     }
 
     const entityAbility = createEntityAbility(state, entity);
     if (entityAbility.cannot('cast', subject('skill', skill))) {
-      return [];
+      return;
     }
 
     const skillAbility = createSkillAbility(state, skill, entity);
     if (skillAbility.cannot('target', subject('cell', input.target))) {
-      return [];
+      return;
     }
 
-    const events: GameEvent[] = [
+    [
       skillUsedEvent.create(entity.id, skill.id),
       ...skill.execute(state, entity, input.target)
-    ];
+    ].forEach(event => reducer(state, event));
 
-    entity.ap -= skill.cost;
     if (entity.ap === 0) {
-      events.push(endTurnEvent.create(state.activeEntityId));
+      reducer(state, endTurnEvent.create(state.activeEntityId));
     }
-
-    return events;
   }
 });

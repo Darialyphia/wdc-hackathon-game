@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { GameState } from '..';
-import type { GameEvent } from '../events/reducer';
+import { reducer, type GameEvent } from '../events/reducer';
 
 export const anyActionSchema = z.object({
   playerId: z.string()
@@ -19,7 +19,7 @@ export const defineAction =
       return [];
     }
 
-    return handler({
+    handler({
       state,
       input: validatedInput.data as any
     });
@@ -27,5 +27,5 @@ export const defineAction =
 
 export type ActionHandler<T extends typeof anyActionSchema> = {
   input: T;
-  handler: (arg: { input: z.infer<T>; state: GameState }) => GameEvent[];
+  handler: (arg: { input: z.infer<T>; state: GameState }) => void;
 };

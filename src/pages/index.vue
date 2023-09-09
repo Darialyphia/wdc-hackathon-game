@@ -138,13 +138,6 @@ const isHighlighted = (cell: GameMapCell) => {
   return canMoveTo(cell);
 };
 
-const processAction = (action: (state: GameState) => GameEvent[]) => {
-  const events = action(gameState.value);
-  events.forEach(event => {
-    reducer(gameState.value, event);
-  });
-};
-
 const moveAction = (cell: GameMapCell) => {
   if (!canMoveTo(cell)) return;
   const action = createMoveAction({
@@ -152,7 +145,7 @@ const moveAction = (cell: GameMapCell) => {
     target: cell
   });
 
-  processAction(action);
+  action(gameState.value);
 };
 
 const summonAction = (cell: GameMapCell) => {
@@ -167,7 +160,7 @@ const summonAction = (cell: GameMapCell) => {
     position: { x: cell.x, y: cell.y }
   });
 
-  processAction(action);
+  action(gameState.value);
   selectedSummon.value = null;
 };
 
@@ -182,7 +175,7 @@ const skillAction = (cell: GameMapCell) => {
     target: { x: cell.x, y: cell.y }
   });
 
-  processAction(action);
+  action(gameState.value);
   selectedSkill.value = null;
 };
 
@@ -191,7 +184,7 @@ const endTurnAction = () => {
     playerId: activeEntity.value.owner
   });
 
-  processAction(action);
+  action(gameState.value);
 };
 
 const onCellClick = (cell: GameMapCell) => {
@@ -364,6 +357,12 @@ h3 {
 .cell {
   overflow: hidden;
   border: solid 1px var(--primary);
+
+  &:has(.is-active) {
+    z-index: 1;
+    outline: solid 2px yellow;
+    outline-offset: 1px;
+  }
   &.is-highlighted {
     background-color: hsl(var(--color-primary-hover-hsl) / 0.35);
   }
@@ -389,10 +388,6 @@ h3 {
 
   &:not(.general) .icon {
     display: none;
-  }
-
-  &.is-active {
-    outline: solid 2px yellow;
   }
 
   .icon {

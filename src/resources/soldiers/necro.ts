@@ -9,7 +9,7 @@ export const necroSoldiers: SoldierData[] = [
     name: 'Skeleton',
     cost: 2,
     initiative: 5,
-    maxHp: 10,
+    maxHp: 6,
     attack: 3,
     defense: 1,
     skills: [skills.meleeAttack.id]
