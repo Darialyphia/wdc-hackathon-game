@@ -1,5 +1,6 @@
 import type { GameState } from '..';
-import { END_TURN, endTurnEvent, type EndTurnEvent } from './endturn.event';
+import { DEAL_DAMAGE, dealDamageEvent, type DealDamageEvent } from './dealDamage.event';
+import { END_TURN, endTurnEvent, type EndTurnEvent } from './endTurn.event';
 import {
   ENTITY_MOVED,
   entityMovedEvent,
@@ -11,7 +12,11 @@ import {
   type SoldierSummonedEvent
 } from './soldierSummoned.event';
 
-export type GameEvent = EntityMovedEvent | SoldierSummonedEvent | EndTurnEvent;
+export type GameEvent =
+  | EntityMovedEvent
+  | SoldierSummonedEvent
+  | EndTurnEvent
+  | DealDamageEvent;
 
 export const reducer = (state: GameState, { type, payload }: GameEvent) => {
   switch (type) {
@@ -23,6 +28,9 @@ export const reducer = (state: GameState, { type, payload }: GameEvent) => {
       break;
     case END_TURN:
       endTurnEvent.execute(state, payload);
+      break;
+    case DEAL_DAMAGE:
+      dealDamageEvent.execute(state, payload);
       break;
     default:
       exhaustiveSwitch(type);

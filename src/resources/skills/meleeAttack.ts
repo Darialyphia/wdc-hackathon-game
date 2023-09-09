@@ -1,5 +1,7 @@
+import { dealDamageEvent } from '@/game-logic/events/dealDamage.event';
 import type { SkillData } from '.';
 import { TARGET_TYPES } from './enums';
+import { getEntityAt } from '@/game-logic/utils/entity.helpers';
 
 export const meleeAttack: SkillData = {
   id: 'melee_attack',
@@ -7,8 +9,15 @@ export const meleeAttack: SkillData = {
   cost: 1,
   range: 1,
   targetType: TARGET_TYPES.ENEMY,
-  execute(state) {
-    console.log('melee attack casted');
-    return [];
+  execute(state, caster, target) {
+    const entity = getEntityAt(state, target);
+    if (!entity) return [];
+
+    return [
+      dealDamageEvent.create(
+        entity.id,
+        Math.max(1, caster.blueprint.attack - entity.blueprint.defense)
+      )
+    ];
   }
 };

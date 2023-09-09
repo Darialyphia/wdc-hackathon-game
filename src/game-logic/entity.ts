@@ -14,11 +14,12 @@ export type EntityBase = {
   characterId: CharacterId;
   readonly id: EntityId;
   position: Point;
+  readonly maxAp: number;
   ap: number;
   readonly atbSeed: number;
-  maxAp: number;
   atb: number;
   initiative: number;
+  hp: number;
 };
 
 export type Soldier = EntityBase & {
@@ -50,7 +51,8 @@ export const addGeneral = (
     atb: atbSeed,
     maxAp: DEFAULT_GENERAL_AP,
     ap: DEFAULT_GENERAL_AP,
-    initiative: blueprint.initiative
+    initiative: blueprint.initiative,
+    hp: blueprint.maxHp
   });
 };
 
@@ -70,6 +72,7 @@ export const addSoldier = (
     atb: atbSeed,
     maxAp: DEFAULT_SOLDIER_AP,
     ap: DEFAULT_SOLDIER_AP,
-    initiative: blueprint.initiative
+    initiative: blueprint.initiative,
+    hp: blueprint.maxHp
   });
 };

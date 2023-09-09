@@ -203,7 +203,11 @@ const EntityView = createReusableTemplate<{ entity: Entity }>();
         <div class="i-mdi:crown icon" />
         {{ entity.blueprint.name }}
         <div>AP: {{ entity.ap }} / {{ entity.maxAp }}</div>
-        <div class="atb" :style="{ '--filled': Math.min(100, entity.atb) }" />
+        <div
+          class="hp-bar"
+          :style="{ '--filled': (entity.hp * 100) / entity.blueprint.maxHp }"
+        />
+        <div class="atb-bar" :style="{ '--filled': Math.min(100, entity.atb) }" />
       </div>
     </EntityView.define>
     <aside class="action-bar">
@@ -336,7 +340,7 @@ h3 {
   }
 
   &.is-active {
-    border: solid 2px red;
+    box-shadow: inset 0 0 5px 2px var(--primary);
   }
 
   .icon {
@@ -349,7 +353,7 @@ h3 {
   }
 }
 
-.atb {
+.atb-bar {
   position: absolute;
   bottom: 0;
   transform-origin: center left;
@@ -358,9 +362,31 @@ h3 {
   width: 100%;
   height: 3px;
 
-  background-color: var(--text-1);
+  background-color: var(--blue-7);
 
   transition: transform 0.3s;
+}
+.hp-bar {
+  position: absolute;
+  bottom: 4px;
+
+  width: 100%;
+  height: 4px;
+
+  background-color: var(--red-7);
+
+  &::after {
+    content: '';
+
+    position: absolute;
+    inset: 0;
+    transform-origin: center left;
+    transform: scaleX(calc(1% * var(--filled)));
+
+    background-color: var(--green-4);
+
+    transition: transform 0.3s;
+  }
 }
 
 .log-move,

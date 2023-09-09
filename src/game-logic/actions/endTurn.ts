@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { defineAction } from '.';
 import { createPlayerAbility } from '../abilities/player.ability';
-import { endTurnEvent } from '../events/endturn.event';
+import { endTurnEvent } from '../events/endTurn.event';
 
 export const createEndTurnAction = defineAction({
   input: z.object({

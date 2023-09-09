@@ -5,7 +5,7 @@ import { createPlayerAbility } from '../abilities/player.ability';
 import { subject } from '@casl/ability';
 import { entityMovedEvent } from '../events/entityMoved.event';
 import { createPathFinder } from '../utils/pathfinding.helpers';
-import { endTurnEvent } from '../events/endturn.event';
+import { endTurnEvent } from '../events/endTurn.event';
 import type { GameEvent } from '../events/reducer';
 
 export const createMoveAction = defineAction({

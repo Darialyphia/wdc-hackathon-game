@@ -4,7 +4,7 @@ import { createPlayerAbility } from '../abilities/player.ability';
 import { getGeneral, getSummonBlueprints } from '../utils/entity.helpers';
 import { subject } from '@casl/ability';
 import { soldierSummonedEvent } from '../events/soldierSummoned.event';
-import { endTurnEvent } from '../events/endturn.event';
+import { endTurnEvent } from '../events/endTurn.event';
 import type { GameEvent } from '../events/reducer';
 
 export const createSummonAction = defineAction({
