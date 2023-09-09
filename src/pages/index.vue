@@ -14,6 +14,11 @@ import type { SoldierData } from '@/resources/soldiers';
 import { getSummonBlueprints } from '@/game-logic/utils/entity.helpers';
 import { getSkillById } from '@/game-logic/utils/skill.helper';
 import { createEndTurnAction } from '@/game-logic/actions/endTurn';
+import type { SkillData } from '@/resources/skills';
+import { createSkillAbility } from '@/game-logic/abilities/skill.ability';
+import { createSkillAction } from '@/game-logic/actions/skill';
+import type { Entity } from '@/game-logic/entity';
+import { getEntityAt } from '@/game-logic/utils/entity.helpers';
 
 definePage({
   name: 'Home'
@@ -33,7 +38,25 @@ const gameState = ref(
     ]
   })
 );
+
 const selectedSummon = ref<Nullable<SoldierData>>();
+const selectedSkill = ref<Nullable<SkillData>>();
+
+const selectSummon = (summon: SoldierData) => {
+  selectedSummon.value = summon;
+  selectedSkill.value = null;
+};
+
+const selectSkill = (skill: SkillData) => {
+  selectedSkill.value = skill;
+  selectedSummon.value = null;
+};
+
+const resetSelected = () => {
+  selectedSummon.value = null;
+  selectedSkill.value = null;
+};
+
 const activeEntity = computed(() => getActiveEntity(gameState.value));
 
 const pathFinder = computed(() =>
@@ -51,8 +74,29 @@ const canSummonAt = (cell: GameMapCell) => {
   return ability.can('summon_at', subject('position', cell));
 };
 
+const canCastAt = (cell: GameMapCell) => {
+  if (!selectedSkill.value) return;
+
+  const ability = createSkillAbility(
+    gameState.value,
+    selectedSkill.value,
+    activeEntity.value
+  );
+  return ability.can('target', subject('cell', cell));
+};
+
+const isInCastRange = (cell: GameMapCell) => {
+  if (!selectedSkill.value) return;
+  return (
+    Math.abs(cell.x - activeEntity.value.position.x) <= selectedSkill.value.range &&
+    Math.abs(cell.y - activeEntity.value.position.y) <= selectedSkill.value.range
+  );
+};
+
 const isHighlighted = (cell: GameMapCell) => {
   if (selectedSummon.value) return canSummonAt(cell);
+  if (selectedSkill.value) return isInCastRange(cell);
+
   return canMoveTo(cell);
 };
 
@@ -92,6 +136,21 @@ const summonAction = (cell: GameMapCell) => {
   selectedSummon.value = null;
 };
 
+const skillAction = (cell: GameMapCell) => {
+  if (!canCastAt(cell)) {
+    selectedSkill.value = null;
+  }
+  if (!selectedSkill.value) return;
+  const action = createSkillAction({
+    playerId: activeEntity.value.owner,
+    skillId: selectedSkill.value.id,
+    target: { x: cell.x, y: cell.y }
+  });
+
+  processAction(action);
+  selectedSkill.value = null;
+};
+
 const endTurnAction = () => {
   const action = createEndTurnAction({
     playerId: activeEntity.value.owner
@@ -103,6 +162,8 @@ const endTurnAction = () => {
 const onCellClick = (cell: GameMapCell) => {
   if (selectedSummon.value) {
     summonAction(cell);
+  } else if (selectedSkill.value) {
+    skillAction(cell);
   } else {
     moveAction(cell);
   }
@@ -120,57 +181,17 @@ const canSummon = (blueprint: SoldierData) => {
 };
 
 const activeSkills = computed(() =>
-  activeEntity.value.blueprint.skills.map(getSkillById)
+  activeEntity.value.blueprint.skills.map(id => getSkillById(id)!)
 );
+
+const EntityView = createReusableTemplate<{ entity: Entity }>();
 </script>
 
 <template>
   <main>
-    <aside class="action-bar">
-      <div>
-        <h2>{{ activeEntity.blueprint.name }}</h2>
-        <h3>Summon</h3>
-        <UiButton
-          v-for="summon in availableSummons"
-          :key="summon.characterId"
-          :disabled="!canSummon(summon)"
-          @click="selectedSummon = summon"
-        >
-          {{ summon.name }} ({{ summon.cost }}AP)
-        </UiButton>
-        <div
-          v-if="isGeneral(activeEntity) && activeEntity.hasSummonned"
-          class="p-2 bg-surface-2"
-        >
-          You already have summoned this turn
-        </div>
-
-        <h3>Abilities</h3>
-        <UiButton v-for="skill in activeSkills" :key="skill.id">
-          {{ skill.name }} ({{ skill.cost }}AP)
-        </UiButton>
-
-        <br />
-        <UiButton :theme="{ bg: 'red-9' }" @click="endTurnAction">End Turn</UiButton>
-      </div>
-    </aside>
-    <div class="grid">
-      <template v-for="row in gameState.map.rows">
-        <div
-          v-for="cell in row"
-          :key="`${cell.x}:${cell.y}`"
-          :style="{ '--x': cell.x + 1, '--y': cell.y + 1 }"
-          :class="['cell', { 'is-highlighted': isHighlighted(cell) }]"
-          @click="onCellClick(cell)"
-        />
-      </template>
-
+    <EntityView.define v-slot="{ entity }">
       <div
-        v-for="entity in gameState.entities"
-        :key="entity.id"
         :style="{
-          '--x': entity.position.x + 1,
-          '--y': entity.position.y + 1,
           '--color': entity.owner === gameState.players[0] ? '#550000' : '#000055'
         }"
         :class="[
@@ -184,7 +205,56 @@ const activeSkills = computed(() =>
         <div>AP: {{ entity.ap }} / {{ entity.maxAp }}</div>
         <div class="atb" :style="{ '--filled': Math.min(100, entity.atb) }" />
       </div>
+    </EntityView.define>
+    <aside class="action-bar">
+      <div>
+        <h2>{{ activeEntity.blueprint.name }}</h2>
+        <h3>Summon</h3>
+        <UiButton
+          v-for="summon in availableSummons"
+          :key="summon.characterId"
+          :disabled="!canSummon(summon)"
+          @click="selectSummon(summon)"
+        >
+          {{ summon.name }} ({{ summon.cost }}AP)
+        </UiButton>
+        <div
+          v-if="isGeneral(activeEntity) && activeEntity.hasSummonned"
+          class="p-2 bg-surface-2"
+        >
+          You already have summoned this turn
+        </div>
+
+        <h3>Abilities</h3>
+        <UiButton
+          v-for="skill in activeSkills"
+          :key="skill.id"
+          @click="selectSkill(skill)"
+        >
+          {{ skill.name }} ({{ skill.cost }}AP)
+        </UiButton>
+
+        <br />
+        <UiButton :theme="{ bg: 'red-9' }" @click="endTurnAction">End Turn</UiButton>
+      </div>
+    </aside>
+    <div class="grid" @contextmenu.prevent="resetSelected">
+      <template v-for="row in gameState.map.rows">
+        <div
+          v-for="cell in row"
+          :key="`${cell.x}:${cell.y}`"
+          :style="{ '--x': cell.x + 1, '--y': cell.y + 1 }"
+          :class="['cell', { 'is-highlighted': isHighlighted(cell) }]"
+          @click="onCellClick(cell)"
+        >
+          <EntityView.reuse
+            v-if="getEntityAt(gameState, cell)"
+            :entity="getEntityAt(gameState, cell)!"
+          />
+        </div>
+      </template>
     </div>
+
     <aside class="event-logs-sidebar">
       <h2>Event Logs</h2>
       <TransitionGroup tag="div" name="log" class="event-logs">
@@ -229,28 +299,17 @@ h3 {
   flex-direction: column-reverse;
 }
 .grid {
-  overflow-y: auto;
+  overflow: auto;
   display: grid;
-  grid-template-columns: repeat(v-bind('gameState.map.width'), var(--size-9));
-  grid-template-rows: repeat(v-bind('gameState.map.height'), var(--size-9));
+  grid-template-columns: repeat(v-bind('gameState.map.width'), 64px);
+  grid-template-rows: repeat(v-bind('gameState.map.height'), 64px);
 
-  > * {
-    display: grid;
-    grid-column: var(--x);
-    grid-row: var(--y);
-    place-content: center;
-
-    font-family: monospace;
-    font-size: 0.7rem;
-    text-align: center;
-
-    transition: grid-column 0.3s;
-  }
+  max-width: calc(64px * v-bind('gameState.map.width'));
 }
 
 .cell {
+  display: flex;
   border: solid 1px var(--primary);
-
   &.is-highlighted {
     background-color: hsl(var(--color-primary-hover-hsl) / 0.35);
   }
@@ -258,7 +317,18 @@ h3 {
 
 .entity {
   position: relative;
+
+  display: grid;
+  grid-column: var(--x);
+  grid-row: var(--y);
+  flex-grow: 1;
+  place-content: center;
+
+  font-family: monospace;
+  font-size: 0.7rem;
   color: var(--gray-1);
+  text-align: center;
+
   background-color: var(--color);
 
   &:not(.general) .icon {

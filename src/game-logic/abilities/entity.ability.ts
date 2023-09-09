@@ -1,22 +1,25 @@
 import { PureAbility } from '@casl/ability';
 import type { GameState } from '..';
-import type { PlayerId } from '../entity';
+import type { Entity } from '../entity';
 import type { GameMapCell } from '../map';
 import { isCellWalkable } from '../utils/map.helpers';
+import type { SkillData } from '@/resources/skills';
 
 type MapActions = 'move';
+type SkillActions = 'cast';
 
-type Abilities = [MapActions, 'cell' | GameMapCell];
+type Abilities = [MapActions, 'cell' | GameMapCell] | [SkillActions, 'skill' | SkillData];
 
 export type EntityAbility = PureAbility<Abilities>;
 
-export const createEntityAbility = (
-  state: GameState,
-  playerId: PlayerId
-): EntityAbility => {
+export const createEntityAbility = (state: GameState, entity: Entity): EntityAbility => {
   return createAbility<EntityAbility>(({ can }) => {
     can('move', 'cell', (subject: GameMapCell) => {
       return isCellWalkable(state, subject);
+    });
+
+    can('cast', 'skill', (subject: SkillData) => {
+      return entity.blueprint.skills.includes(subject.id) && entity.ap >= subject.cost;
     });
   });
 };

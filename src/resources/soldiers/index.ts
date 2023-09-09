@@ -8,13 +8,6 @@ export type SoldierData = EntityData & {
   cost: number;
 };
 
-export type SkillId = string;
-export type SkillData = {
-  id: SkillId;
-  name: string;
-  cost: number;
-};
-
 export const soldiersByFaction = {
   [FACTIONS_IDS.HAVEN]: Object.fromEntries(havenSoldiers.map(e => [e.characterId, e])),
   [FACTIONS_IDS.NECRO]: Object.fromEntries(necroSoldiers.map(e => [e.characterId, e]))

@@ -8,6 +8,7 @@ export const meleeAttack: SkillData = {
   range: 1,
   targetType: TARGET_TYPES.ENEMY,
   execute(state) {
-    return state;
+    console.log('melee attack casted');
+    return [];
   }
 };
