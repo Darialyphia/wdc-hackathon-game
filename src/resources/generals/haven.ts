@@ -5,7 +5,7 @@ import { skills } from '../skills';
 export const havenGeneral: GeneralData = {
   characterId: 'haven_hero',
   factionId: FACTIONS_IDS.HAVEN,
-  name: 'Daria',
+  name: 'Paladin',
   initiative: 6,
   maxHp: 30,
   attack: 4,

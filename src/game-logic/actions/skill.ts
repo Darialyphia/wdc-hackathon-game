@@ -10,6 +10,7 @@ import type { GameEvent } from '../events/reducer';
 import { getSkillById } from '../utils/skill.helper';
 import { createEntityAbility } from '../abilities/entity.ability';
 import { createSkillAbility } from '../abilities/skill.ability';
+import { skillUsedEvent } from '../events/skillUsed.event';
 
 export const createSkillAction = defineAction({
   input: z.object({
@@ -40,8 +41,12 @@ export const createSkillAction = defineAction({
       return [];
     }
 
+    const events: GameEvent[] = [
+      skillUsedEvent.create(entity.id, skill.id),
+      ...skill.execute(state, entity, input.target)
+    ];
+
     entity.ap -= skill.cost;
-    const events: GameEvent[] = skill.execute(state, entity, input.target);
     if (entity.ap === 0) {
       events.push(endTurnEvent.create(state.activeEntityId));
     }

@@ -19,6 +19,7 @@ import { createSkillAbility } from '@/game-logic/abilities/skill.ability';
 import { createSkillAction } from '@/game-logic/actions/skill';
 import type { Entity } from '@/game-logic/entity';
 import { getEntityAt } from '@/game-logic/utils/entity.helpers';
+import { createEntityAbility } from '@/game-logic/abilities/entity.ability';
 
 definePage({
   name: 'Home'
@@ -51,6 +52,9 @@ const getEventLabel = ({ type, payload }: GameEvent) => {
       return `${getEntityById(gameState.value, payload.sourceId)?.blueprint.name} dealt ${
         payload.amount
       } damage to ${getEntityById(gameState.value, payload.targetId)?.blueprint.name}.`;
+    case 'skill_used':
+      return `${getEntityById(gameState.value, payload.sourceId)?.blueprint
+        .name} used ${getSkillById(payload.skillId)?.name}.`;
     default:
       throw new Error(`exhaustive switch error, unhandled case ${type}`);
   }
@@ -101,6 +105,11 @@ const canMoveTo = (cell: GameMapCell) => {
 const canSummonAt = (cell: GameMapCell) => {
   const ability = createPlayerAbility(gameState.value, activeEntity.value.owner);
   return ability.can('summon_at', subject('position', cell));
+};
+
+const canCast = (skill: SkillData) => {
+  const ability = createEntityAbility(gameState.value, activeEntity.value);
+  return ability.can('cast', subject('skill', { ...skill }));
 };
 
 const canCastAt = (cell: GameMapCell) => {
@@ -249,35 +258,7 @@ watch(
     <aside class="action-bar">
       <div>
         <h2>{{ activeEntity.blueprint.name }}</h2>
-        <h3>Summon</h3>
-        <UiButton
-          v-for="summon in availableSummons"
-          :key="summon.characterId"
-          :disabled="!canSummon(summon)"
-          @click="selectSummon(summon)"
-        >
-          {{ summon.name }} ({{ summon.cost }}AP)
-        </UiButton>
-        <div
-          v-if="isGeneral(activeEntity) && activeEntity.hasSummonned"
-          class="p-2 bg-surface-2"
-        >
-          You already have summoned this turn
-        </div>
-
-        <h3>Abilities</h3>
-        <UiButton
-          v-for="skill in activeSkills"
-          :key="skill.id"
-          @click="selectSkill(skill)"
-        >
-          {{ skill.name }} ({{ skill.cost }}AP)
-        </UiButton>
-
-        <br />
-        <UiButton :theme="{ bg: 'red-9', hoverBg: 'red-7' }" @click="endTurnAction">
-          End Turn
-        </UiButton>
+        <pre>{{ activeEntity }}</pre>
       </div>
     </aside>
     <div class="grid" @contextmenu.prevent="resetSelected">
@@ -306,6 +287,36 @@ watch(
         <div ref="logSentinel" key="sentinel" />
       </TransitionGroup>
     </aside>
+
+    <footer class="flex gap-5 align-start p-4">
+      <section class="flex gap-2">
+        <h3>Summon</h3>
+        <UiButton
+          v-for="summon in availableSummons"
+          :key="summon.characterId"
+          :disabled="!canSummon(summon)"
+          @click="selectSummon(summon)"
+        >
+          {{ summon.name }} ({{ summon.cost }}AP)
+        </UiButton>
+      </section>
+
+      <section class="flex gap-2">
+        <h3>Abilities</h3>
+        <UiButton
+          v-for="skill in activeSkills"
+          :key="skill.id"
+          :disabled="!canCast(skill)"
+          @click="selectSkill(skill)"
+        >
+          {{ skill.name }} ({{ skill.cost }}AP)
+        </UiButton>
+      </section>
+
+      <UiButton :theme="{ bg: 'red-9', hoverBg: 'red-7' }" @click="endTurnAction">
+        End Turn
+      </UiButton>
+    </footer>
   </main>
 </template>
 
@@ -314,6 +325,7 @@ main {
   overflow: hidden;
   display: grid;
   grid-template-columns: 1fr max-content 1fr;
+  grid-template-rows: 1fr auto;
   gap: var(--size-3);
 
   padding: 0;
@@ -325,7 +337,8 @@ h2 {
 }
 
 h3 {
-  font-size: var(--font-size-4);
+  font-size: var(--font-size-3);
+  font-weight: var(--font-weight-4);
 }
 .action-bar {
   > div {
@@ -349,7 +362,7 @@ h3 {
 }
 
 .cell {
-  display: flex;
+  overflow: hidden;
   border: solid 1px var(--primary);
   &.is-highlighted {
     background-color: hsl(var(--color-primary-hover-hsl) / 0.35);
@@ -362,8 +375,10 @@ h3 {
   display: grid;
   grid-column: var(--x);
   grid-row: var(--y);
-  flex-grow: 1;
   place-content: center;
+
+  width: 100%;
+  height: 100%;
 
   font-family: monospace;
   font-size: 0.7rem;
@@ -440,5 +455,9 @@ h3 {
 
 .log-leave-active {
   position: absolute;
+}
+
+footer {
+  grid-column: 2;
 }
 </style>

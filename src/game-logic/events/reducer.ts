@@ -6,6 +6,7 @@ import {
   entityMovedEvent,
   type EntityMovedEvent
 } from './entityMoved.event';
+import { SKILL_USED, skillUsedEvent, type SkillUsedEvent } from './skillUsed.event';
 import {
   SOLDIER_SUMMONED,
   soldierSummonedEvent,
@@ -17,7 +18,8 @@ export type GameEvent =
   | EntityMovedEvent
   | SoldierSummonedEvent
   | EndTurnEvent
-  | DealDamageEvent;
+  | DealDamageEvent
+  | SkillUsedEvent;
 
 export const reducer = (state: GameState, event: GameEvent) => {
   const { type, payload } = event;
@@ -35,9 +37,12 @@ export const reducer = (state: GameState, event: GameEvent) => {
     case DEAL_DAMAGE:
       dealDamageEvent.execute(state, payload);
       break;
+    case SKILL_USED:
+      skillUsedEvent.execute(state, payload);
+      break;
     default:
       exhaustiveSwitch(type);
   }
-  console.log('pushing', event.type);
+
   state.history.push(event);
 };

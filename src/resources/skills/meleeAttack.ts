@@ -6,7 +6,7 @@ import { getEntityAt } from '@/game-logic/utils/entity.helpers';
 export const meleeAttack: SkillData = {
   id: 'melee_attack',
   name: 'Melee attack',
-  cost: 1,
+  cost: 2,
   range: 1,
   targetType: TARGET_TYPES.ENEMY,
   execute(state, caster, target) {

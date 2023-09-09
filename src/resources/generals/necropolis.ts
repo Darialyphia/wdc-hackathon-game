@@ -5,7 +5,7 @@ import { skills } from '../skills';
 export const necroGeneral: GeneralData = {
   characterId: 'necro_hero',
   factionId: FACTIONS_IDS.NECRO,
-  name: 'Borax',
+  name: 'Necromancer',
   initiative: 6,
   maxHp: 30,
   attack: 4,
