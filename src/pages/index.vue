@@ -5,12 +5,12 @@ import { createMoveAction } from '@/game-logic/actions/move';
 import { createSummonAction } from '@/game-logic/actions/summon';
 import { reducer, type GameEvent } from '@/game-logic/events/reducer';
 import type { GameMapCell } from '@/game-logic/map';
-import { getActiveEntity } from '@/game-logic/utils/entity.helpers';
+import { getActiveEntity, getEntityById } from '@/game-logic/utils/entity.helpers';
 import { createPathFinder } from '@/game-logic/utils/pathfinding.helpers';
 import type { Nullable } from '@/utils/types';
 import { subject } from '@casl/ability';
 import { isGeneral } from '@/game-logic/utils/entity.helpers';
-import type { SoldierData } from '@/resources/soldiers';
+import { soldiers, type SoldierData } from '@/resources/soldiers';
 import { getSummonBlueprints } from '@/game-logic/utils/entity.helpers';
 import { getSkillById } from '@/game-logic/utils/skill.helper';
 import { createEndTurnAction } from '@/game-logic/actions/endTurn';
@@ -37,6 +37,35 @@ const gameState = ref(
       }
     ]
   })
+);
+const getEventLabel = ({ type, payload }: GameEvent) => {
+  switch (type) {
+    case 'end_turn':
+      return `--------------------------------`;
+    case 'entity_moved':
+      return `${getEntityById(gameState.value, payload.sourceId)?.blueprint.name} moved.`;
+    case 'soldier_summoned':
+      return `${getEntityById(gameState.value, payload.sourceId)?.blueprint
+        .name} summoned ${soldiers[payload.characterId].name}.`;
+    case 'deal_damage':
+      return `${getEntityById(gameState.value, payload.sourceId)?.blueprint.name} dealt ${
+        payload.amount
+      } damage to ${getEntityById(gameState.value, payload.targetId)?.blueprint.name}.`;
+    default:
+      throw new Error(`exhaustive switch error, unhandled case ${type}`);
+  }
+};
+
+const logs = ref<string[]>(gameState.value.history.map(getEventLabel));
+watch(
+  () => gameState.value.history.length,
+  (newLength, oldLength) => {
+    const newEvents = gameState.value.history.slice(-1 * (newLength - oldLength));
+
+    newEvents.forEach(event => {
+      logs.value.push(getEventLabel(event));
+    });
+  }
 );
 
 const selectedSummon = ref<Nullable<SoldierData>>();
@@ -82,7 +111,7 @@ const canCastAt = (cell: GameMapCell) => {
     selectedSkill.value,
     activeEntity.value
   );
-  return ability.can('target', subject('cell', cell));
+  return ability.can('target', subject('cell', { x: cell.x, y: cell.y }));
 };
 
 const isInCastRange = (cell: GameMapCell) => {
@@ -100,11 +129,9 @@ const isHighlighted = (cell: GameMapCell) => {
   return canMoveTo(cell);
 };
 
-const eventLog = ref<GameEvent[]>([]);
 const processAction = (action: (state: GameState) => GameEvent[]) => {
   const events = action(gameState.value);
   events.forEach(event => {
-    eventLog.value.push(event);
     reducer(gameState.value, event);
   });
 };
@@ -113,7 +140,6 @@ const moveAction = (cell: GameMapCell) => {
   if (!canMoveTo(cell)) return;
   const action = createMoveAction({
     playerId: activeEntity.value.owner,
-    entityId: activeEntity.value.id,
     target: cell
   });
 
@@ -185,6 +211,16 @@ const activeSkills = computed(() =>
 );
 
 const EntityView = createReusableTemplate<{ entity: Entity }>();
+
+const logSentinel = ref<HTMLElement>();
+watch(
+  () => gameState.value.history.length,
+  () => {
+    nextTick(() => {
+      logSentinel.value?.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+);
 </script>
 
 <template>
@@ -239,7 +275,9 @@ const EntityView = createReusableTemplate<{ entity: Entity }>();
         </UiButton>
 
         <br />
-        <UiButton :theme="{ bg: 'red-9' }" @click="endTurnAction">End Turn</UiButton>
+        <UiButton :theme="{ bg: 'red-9', hoverBg: 'red-7' }" @click="endTurnAction">
+          End Turn
+        </UiButton>
       </div>
     </aside>
     <div class="grid" @contextmenu.prevent="resetSelected">
@@ -262,7 +300,10 @@ const EntityView = createReusableTemplate<{ entity: Entity }>();
     <aside class="event-logs-sidebar">
       <h2>Event Logs</h2>
       <TransitionGroup tag="div" name="log" class="event-logs">
-        <pre v-for="(event, index) in eventLog" :key="index">{{ event }}</pre>
+        <p v-for="(event, index) in logs" :key="index">
+          {{ event }}
+        </p>
+        <div ref="logSentinel" key="sentinel" />
       </TransitionGroup>
     </aside>
   </main>
@@ -298,10 +339,6 @@ h3 {
   font-size: var(--font-size-00);
 }
 
-.event-logs {
-  display: flex;
-  flex-direction: column-reverse;
-}
 .grid {
   overflow: auto;
   display: grid;
@@ -340,7 +377,7 @@ h3 {
   }
 
   &.is-active {
-    box-shadow: inset 0 0 5px 2px var(--primary);
+    outline: solid 2px yellow;
   }
 
   .icon {
@@ -360,7 +397,7 @@ h3 {
   transform: scaleX(calc(1% * var(--filled)));
 
   width: 100%;
-  height: 3px;
+  height: 5px;
 
   background-color: var(--blue-7);
 
@@ -368,10 +405,10 @@ h3 {
 }
 .hp-bar {
   position: absolute;
-  bottom: 4px;
+  bottom: 6px;
 
   width: 100%;
-  height: 4px;
+  height: 5px;
 
   background-color: var(--red-7);
 

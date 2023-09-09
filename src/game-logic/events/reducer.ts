@@ -11,6 +11,7 @@ import {
   soldierSummonedEvent,
   type SoldierSummonedEvent
 } from './soldierSummoned.event';
+import { exhaustiveSwitch } from '@/utils/assertions';
 
 export type GameEvent =
   | EntityMovedEvent
@@ -18,7 +19,9 @@ export type GameEvent =
   | EndTurnEvent
   | DealDamageEvent;
 
-export const reducer = (state: GameState, { type, payload }: GameEvent) => {
+export const reducer = (state: GameState, event: GameEvent) => {
+  const { type, payload } = event;
+
   switch (type) {
     case ENTITY_MOVED:
       entityMovedEvent.execute(state, payload);
@@ -35,4 +38,6 @@ export const reducer = (state: GameState, { type, payload }: GameEvent) => {
     default:
       exhaustiveSwitch(type);
   }
+  console.log('pushing', event.type);
+  state.history.push(event);
 };

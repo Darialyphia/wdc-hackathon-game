@@ -1,23 +1,28 @@
 import type { Point } from '@/utils/geometry';
-import { addSoldier, type CharacterId } from '../entity';
+import { addSoldier, type CharacterId, type EntityId } from '../entity';
 import { defineEvent } from '.';
-import { endTurn, getActiveEntity, getGeneral, isGeneral } from '../utils/entity.helpers';
-import { soldiers, type SoldierData } from '../../resources/soldiers';
+import { getActiveEntity, getGeneral, isGeneral } from '../utils/entity.helpers';
+import { soldiers } from '../../resources/soldiers';
 
 export const SOLDIER_SUMMONED = 'soldier_summoned';
 
 export type SoldierSummonedEvent = {
   type: typeof SOLDIER_SUMMONED;
   payload: {
+    sourceId: EntityId;
     characterId: CharacterId;
     position: Point;
   };
 };
 
 export const soldierSummonedEvent = defineEvent({
-  create: (characterId: CharacterId, position: Point): SoldierSummonedEvent => ({
+  create: (
+    sourceId: EntityId,
+    characterId: CharacterId,
+    position: Point
+  ): SoldierSummonedEvent => ({
     type: SOLDIER_SUMMONED,
-    payload: { characterId, position }
+    payload: { sourceId, characterId, position }
   }),
   execute: (state, event) => {
     const activeEntity = getActiveEntity(state);

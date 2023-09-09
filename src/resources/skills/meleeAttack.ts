@@ -15,6 +15,7 @@ export const meleeAttack: SkillData = {
 
     return [
       dealDamageEvent.create(
+        state.activeEntityId,
         entity.id,
         Math.max(1, caster.blueprint.attack - entity.blueprint.defense)
       )

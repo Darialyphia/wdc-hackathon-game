@@ -10,6 +10,7 @@ import { tickUntilActiveEntity } from './atb';
 import { MAP_WIDTH, MAP_HEIGHT } from './constants';
 import { soldiersByFaction } from '../resources/soldiers';
 import { generals } from '@/resources/generals';
+import { reducer, type GameEvent } from './events/reducer';
 
 export type GameState = {
   players: [PlayerId, PlayerId];
@@ -17,6 +18,7 @@ export type GameState = {
   activeEntityId: EntityId;
   map: GameMap;
   entities: Entity[];
+  history: GameEvent[];
 };
 
 type CreateGamOptionsPlayer = {
@@ -25,15 +27,20 @@ type CreateGamOptionsPlayer = {
 };
 export type CreateGameOptions = {
   players: [CreateGamOptionsPlayer, CreateGamOptionsPlayer];
+  history?: GameEvent[];
 };
 
-export const createGameState = ({ players }: CreateGameOptions): GameState => {
+export const createGameState = ({
+  players,
+  history = []
+}: CreateGameOptions): GameState => {
   const state: GameState = {
     players: [players[0].id, players[1].id],
     nextEntityId: 0,
     activeEntityId: 0,
     map: createGameMap(MAP_WIDTH, MAP_HEIGHT),
-    entities: []
+    entities: [],
+    history: []
   };
 
   players.forEach((player, i) => {
@@ -47,5 +54,10 @@ export const createGameState = ({ players }: CreateGameOptions): GameState => {
 
   tickUntilActiveEntity(state);
 
+  if (history) {
+    history.forEach(event => {
+      reducer(state, event);
+    });
+  }
   return state;
 };

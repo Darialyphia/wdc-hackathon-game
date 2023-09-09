@@ -8,19 +8,19 @@ export const ENTITY_MOVED = 'entity_moved';
 export type EntityMovedEvent = {
   type: typeof ENTITY_MOVED;
   payload: {
-    entityId: EntityId;
+    sourceId: EntityId;
     to: Point;
   };
 };
 
 export const entityMovedEvent = defineEvent({
-  create: (entityId: EntityId, to: Point): EntityMovedEvent => ({
+  create: (sourceId: EntityId, to: Point): EntityMovedEvent => ({
     type: ENTITY_MOVED,
-    payload: { to, entityId }
+    payload: { to, sourceId }
   }),
   execute: (state, event) => {
-    const entity = getEntityById(state, event.entityId);
-    if (!entity) throw new Error(`Could not find entity ${event.entityId} !`);
+    const entity = getEntityById(state, event.sourceId);
+    if (!entity) return state;
 
     entity.position = event.to;
     entity.ap--;

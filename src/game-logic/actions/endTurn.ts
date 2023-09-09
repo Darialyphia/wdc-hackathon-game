@@ -12,6 +12,6 @@ export const createEndTurnAction = defineAction({
 
     if (playerAbility.cannot('end_turn', 'turn')) return [];
 
-    return [endTurnEvent.create()];
+    return [endTurnEvent.create(state.activeEntityId)];
   }
 });

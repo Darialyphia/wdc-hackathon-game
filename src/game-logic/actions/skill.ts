@@ -43,7 +43,7 @@ export const createSkillAction = defineAction({
     entity.ap -= skill.cost;
     const events: GameEvent[] = skill.execute(state, entity, input.target);
     if (entity.ap === 0) {
-      events.push(endTurnEvent.create());
+      events.push(endTurnEvent.create(state.activeEntityId));
     }
 
     return events;

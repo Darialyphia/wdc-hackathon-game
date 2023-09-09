@@ -7,15 +7,16 @@ export const DEAL_DAMAGE = 'deal_damage';
 export type DealDamageEvent = {
   type: typeof DEAL_DAMAGE;
   payload: {
+    sourceId: EntityId;
     targetId: EntityId;
     amount: number;
   };
 };
 
 export const dealDamageEvent = defineEvent({
-  create: (targetId: EntityId, amount: number): DealDamageEvent => ({
+  create: (sourceId: EntityId, targetId: EntityId, amount: number): DealDamageEvent => ({
     type: DEAL_DAMAGE,
-    payload: { targetId, amount }
+    payload: { sourceId, targetId, amount }
   }),
   execute: (state, { targetId, amount }) => {
     const entity = getEntityById(state, targetId);

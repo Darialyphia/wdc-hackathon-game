@@ -32,13 +32,13 @@ export const createSummonAction = defineAction({
     }
 
     const events: GameEvent[] = [
-      soldierSummonedEvent.create(input.characterId, input.position)
+      soldierSummonedEvent.create(state.activeEntityId, input.characterId, input.position)
     ];
 
     if (general.ap === blueprint.cost) {
-      events.push(endTurnEvent.create());
+      events.push(endTurnEvent.create(state.activeEntityId));
     }
 
-    return [soldierSummonedEvent.create(input.characterId, input.position)];
+    return events;
   }
 });
