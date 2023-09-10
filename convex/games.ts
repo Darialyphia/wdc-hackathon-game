@@ -14,7 +14,6 @@ import { createSummonAction } from '../src/game-logic/actions/summon';
 import { createSkillAction } from '../src/game-logic/actions/skill';
 import { createEndTurnAction } from '../src/game-logic/actions/endTurn';
 import { exhaustiveSwitch } from '../src/utils/assertions';
-import { ensureAuthenticated } from './utils/auth';
 
 // Create a new task with the given text
 export const create = mutation({
@@ -92,6 +91,8 @@ export const join = mutation({
     await scheduler.runAfter(JOIN_CONFIRMATION_TIMEOUT, internal.games.decline, {
       gameId: game._id
     });
+
+    return game._id;
   }
 });
 
@@ -103,7 +104,7 @@ export const decline = internalMutation({
     const game = await db.get(gameId);
     if (!game) return;
 
-    if (game.creator === GAME_STATES.WAITING_FOR_CREATOR_CONFIRMATION) {
+    if (game.state === GAME_STATES.WAITING_FOR_CREATOR_CONFIRMATION) {
       await db.patch(game._id, {
         state: GAME_STATES.DECLINED_BY_CREATOR
       });
@@ -161,6 +162,7 @@ export const actOn = mutation({
     })
   },
   handler: async ({ auth, db }, { gameId, action }) => {
+    const me = await findMe({ auth, db });
     const game = await db.get(gameId);
     if (!game) throw new Error('Game not found');
 
@@ -204,16 +206,16 @@ export const actOn = mutation({
     const type = action.type as GameAction;
     switch (type) {
       case 'move':
-        createMoveAction(action.payload)(state);
+        createMoveAction({ ...action.payload, playerId: me!._id })(state);
         break;
       case 'summon':
-        createSummonAction(action.payload)(state);
+        createSummonAction({ ...action.payload, playerId: me!._id })(state);
         break;
       case 'use_skill':
-        createSkillAction(action.payload)(state);
+        createSkillAction({ ...action.payload, playerId: me!._id })(state);
         break;
       case 'end_turn':
-        createEndTurnAction(action.payload)(state);
+        createEndTurnAction({ ...action.payload, playerId: me!._id })(state);
         break;
       default:
         exhaustiveSwitch(type);
@@ -259,6 +261,8 @@ export const getById = query({
   },
   handler: async ({ db }, { gameId }) => {
     const game = await db.get(gameId);
+    if (!game) return null;
+
     const events = await db
       .query('gameEvents')
       .withIndex('by_game_id', q => q.eq('gameId', gameId))

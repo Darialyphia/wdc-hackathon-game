@@ -7,7 +7,9 @@ import { vFocusOn } from '../directives/vFocusOn';
 
 const me = useQuery(api.users.me, []);
 const { isAuthenticated } = useConvexAuth();
-const isOpened = computed(() => isAuthenticated.value && me.value === null);
+const isOpened = computed(() => {
+  return isAuthenticated.value && me.value === null;
+});
 
 const { mutate: signup, isLoading } = useMutation(api.users.signUp);
 

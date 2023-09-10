@@ -4,10 +4,9 @@ import type { ButtonBaseThemeKeys, ButtonProps } from './UiButtonBase.vue';
 
 type ButtonExtraKeys = 'bg' | 'color' | 'hoverColor' | 'hoverBg';
 
-const { theme, ...props } = defineProps<
+const props = defineProps<
   ButtonProps & ThemeProps<ButtonBaseThemeKeys | ButtonExtraKeys>
 >();
-
 const styles = useStyles<ButtonExtraKeys>(
   {
     config: {
@@ -18,25 +17,31 @@ const styles = useStyles<ButtonExtraKeys>(
     },
     prefix: 'ui-button'
   },
-  () => theme
+  () => props.theme
 );
 
 const passthroughTheme = computed(() => {
-  if (!theme) return theme;
+  if (!props.theme) return props.theme;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { color, bg, hoverBg, hoverColor, ...rest } = theme;
+  const { color, bg, hoverBg, hoverColor, ...rest } = props.theme;
 
+  return rest;
+});
+
+const passthroughProps = computed(() => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { theme, ...rest } = props;
   return rest;
 });
 </script>
 
 <template>
   <UiButtonBase
-    v-bind="props"
     :theme="passthroughTheme"
     class="ui-button"
     :style="styles"
+    v-bind="passthroughProps"
   >
     <slot />
   </UiButtonBase>

@@ -15,7 +15,7 @@ const isMenuOpened = ref(false);
     <header class="lt-lg:p-inline-3">
       <CurrentGameBanner />
 
-      <div class="container flex gap-3 items-center">
+      <div class="container">
         <h1>
           <RouterLink :to="{ name: 'Home' }">Hackathon Winning App</RouterLink>
         </h1>
@@ -23,27 +23,26 @@ const isMenuOpened = ref(false);
         <nav>
           <HeaderMenu />
         </nav>
+        <UiSimpleDrawer id="header-menu" v-model:is-opened="isMenuOpened" title="Menu">
+          <template #trigger="triggerProps">
+            <UiIconButton
+              class="md:hidden ml-auto"
+              v-bind="triggerProps"
+              title="open menu"
+              icon="octicon:three-bars"
+              :theme="{ size: 'font-size-5' }"
+            />
+          </template>
+          <HeaderMenu />
+        </UiSimpleDrawer>
       </div>
-
-      <UiSimpleDrawer id="header-menu" v-model:is-opened="isMenuOpened" title="Menu">
-        <template #trigger="triggerProps">
-          <UiIconButton
-            class="md:hidden ml-auto"
-            v-bind="triggerProps"
-            title="open menu"
-            icon="octicon:three-bars"
-            :theme="{ size: 'font-size-5' }"
-          />
-        </template>
-        <HeaderMenu />
-      </UiSimpleDrawer>
     </header>
 
     <slot />
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="postcss">
 .layout {
   display: grid;
   grid-template-rows: auto 1fr;
@@ -52,6 +51,20 @@ const isMenuOpened = ref(false);
 header {
   position: sticky;
   top: 0;
+
+  .container {
+    display: flex;
+    gap: var(--size-3);
+    align-items: center;
+
+    padding-top: var(--size-2);
+    padding-bottom: var(--size-2);
+
+    @screen sm {
+      padding-top: var(--size-3);
+      padding-bottom: var(--size-3);
+    }
+  }
 }
 
 nav {

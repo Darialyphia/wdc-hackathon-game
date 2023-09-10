@@ -21,7 +21,7 @@ const isOnGameRoute = computed(() => {
         >
           <UiButton
             :href="href"
-            :theme="{ bg: 'cyan-5', hoverBg: 'cyan-7' }"
+            :theme="{ bg: 'cyan-6', hoverBg: 'cyan-7' }"
             @click="navigate"
           >
             Let's kick some ass

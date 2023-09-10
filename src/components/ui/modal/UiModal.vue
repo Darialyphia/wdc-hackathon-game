@@ -47,7 +47,8 @@ const isOpened = defineModel('isOpened', { required: true });
     }
 
     &[data-part='backdrop'] {
-      background-color: hsl(var(--gray-11-hsl) / 50%);
+      background-color: hsl(var(--gray-11-hsl) / 65%);
+      backdrop-filter: blur(5px);
     }
 
     &[data-part='container'] {

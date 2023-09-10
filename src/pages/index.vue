@@ -1,54 +1,93 @@
 <script setup lang="ts">
 import { api } from '../../convex/_generated/api';
-import { generals } from '../resources/generals';
+import type { Doc, Id } from '../../convex/_generated/dataModel';
+import type { CharacterId } from '../game-logic/entity';
+import type { Nullable } from '../utils/types';
 
 definePage({
   name: 'Home'
 });
 
-const { mutate: createGame, isLoading } = useMutation(api.games.create);
-
-const generalId = ref<string>();
 const { push } = useRouter();
-const onSubmit = async () => {
-  if (!generalId.value) return;
-
-  const gameId = await createGame({ generalId: generalId.value });
-  push({ name: 'Game', params: { id: gameId } });
-};
-
 const me = await useSuspenseQuery(api.users.me, []);
 const games = await useSuspenseQuery(api.games.getList, []);
 
+const isChooseGeneralModalOpened = ref(false);
+const selectedGameId = ref<Nullable<Id<'games'>>>();
+watchEffect(() => {
+  if (!isChooseGeneralModalOpened.value) {
+    selectedGameId.value = null;
+  }
+});
+
 const canJoin = computed(
-  () => !games.value.some(game => game.creator?._id === me.value?._id)
+  () => me.value && !games.value.some(game => game.creator?._id === me.value?._id)
 );
+
+const { mutate: cancel, isLoading: isCancelling } = useMutation(api.games.cancel);
+
+const { mutate: createGame, isLoading: isCreating } = useMutation(api.games.create);
+const onCreate = async (general: CharacterId) => {
+  const gameId = await createGame({ generalId: general });
+  isChooseGeneralModalOpened.value = false;
+  push({ name: 'Game', params: { id: gameId } });
+};
+
+const { mutate: joinGame, isLoading: isJoining } = useMutation(api.games.join);
+const onJoin = async (general: CharacterId) => {
+  const gameId = await joinGame({ generalId: general, gameId: selectedGameId.value! });
+  isChooseGeneralModalOpened.value = false;
+  push({ name: 'Game', params: { id: gameId } });
+};
+
+const onTryJoin = (id: Id<'games'>) => {
+  selectedGameId.value = id;
+  isChooseGeneralModalOpened.value = true;
+};
 </script>
 
 <template>
   <main>
     <section class="container surface">
       <h2>Games</h2>
-      <article v-for="game in games" :key="game._id">
-        <h3>{{ game.creator?.name }}'s game</h3>
-        {{ game.state }}
-        <UiButton v-if="canJoin && game.creator?._id === me?._id">Join</UiButton>
-      </article>
+      <div class="grid gap-3">
+        <p v-if="games.length === 0">There are not ongoing game at the moment.</p>
+        <article v-for="game in games" :key="game._id">
+          <h3>{{ game.creator?.name }}'s game</h3>
+          <span class="ml-auto">{{ game.state }}</span>
+          <UiButton
+            v-if="canJoin"
+            left-icon="game-icons:crossed-swords"
+            @click="onTryJoin(game._id)"
+          >
+            Join
+          </UiButton>
+          <UiButton
+            v-if="game.creator?._id === me?._id && game.state === 'WAITING_FOR_OPPONENT'"
+            left-icon="material-symbols:close-rounded"
+            :is-loading="isCancelling"
+            :theme="{ bg: 'red-6', hoverBg: 'red-7' }"
+            @click="cancel({ gameId: game._id })"
+          >
+            Cancel
+          </UiButton>
+        </article>
+
+        <UiButton
+          left-icon="material-symbols:add-circle-outline"
+          :theme="{ size: 'size-3' }"
+          @click="isChooseGeneralModalOpened = true"
+        >
+          New Game
+        </UiButton>
+      </div>
     </section>
 
-    <section class="container surface">
-      <h2>Create new game</h2>
-      <form @submit.prevent="onSubmit">
-        <fieldset>
-          <legend>Choose your general</legend>
-          <label v-for="general in generals" :key="general.characterId" class="block">
-            <input v-model="generalId" type="radio" :value="general.characterId" />
-            {{ general.name }}
-          </label>
-        </fieldset>
-        <UiButton :is-loading="isLoading">Create game</UiButton>
-      </form>
-    </section>
+    <ChooseGeneralModal
+      v-model:is-opened="isChooseGeneralModalOpened"
+      :is-loading="isCreating || isJoining"
+      @submit="selectedGameId ? onJoin($event) : onCreate($event)"
+    />
   </main>
 </template>
 
@@ -57,7 +96,17 @@ h2 {
   font-size: var(--font-size-5);
 }
 
-article h3 {
-  font-size: var(--font-size-3);
+article {
+  display: flex;
+  gap: var(--size-3);
+  align-items: center;
+
+  padding: var(--size-3);
+
+  border: solid var(--border-size-1) var(--primary);
+
+  h3 {
+    font-size: var(--font-size-3);
+  }
 }
 </style>

@@ -30,6 +30,7 @@ until(isLoading)
     </DynamicLayout>
   </Suspense>
 
+  <ConfirmGameModal />
   <SignupModal />
   <ServiceWorkerPrompt />
 </template>
