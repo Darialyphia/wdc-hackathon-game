@@ -33,7 +33,12 @@ export const createSummonAction = defineAction({
 
     reducer(
       state,
-      soldierSummonedEvent.create(state.activeEntityId, input.characterId, input.position)
+      soldierSummonedEvent.create(
+        state.activeEntityId,
+        input.characterId,
+        input.position,
+        Math.random()
+      )
     );
 
     if (general.ap === 0) {

@@ -1,18 +1,30 @@
-import { PureAbility, ForcedSubject } from '@casl/ability';
+import { PureAbility } from '@casl/ability';
 import { User } from './user.entity';
-import { Nullable } from '../utils/types';
 import { createAbility } from '../utils/ability';
 import { QueryCtx } from '../_generated/server';
+import { GAME_STATES, Game } from 'games/game.entity';
 
-type Abilities = ['read' | 'edit' | 'create', 'user' | (User & ForcedSubject<'user'>)];
+type UserActions = 'read' | 'edit' | 'create';
+type GameActions =
+  | 'read'
+  | 'create'
+  | 'cancel'
+  | 'join'
+  | 'confirm'
+  | 'act_on'
+  | 'surrender';
+
+type Abilities = [UserActions, 'user' | User] | [GameActions, 'game' | Game];
 
 export type UserAbility = PureAbility<Abilities>;
 
-const unAuthenticatedAbility = createAbility<UserAbility>(({ can, cannot }) => {
+const unAuthenticatedAbility = createAbility<UserAbility>(({ can }) => {
   can('read', 'user');
+  can('read', 'game');
+});
 
-  cannot('edit', 'user');
-  cannot('create', 'user');
+const onboardingAbility = createAbility<UserAbility>(({ can }) => {
+  can('create', 'user');
 });
 
 export const createUserability = async ({
@@ -28,17 +40,52 @@ export const createUserability = async ({
     .withIndex('by_token', q => q.eq('tokenIdentifier', identity.tokenIdentifier))
     .unique();
 
-  return createAbility<UserAbility>(({ can }) => {
-    can('read', 'user', 'email', (subject: User) => {
-      return subject._id === identity.tokenIdentifier;
-    });
+  if (!sessionUser) return onboardingAbility;
 
+  const gamePlayers = await db
+    .query('gamePlayers')
+    .withIndex('by_user_id', q => q.eq('userId', sessionUser?._id))
+    .collect();
+  const games = await Promise.all(gamePlayers.map(({ gameId }) => db.get(gameId)));
+
+  const isAvailableForGame = games.every(game => game?.state === GAME_STATES.ENDED);
+
+  return createAbility<UserAbility>(({ can }) => {
+    can('read', 'user');
     can('edit', 'user', (subject: User) => {
       return subject._id === identity.tokenIdentifier;
     });
 
-    if (!sessionUser) {
-      return can('create', 'user');
+    can('read', 'game');
+    if (isAvailableForGame) {
+      can('create', 'game');
+      can('join', 'game', (subject: Game) => subject.state === 'WAITING_FOR_OPPONENT');
     }
+
+    can('confirm', 'game', (subject: Game) => {
+      return (
+        subject.state === GAME_STATES.WAITING_FOR_CREATOR_CONFIRMATION &&
+        subject.creator === sessionUser._id
+      );
+    });
+
+    can('cancel', 'game', (subject: Game) => {
+      return (
+        subject.state === GAME_STATES.WAITING_FOR_OPPONENT &&
+        subject.creator === sessionUser._id
+      );
+    });
+
+    can('act_on', 'game', (subject: Game) => {
+      return (
+        subject.state === 'ONGOING' && gamePlayers.some(gp => gp.gameId === subject._id)
+      );
+    });
+
+    can('surrender', 'game', (subject: Game) => {
+      return (
+        subject.state === 'ONGOING' && gamePlayers.some(gp => gp.gameId === subject._id)
+      );
+    });
   });
 };

@@ -5,9 +5,7 @@ import { ensureAuthenticated } from '../utils/auth';
 import { findMe, generateDiscriminator } from './user.utils';
 import { toUserDto } from './user.mapper';
 import { mutationWithZod } from '../utils/zod';
-import { signupInput } from '../utils/inputs';
-
-import { soldierSummonedEvent } from '@/game-logic/events/soldierSummoned.event';
+import { signupInput } from '@/inputs/users';
 
 export const signUp = mutationWithZod({
   args: signupInput,

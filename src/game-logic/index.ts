@@ -45,6 +45,7 @@ export type GameState = {
 type CreateGamOptionsPlayer = {
   id: PlayerId;
   characterId: CharacterId;
+  atbSeed: number;
 };
 export type CreateGameOptions = {
   players: [CreateGamOptionsPlayer, CreateGamOptionsPlayer];
@@ -69,6 +70,7 @@ export const createGameState = ({
   players.forEach((player, i) => {
     const general = getGeneralById(player.characterId)!;
     addGeneral(state, general, {
+      atbSeed: player.atbSeed,
       characterId: player.characterId,
       owner: player.id,
       position: { y: Math.floor(MAP_HEIGHT / 2), x: i === 0 ? 2 : MAP_WIDTH - 3 }

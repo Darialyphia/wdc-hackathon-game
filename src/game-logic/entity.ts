@@ -46,10 +46,8 @@ export type Entity = Soldier | General;
 export const addGeneral = (
   state: GameState,
   blueprint: GeneralData,
-  entity: Pick<General, 'owner' | 'characterId' | 'position'>
+  entity: Pick<General, 'owner' | 'characterId' | 'position' | 'atbSeed'>
 ) => {
-  const atbSeed = Math.random();
-
   state.entities.push({
     ...entity,
     state: ENTITY_STATES.ALIVE,
@@ -57,8 +55,8 @@ export const addGeneral = (
     kind: 'general',
     id: ++state.nextEntityId,
     hasSummonned: false,
-    atbSeed,
-    atb: atbSeed,
+    atbSeed: entity.atbSeed,
+    atb: entity.atbSeed,
     maxAp: DEFAULT_GENERAL_AP,
     ap: DEFAULT_GENERAL_AP,
     initiative: blueprint.initiative,
@@ -69,18 +67,16 @@ export const addGeneral = (
 export const addSoldier = (
   state: GameState,
   blueprint: SoldierData,
-  entity: Pick<Soldier, 'owner' | 'characterId' | 'position'>
+  entity: Pick<Soldier, 'owner' | 'characterId' | 'position' | 'atbSeed'>
 ) => {
-  const atbSeed = Math.random();
-
   state.entities.push({
     ...entity,
     state: ENTITY_STATES.ALIVE,
     blueprint,
     kind: 'soldier',
     id: ++state.nextEntityId,
-    atbSeed,
-    atb: atbSeed,
+    atbSeed: entity.atbSeed,
+    atb: entity.atbSeed,
     maxAp: DEFAULT_SOLDIER_AP,
     ap: DEFAULT_SOLDIER_AP,
     initiative: blueprint.initiative,

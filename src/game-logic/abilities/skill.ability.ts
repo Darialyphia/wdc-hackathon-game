@@ -5,6 +5,7 @@ import type { Point } from '@/utils/geometry';
 import { exhaustiveSwitch } from '@/utils/assertions';
 import type { Entity } from '../entity';
 import { getEntityAt } from '../utils/entity.helpers';
+import { createAbility } from '@/utils/casl';
 
 type TargetActions = 'target';
 

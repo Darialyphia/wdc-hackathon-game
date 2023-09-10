@@ -16,6 +16,7 @@ export type SoldierSummonedEvent = {
     sourceId: EntityId;
     characterId: CharacterId;
     position: Point;
+    atbSeed: number;
   };
 };
 
@@ -23,10 +24,11 @@ export const soldierSummonedEvent = defineEvent({
   create: (
     sourceId: EntityId,
     characterId: CharacterId,
-    position: Point
+    position: Point,
+    atbSeed: number
   ): SoldierSummonedEvent => ({
     type: SOLDIER_SUMMONED,
-    payload: { sourceId, characterId, position }
+    payload: { sourceId, characterId, position, atbSeed }
   }),
   execute: (state, event) => {
     const activeEntity = getActiveEntity(state);
@@ -39,6 +41,7 @@ export const soldierSummonedEvent = defineEvent({
     general.ap -= blueprint.cost;
 
     addSoldier(state, blueprint, {
+      atbSeed: event.atbSeed,
       owner: activeEntity.owner,
       characterId: blueprint.characterId,
       position: event.position

@@ -18,7 +18,6 @@ import type * as init from "../init";
 import type * as users from "../users";
 import type * as utils_ability from "../utils/ability";
 import type * as utils_auth from "../utils/auth";
-import type * as utils_inputs from "../utils/inputs";
 import type * as utils_types from "../utils/types";
 import type * as utils_zod from "../utils/zod";
 
@@ -35,7 +34,6 @@ declare const fullApi: ApiFromModules<{
   users: typeof users;
   "utils/ability": typeof utils_ability;
   "utils/auth": typeof utils_auth;
-  "utils/inputs": typeof utils_inputs;
   "utils/types": typeof utils_types;
   "utils/zod": typeof utils_zod;
 }>;
