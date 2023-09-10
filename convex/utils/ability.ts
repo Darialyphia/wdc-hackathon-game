@@ -27,6 +27,5 @@ export const ensureAuthorized = async (
 ) => {
   const isAuthorized =
     typeof valueOrCb === 'function' ? await valueOrCb() : await valueOrCb;
-
   if (!isAuthorized) throw new Error('Forbidden');
 };

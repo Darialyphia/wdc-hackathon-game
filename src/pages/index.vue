@@ -9,11 +9,12 @@ definePage({
 const { mutate: createGame, isLoading } = useMutation(api.games.create);
 
 const generalId = ref<string>();
-
-const onSubmit = () => {
+const { push } = useRouter();
+const onSubmit = async () => {
   if (!generalId.value) return;
 
-  createGame({ generalId: generalId.value });
+  const gameId = await createGame({ generalId: generalId.value });
+  push({ name: 'Game', params: { id: gameId } });
 };
 </script>
 

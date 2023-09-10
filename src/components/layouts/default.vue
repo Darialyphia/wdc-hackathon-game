@@ -47,10 +47,7 @@ const me = await useSuspenseQuery(api.users.me, []);
         <DarkModeToggle />
       </MenuContent.define>
       <h1>
-        <RouterLink :to="{ name: 'Home' }">
-          <img src="img/pasduhring.png" class="inline" />
-          Hackathon Winning App
-        </RouterLink>
+        <RouterLink :to="{ name: 'Home' }">Hackathon Winning App</RouterLink>
       </h1>
 
       <nav>

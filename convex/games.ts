@@ -29,12 +29,14 @@ export const create = mutation({
       state: GAME_STATES.WAITING_FOR_OPPONENT
     });
 
-    return db.insert('gamePlayers', {
+    await db.insert('gamePlayers', {
       generalId,
       gameId,
       userId: user!._id,
       atbSeed: Math.random()
     });
+
+    return gameId;
   }
 });
 
@@ -254,10 +256,11 @@ export const getById = query({
     gameId: v.id('games')
   },
   handler: async ({ db }, { gameId }) => {
-    const game = db.get(gameId);
-    const events = db
+    const game = await db.get(gameId);
+    const events = await db
       .query('gameEvents')
-      .withIndex('by_game_id', q => q.eq('gameId', gameId)).collect;
+      .withIndex('by_game_id', q => q.eq('gameId', gameId))
+      .collect();
 
     return {
       ...game,
