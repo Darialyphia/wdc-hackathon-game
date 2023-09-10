@@ -1,12 +1,8 @@
-import type { Point } from '@/utils/geometry';
+import type { Point } from '../../utils/geometry';
 import { addSoldier, type CharacterId, type EntityId } from '../entity';
 import { defineEvent } from '.';
-import {
-  getActiveEntity,
-  getGeneral,
-  getSoldierById,
-  isGeneral
-} from '../utils/entity.helpers';
+import { getActiveEntity, getGeneral, isGeneral } from '../utils/entity.helpers';
+import { getSoldierById } from '../../resources/soldiers';
 
 export const SOLDIER_SUMMONED = 'soldier_summoned';
 

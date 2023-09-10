@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ThemeProps } from '@/composables/useStyles';
+import type { ThemeProps } from '../../../composables/useStyles';
 import type { ButtonBaseThemeKeys, ButtonProps } from './UiButtonBase.vue';
 
 type ButtonExtraKeys = 'bg' | 'color' | 'hoverColor' | 'hoverBg';

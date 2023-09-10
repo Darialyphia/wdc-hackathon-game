@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { api } from '@/api';
-import { signupInput } from '@/inputs/users';
+import { api } from '../api';
+import { signupInput } from '../inputs/users';
 import { toTypedSchema } from '@vee-validate/zod';
 import { object } from 'zod';
-import { vFocusOn } from '@/directives/vFocusOn';
+import { vFocusOn } from '../directives/vFocusOn';
 
 const me = useQuery(api.users.me, []);
 const { isAuthenticated } = useConvexAuth();

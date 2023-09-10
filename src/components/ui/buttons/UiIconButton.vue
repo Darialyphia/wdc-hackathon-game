@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ThemeProps } from '@/composables/useStyles';
+import type { ThemeProps } from '../../../composables/useStyles';
 import type { ButtonProps } from './UiButtonBase.vue';
 import type { ButtonGhostThemeKeys } from './UiGhostButton.vue';
 

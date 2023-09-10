@@ -1,6 +1,6 @@
 import type { SoldierData } from '.';
 import { FACTIONS_IDS } from '../enums';
-import { skills } from '../skills';
+import { meleeAttack } from '../skills/meleeAttack';
 
 export const necroSoldiers: SoldierData[] = [
   {
@@ -12,6 +12,6 @@ export const necroSoldiers: SoldierData[] = [
     maxHp: 6,
     attack: 2,
     defense: 1,
-    skills: [skills.meleeAttack.id]
+    skills: ['melee_attack']
   }
 ];

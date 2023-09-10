@@ -1,6 +1,5 @@
 import type { GeneralData } from '.';
 import { FACTIONS_IDS } from '../enums';
-import { skills } from '../skills';
 
 export const havenGeneral: GeneralData = {
   characterId: 'haven_hero',
@@ -10,5 +9,5 @@ export const havenGeneral: GeneralData = {
   maxHp: 12,
   attack: 4,
   defense: 1,
-  skills: [skills.meleeAttack.id]
+  skills: ['melee_attack']
 };

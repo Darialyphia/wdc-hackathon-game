@@ -1,4 +1,4 @@
-import type { Values } from '@/utils/types';
+import type { Values } from '../utils/types';
 
 export const FACTIONS_IDS = {
   HAVEN: 'faction_haven',

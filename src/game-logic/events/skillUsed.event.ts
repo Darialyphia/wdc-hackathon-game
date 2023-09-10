@@ -1,9 +1,8 @@
-import { skills, type SkillId } from '@/resources/skills';
+import { type SkillId } from '../../resources/skills';
 import { defineEvent } from '.';
 import type { EntityId } from '../entity';
-import { endTurn, getEntityById } from '../utils/entity.helpers';
+import { getEntityById } from '../utils/entity.helpers';
 import { getSkillById } from '../utils/skill.helper';
-import { endTurnEvent } from './endTurn.event';
 
 export const SKILL_USED = 'skill_used';
 

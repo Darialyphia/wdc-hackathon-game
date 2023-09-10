@@ -1,13 +1,13 @@
 import { z } from 'zod';
 import {
   action,
-  ActionCtx,
+  type ActionCtx,
   mutation,
-  MutationCtx,
+  type MutationCtx,
   query,
-  QueryCtx
+  type QueryCtx
 } from '../_generated/server';
-import { Id, TableNames } from '../_generated/dataModel';
+import type { Id, TableNames } from '../_generated/dataModel';
 
 /**
  * Create a validator for a Convex `Id`.

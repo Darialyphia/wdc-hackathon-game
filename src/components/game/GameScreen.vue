@@ -1,39 +1,37 @@
 <script setup lang="ts">
-import { createGameState } from '@/game-logic';
-import { createPlayerAbility } from '@/game-logic/abilities/player.ability';
-import { createMoveAction } from '@/game-logic/actions/move';
-import { createSummonAction } from '@/game-logic/actions/summon';
-import { type GameEvent } from '@/game-logic/events/reducer';
-import type { GameMapCell } from '@/game-logic/map';
-import {
-  getActiveEntity,
-  getEntityById,
-  getSoldierById
-} from '@/game-logic/utils/entity.helpers';
-import { createPathFinder } from '@/game-logic/utils/pathfinding.helpers';
-import type { Nullable } from '@/utils/types';
+import { createGameState } from '../../game-logic';
+import { createPlayerAbility } from '../../game-logic/abilities/player.ability';
+import { createMoveAction } from '../../game-logic/actions/move';
+import { createSummonAction } from '../../game-logic/actions/summon';
+import { type GameEvent } from '../../game-logic/events/reducer';
+import type { GameMapCell } from '../../game-logic/map';
+import { getActiveEntity, getEntityById } from '../../game-logic/utils/entity.helpers';
+import { createPathFinder } from '../../game-logic/utils/pathfinding.helpers';
+import type { Nullable } from '../../utils/types';
 import { subject } from '@casl/ability';
-import { type SoldierData } from '@/resources/soldiers';
-import { getSummonBlueprints } from '@/game-logic/utils/entity.helpers';
-import { getSkillById } from '@/game-logic/utils/skill.helper';
-import { createEndTurnAction } from '@/game-logic/actions/endTurn';
-import type { SkillData } from '@/resources/skills';
-import { createSkillAbility } from '@/game-logic/abilities/skill.ability';
-import { createSkillAction } from '@/game-logic/actions/skill';
-import type { Entity, EntityId } from '@/game-logic/entity';
-import { getEntityAt } from '@/game-logic/utils/entity.helpers';
-import { createEntityAbility } from '@/game-logic/abilities/entity.ability';
+import { getSoldierById, type SoldierData } from '../../resources/soldiers';
+import { getSummonBlueprints } from '../../game-logic/utils/entity.helpers';
+import { getSkillById } from '../../game-logic/utils/skill.helper';
+import { createEndTurnAction } from '../../game-logic/actions/endTurn';
+import type { SkillData } from '../../resources/skills';
+import { createSkillAbility } from '../../game-logic/abilities/skill.ability';
+import { createSkillAction } from '../../game-logic/actions/skill';
+import type { Entity, EntityId } from '../../game-logic/entity';
+import { getEntityAt } from '../../game-logic/utils/entity.helpers';
+import { createEntityAbility } from '../../game-logic/abilities/entity.ability';
 
 const gameState = ref(
   createGameState({
     players: [
       {
         id: 'player 1',
-        characterId: 'haven_hero'
+        characterId: 'haven_hero',
+        atbSeed: Math.random()
       },
       {
         id: 'player 2',
-        characterId: 'necro_hero'
+        characterId: 'necro_hero',
+        atbSeed: Math.random()
       }
     ]
   })

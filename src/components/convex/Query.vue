@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="TData, TArgs extends DefaultFunctionArgs">
-import type { Nullable } from '@/utils/types';
+import type { Nullable } from '../../utils/types';
 import type { DefaultFunctionArgs, FunctionReference } from 'convex/server';
-import { api } from '@/api';
+import { api } from '../../api';
 
 type QueryFunc = FunctionReference<'query', 'public', TArgs, TData>;
 

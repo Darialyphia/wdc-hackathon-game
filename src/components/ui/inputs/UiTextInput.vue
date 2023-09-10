@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ThemeProps } from '@/composables/useStyles';
-import type { Nullable } from '@/utils/types';
+import type { ThemeProps } from '../../../composables/useStyles';
+import type { Nullable } from '../../../utils/types';
 import { omit, pick } from 'lodash-es';
 
 type Props = ThemeProps<'size'> & {

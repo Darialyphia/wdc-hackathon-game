@@ -1,10 +1,10 @@
 <script setup lang="ts" generic="TFunc extends PaginatedQueryReference">
-import { api } from '@/api';
+import { api } from '../../api';
 import type {
   PaginatedQueryArgs,
   PaginatedQueryReference
-} from '@/composables/convex/usePaginatedQuery';
-import type { Nullable } from '@/utils/types';
+} from '../../composables/convex/usePaginatedQuery';
+import type { Nullable } from '../../utils/types';
 
 const {
   query,

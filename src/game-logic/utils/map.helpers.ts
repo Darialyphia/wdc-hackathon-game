@@ -1,7 +1,7 @@
-import type { Point } from '@/utils/geometry';
+import type { Point } from '../../utils/geometry';
 import type { GameState } from '..';
 import { type GameMapCell, CELL_TYPES } from '../map';
-import { isDefined } from '@/utils/assertions';
+import { isDefined } from '../../utils/assertions';
 
 export const getCellAt = (state: GameState, { x, y }: Point): GameMapCell | undefined =>
   state.map.rows[y]?.[x];

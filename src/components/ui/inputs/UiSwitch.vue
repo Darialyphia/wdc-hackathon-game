@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import type { Nullable } from '@/utils/types';
-import { type ThemeProps } from '@/composables/useStyles';
+import type { Nullable } from '../../../utils/types';
+import { type ThemeProps } from '../../../composables/useStyles';
 
 type Props = ThemeProps<'offColor' | 'onColor' | 'size'>;
 const { theme } = defineProps<Props>();

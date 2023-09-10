@@ -1,5 +1,5 @@
-import { Id } from '../_generated/dataModel';
-import { User } from './user.entity';
+import type { Id } from '../_generated/dataModel';
+import type { User } from './user.entity';
 
 export type UserDto = {
   _id: Id<'users'>;

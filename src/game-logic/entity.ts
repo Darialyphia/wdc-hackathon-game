@@ -2,8 +2,8 @@ import type { GameState } from '.';
 import type { Point } from '../utils/geometry';
 import { DEFAULT_GENERAL_AP, DEFAULT_SOLDIER_AP } from './constants';
 import type { SoldierData } from '../resources/soldiers';
-import type { GeneralData } from '@/resources/generals';
-import type { Values } from '@/utils/types';
+import type { GeneralData } from '../resources/generals';
+import type { Values } from '../utils/types';
 
 export type EntityId = number;
 export type GameId = string;

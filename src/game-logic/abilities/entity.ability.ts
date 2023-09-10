@@ -3,8 +3,8 @@ import type { GameState } from '..';
 import type { Entity } from '../entity';
 import type { GameMapCell } from '../map';
 import { isCellWalkable } from '../utils/map.helpers';
-import type { SkillData } from '@/resources/skills';
-import { createAbility } from '@/utils/casl';
+import type { SkillData } from '../../resources/skills';
+import { createAbility } from '../../utils/casl';
 
 type MapActions = 'move';
 type SkillActions = 'cast';

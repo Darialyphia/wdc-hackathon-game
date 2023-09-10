@@ -1,23 +1,24 @@
-import { ensureAuthorized } from '../utils/ability';
-import { mutationWithZod } from '../utils/zod';
-import { createGameInput } from '@/inputs/games';
-import { findMe } from '../users/user.utils';
-import { createUserability } from '../users/user.ability';
-import { GAME_STATES, GameAction, GameEvent } from './game.entity';
-import { GameEvent as GameLogicEvent } from '@/game-logic/events/reducer';
-import { subject } from '@casl/ability';
-import { mutation, query } from '_generated/server';
+import { internalMutation, mutation, query } from './_generated/server';
 import { v } from 'convex/values';
-import { createGameState } from '@/game-logic';
-import { createMoveAction } from '@/game-logic/actions/move';
-import { createSummonAction } from '@/game-logic/actions/summon';
-import { createSkillAction } from '@/game-logic/actions/skill';
-import { createEndTurnAction } from '@/game-logic/actions/endTurn';
-import { reducer } from '@/game-logic/events/reducer';
-import { exhaustiveSwitch } from '@/utils/assertions';
+import { findMe } from './users/user.utils';
+import { createUserability } from './users/user.ability';
+import { ensureAuthorized } from './utils/ability';
+import { GAME_STATES, GameAction } from './games/game.entity';
+import { subject } from '@casl/ability';
+import { JOIN_CONFIRMATION_TIMEOUT } from './games/game.utils';
+import { createGameState } from '../src/game-logic/index';
+import { reducer, GameEvent as GameLogicEvent } from '../src/game-logic/events/reducer';
+import { createMoveAction } from '../src/game-logic/actions/move';
+import { createSummonAction } from '../src/game-logic/actions/summon';
+import { createSkillAction } from '../src/game-logic/actions/skill';
+import { createEndTurnAction } from '../src/game-logic/actions/endTurn';
+import { exhaustiveSwitch } from '../src/utils/assertions';
 
-export const create = mutationWithZod({
-  args: createGameInput,
+// Create a new task with the given text
+export const create = mutation({
+  args: {
+    generalId: v.string()
+  },
   handler: async ({ auth, db }, { generalId }) => {
     const user = await findMe({ auth, db });
     const userAbility = await createUserability({ auth, db });
@@ -52,7 +53,11 @@ export const cancel = mutation({
       .query('gamePlayers')
       .withIndex('by_game_id', q => q.eq('gameId', game._id))
       .collect();
-    await Promise.all([...gamePlayers.map(gp => db.delete(gp._id)), db.delete(game._id)]);
+
+    await Promise.allSettled([
+      ...gamePlayers.map(gp => db.delete(gp._id)),
+      db.delete(game._id)
+    ]);
   }
 });
 
@@ -61,7 +66,7 @@ export const join = mutation({
     gameId: v.id('games'),
     generalId: v.string()
   },
-  handler: async ({ auth, db }, { gameId, generalId }) => {
+  handler: async ({ auth, db, scheduler }, { gameId, generalId }) => {
     const user = await findMe({ auth, db });
     const game = await db.get(gameId);
     if (!game) throw new Error('Game not found');
@@ -79,6 +84,50 @@ export const join = mutation({
     await db.patch(game._id, {
       state: GAME_STATES.WAITING_FOR_CREATOR_CONFIRMATION
     });
+
+    // await scheduler.runAfter(JOIN_CONFIRMATION_TIMEOUT, internal.games.decline, {
+    //   gameId: game._id
+    // });
+  }
+});
+
+export const decline = internalMutation({
+  args: {
+    gameId: v.id('games')
+  },
+  handler: async ({ db, scheduler }, { gameId }) => {
+    const game = await db.get(gameId);
+    if (!game) return;
+
+    if (game.creator === GAME_STATES.WAITING_FOR_CREATOR_CONFIRMATION) {
+      await db.patch(game._id, {
+        state: GAME_STATES.DECLINED_BY_CREATOR
+      });
+
+      // await scheduler.runAfter(5000, internal.games.internalCancel, {
+      //   gameId: game._id
+      // });
+    }
+  }
+});
+
+export const internalCancel = internalMutation({
+  args: {
+    gameId: v.id('games')
+  },
+  handler: async ({ db }, { gameId }) => {
+    const game = await db.get(gameId);
+    if (!game) return;
+
+    const gamePlayers = await db
+      .query('gamePlayers')
+      .withIndex('by_game_id', q => q.eq('gameId', game._id))
+      .collect();
+
+    await Promise.allSettled([
+      ...gamePlayers.map(gp => db.delete(gp._id)),
+      db.delete(game._id)
+    ]);
   }
 });
 
@@ -180,6 +229,23 @@ export const actOn = mutation({
         })
       )
     );
+  }
+});
+
+export const surrender = mutation({
+  args: {
+    gameId: v.id('games')
+  },
+  handler: async ({ auth, db }, { gameId }) => {
+    const game = await db.get(gameId);
+    if (!game) throw new Error('Game not found');
+
+    const userAbility = await createUserability({ auth, db });
+    await ensureAuthorized(userAbility.can('surrender', subject('game', game)));
+
+    await db.patch(game._id, {
+      state: GAME_STATES.ENDED
+    });
   }
 });
 

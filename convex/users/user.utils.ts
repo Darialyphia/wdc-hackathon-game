@@ -1,6 +1,6 @@
-import { QueryCtx } from '../_generated/server';
-import { Nullable } from '../utils/types';
-import { User } from './user.entity';
+import type { QueryCtx } from '../_generated/server';
+import type { Nullable } from '../utils/types';
+import type { User } from './user.entity';
 
 const MAX_DISCRIMINATOR_VALUE = 9999;
 

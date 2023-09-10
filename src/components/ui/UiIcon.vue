@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ThemeProps } from '@/composables/useStyles';
+import type { ThemeProps } from '../../composables/useStyles';
 import { Icon } from '@iconify/vue';
 
 const { icon, inline, theme } = defineProps<

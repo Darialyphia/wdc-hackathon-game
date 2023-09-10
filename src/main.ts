@@ -1,4 +1,4 @@
-import '@/styles/global.css';
+import './styles/global.css';
 import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router/auto';
 import { createAuth0 } from '@auth0/auth0-vue';

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type ThemeProps } from '@/composables/useStyles';
+import { type ThemeProps } from '../../../composables/useStyles';
 
 const props = defineProps<ThemeProps<'weight' | 'color' | 'size'> & { for: string }>();
 

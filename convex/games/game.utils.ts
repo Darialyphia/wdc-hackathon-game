@@ -1,0 +1,1 @@
+export const JOIN_CONFIRMATION_TIMEOUT = 10_000;

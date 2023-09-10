@@ -1,4 +1,4 @@
-import type { Values } from '@/utils/types';
+import type { Values } from '../../utils/types';
 
 export const TARGET_TYPES = {
   LINE: 'LINE',

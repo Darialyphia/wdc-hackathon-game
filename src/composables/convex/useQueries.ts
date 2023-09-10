@@ -3,8 +3,8 @@ import type { Value } from 'convex/values';
 import type { QueryReference } from './useQuery';
 import type { QueryJournal } from 'convex/browser';
 
-import type { Watch } from '@/plugins/convex';
-import { QueriesObserver } from '@/utils/convex/QueriesObserver';
+import type { Watch } from '../../plugins/convex';
+import { QueriesObserver } from '../../utils/convex/QueriesObserver';
 import type { FunctionReference } from 'convex/server';
 
 export function useQueries(

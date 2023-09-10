@@ -1,4 +1,4 @@
-import type { Point, Size } from '@/utils/geometry';
+import type { Point, Size } from '../utils/geometry';
 
 export const CELL_TYPES = {
   GROUND: 0, // walkable, doesn't block vision and projectiles

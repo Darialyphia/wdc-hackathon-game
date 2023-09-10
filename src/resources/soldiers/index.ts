@@ -1,4 +1,4 @@
-import type { CharacterId } from '@/game-logic/entity';
+import type { CharacterId } from '../../game-logic/entity';
 import { FACTIONS_IDS, type FactionId } from '../enums';
 import { havenSoldiers } from './haven';
 import { necroSoldiers } from './necro';
@@ -19,3 +19,6 @@ export const soldiers = Object.fromEntries(
     g
   ])
 ) satisfies Record<CharacterId, SoldierData>;
+
+export const getSoldierById = (characterId: CharacterId) =>
+  Object.values(soldiers).find(s => s.characterId === characterId);

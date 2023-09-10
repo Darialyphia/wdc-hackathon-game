@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ThemeProps } from '@/composables/useStyles';
-import type { Nullable } from '@/utils/types';
+import type { ThemeProps } from '../../../composables/useStyles';
+import type { Nullable } from '../../../utils/types';
 
 const modelValue = defineModel<Nullable<boolean>>({ required: true });
 

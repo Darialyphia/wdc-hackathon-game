@@ -1,6 +1,6 @@
 import { defineSchema, defineTable } from 'convex/server';
 import { Validator, v } from 'convex/values';
-import { GameState } from 'games/game.entity';
+import type { GameState } from './games/game.entity';
 
 export default defineSchema({
   users: defineTable({

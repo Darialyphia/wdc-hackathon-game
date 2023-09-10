@@ -1,6 +1,6 @@
 import { convexToJson, type Value } from 'convex/values';
 import type { QueryJournal } from 'convex/browser';
-import type { Watch } from '@/plugins/convex';
+import type { Watch } from '../../plugins/convex';
 import { type FunctionReference, getFunctionName } from 'convex/server';
 
 type Identifier = string;

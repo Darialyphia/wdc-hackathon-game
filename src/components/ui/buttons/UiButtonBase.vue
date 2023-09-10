@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ThemeProps } from '@/composables/useStyles';
+import type { ThemeProps } from '../../../composables/useStyles';
 import type { RouterLinkProps } from 'vue-router/auto';
 import { RouterLink } from 'vue-router/auto';
 

@@ -1,4 +1,4 @@
-import type { CharacterId } from '@/game-logic/entity';
+import type { CharacterId } from '../game-logic/entity';
 import type { FactionId } from './enums';
 import type { SkillId } from './skills';
 

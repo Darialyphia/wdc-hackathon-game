@@ -1,8 +1,8 @@
 import { PureAbility } from '@casl/ability';
-import { User } from './user.entity';
+import type { User } from './user.entity';
 import { createAbility } from '../utils/ability';
-import { QueryCtx } from '../_generated/server';
-import { GAME_STATES, Game } from 'games/game.entity';
+import type { QueryCtx } from '../_generated/server';
+import { GAME_STATES, type Game } from '../games/game.entity';
 
 type UserActions = 'read' | 'edit' | 'create';
 type GameActions =
@@ -59,7 +59,11 @@ export const createUserability = async ({
     can('read', 'game');
     if (isAvailableForGame) {
       can('create', 'game');
-      can('join', 'game', (subject: Game) => subject.state === 'WAITING_FOR_OPPONENT');
+      can(
+        'join',
+        'game',
+        (subject: Game) => subject.state === GAME_STATES.WAITING_FOR_OPPONENT
+      );
     }
 
     can('confirm', 'game', (subject: Game) => {

@@ -1,5 +1,5 @@
 import type { MaybeRefOrGetter, StyleValue } from 'vue';
-import type { AnyObject } from '@/utils/types';
+import type { AnyObject } from '../utils/types';
 import { kebabCase } from 'lodash-es';
 
 export type ThemeProps<TKeys extends string> = {

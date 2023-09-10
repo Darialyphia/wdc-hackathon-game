@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="TData, TArgs extends DefaultFunctionArgs">
-import { api } from '@/api';
+import { api } from '../../api';
 
 import type {
   DefaultFunctionArgs,

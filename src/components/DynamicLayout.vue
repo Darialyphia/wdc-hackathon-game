@@ -4,7 +4,7 @@ import type { Component as VueComponent } from 'vue';
 const layoutMap = new Map<string, VueComponent>();
 layoutMap.set(
   'default',
-  defineAsyncComponent(() => import('@/components/layouts/default.vue'))
+  defineAsyncComponent(() => import('./layouts/default.vue'))
 );
 
 const route = useRoute();

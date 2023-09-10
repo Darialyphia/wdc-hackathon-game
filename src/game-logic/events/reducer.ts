@@ -13,7 +13,7 @@ import {
   soldierSummonedEvent,
   type SoldierSummonedEvent
 } from './soldierSummoned.event';
-import { exhaustiveSwitch } from '@/utils/assertions';
+import { exhaustiveSwitch } from '../../utils/assertions';
 
 export type GameEvent =
   | EntityMovedEvent
@@ -23,6 +23,7 @@ export type GameEvent =
   | DealDamageEvent
   | SkillUsedEvent;
 
+export type GameReducer = typeof reducer;
 export const reducer = (state: GameState, event: GameEvent) => {
   const { type, payload } = event;
 

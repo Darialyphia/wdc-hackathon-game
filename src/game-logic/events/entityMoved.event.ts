@@ -1,4 +1,4 @@
-import type { Point } from '@/utils/geometry';
+import type { Point } from '../../utils/geometry';
 import type { EntityId } from '../entity';
 import { defineEvent } from '.';
 import { getEntityById } from '../utils/entity.helpers';

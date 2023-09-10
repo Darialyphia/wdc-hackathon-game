@@ -1,6 +1,6 @@
 import {
-  FieldMatcher,
-  MatchConditions,
+  type FieldMatcher,
+  type MatchConditions,
   PureAbility,
   AbilityBuilder
 } from '@casl/ability';

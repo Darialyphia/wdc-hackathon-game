@@ -9,20 +9,8 @@ import { createGameMap, type GameMap } from './map';
 import { tickUntilActiveEntity } from './atb';
 import { MAP_WIDTH, MAP_HEIGHT } from './constants';
 import { reducer, type GameEvent } from './events/reducer';
-import { getGeneralById } from './utils/entity.helpers';
-
-// We do nothing with those imports in this file
-// If we remove them we get circular import issues and underfined variables
-// I'd look how to fix it but I HAVE BETTER THINGS TO DO
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { skills } from '@/resources/skills';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { generals } from '@/resources/generals';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { soldiers } from '@/resources/soldiers';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { factions } from '@/resources/factions';
-import type { Nullable, Values } from '@/utils/types';
+import type { Nullable, Values } from '../utils/types';
+import { getGeneralById } from '../resources/generals';
 
 export const GAME_LIFECYCLE_STATES = {
   STARTED: 'STARTED',
