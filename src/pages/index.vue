@@ -16,16 +16,48 @@ const onSubmit = async () => {
   const gameId = await createGame({ generalId: generalId.value });
   push({ name: 'Game', params: { id: gameId } });
 };
+
+const me = await useSuspenseQuery(api.users.me, []);
+const games = await useSuspenseQuery(api.games.getList, []);
+
+const canJoin = computed(
+  () => !games.value.some(game => game.creator?._id === me.value?._id)
+);
 </script>
 
 <template>
   <main>
-    <form @submit.prevent="onSubmit">
-      <label v-for="general in generals" :key="general.characterId">
-        <input v-model="generalId" type="radio" :value="general.characterId" />
-        {{ general.name }}
-      </label>
-      <UiButton :is-loading="isLoading">Create game</UiButton>
-    </form>
+    <section class="container surface">
+      <h2>Games</h2>
+      <article v-for="game in games" :key="game._id">
+        <h3>{{ game.creator?.name }}'s game</h3>
+        {{ game.state }}
+        <UiButton v-if="canJoin && game.creator?._id === me?._id">Join</UiButton>
+      </article>
+    </section>
+
+    <section class="container surface">
+      <h2>Create new game</h2>
+      <form @submit.prevent="onSubmit">
+        <fieldset>
+          <legend>Choose your general</legend>
+          <label v-for="general in generals" :key="general.characterId" class="block">
+            <input v-model="generalId" type="radio" :value="general.characterId" />
+            {{ general.name }}
+          </label>
+        </fieldset>
+        <UiButton :is-loading="isLoading">Create game</UiButton>
+      </form>
+    </section>
   </main>
 </template>
+
+<style scoped>
+h2 {
+  font-size: var(--font-size-5);
+}
+
+article h3 {
+  font-size: var(--font-size-3);
+}
+</style>

@@ -1,11 +1,5 @@
 <script setup lang="ts">
-import { api } from '../../api';
-
-const { loginWithRedirect, logout } = useAuth0();
-
-const { isAuthenticated, isLoading } = useConvexAuth();
-
-const location = window.location;
+const { isLoading } = useConvexAuth();
 
 const isReady = ref(false);
 until(isLoading)
@@ -14,45 +8,22 @@ until(isLoading)
     isReady.value = true;
   });
 
-const MenuContent = createReusableTemplate();
 const isMenuOpened = ref(false);
-
-const me = await useSuspenseQuery(api.users.me, []);
 </script>
 <template>
   <div class="layout">
-    <header class="container lt-lg:p-inline-3">
-      <MenuContent.define>
-        <UiLinkButton v-if="!isAuthenticated" @click="loginWithRedirect()">
-          Log in
-        </UiLinkButton>
-        <template v-else>
-          <RouterLink
-            v-if="me"
-            v-slot="{ navigate, href }"
-            :to="{ name: 'Profile', params: { id: me._id } }"
-            custom
-          >
-            <UiLinkButton :href="href" @click="navigate">
-              {{ me.fullName }}
-            </UiLinkButton>
-          </RouterLink>
-          <UiLinkButton
-            left-icon="material-symbols:logout"
-            @click="logout({ logoutParams: { returnTo: location.origin } })"
-          >
-            Log out
-          </UiLinkButton>
-        </template>
-        <DarkModeToggle />
-      </MenuContent.define>
-      <h1>
-        <RouterLink :to="{ name: 'Home' }">Hackathon Winning App</RouterLink>
-      </h1>
+    <header class="lt-lg:p-inline-3">
+      <CurrentGameBanner />
 
-      <nav>
-        <MenuContent.reuse />
-      </nav>
+      <div class="container flex gap-3 items-center">
+        <h1>
+          <RouterLink :to="{ name: 'Home' }">Hackathon Winning App</RouterLink>
+        </h1>
+
+        <nav>
+          <HeaderMenu />
+        </nav>
+      </div>
 
       <UiSimpleDrawer id="header-menu" v-model:is-opened="isMenuOpened" title="Menu">
         <template #trigger="triggerProps">
@@ -64,7 +35,7 @@ const me = await useSuspenseQuery(api.users.me, []);
             :theme="{ size: 'font-size-5' }"
           />
         </template>
-        <MenuContent.reuse />
+        <HeaderMenu />
       </UiSimpleDrawer>
     </header>
 
@@ -79,12 +50,8 @@ const me = await useSuspenseQuery(api.users.me, []);
   height: 100vh;
 }
 header {
-  display: flex;
-  gap: var(--size-3);
-  align-items: center;
-
-  margin-bottom: var(--size-3);
-  padding-block: var(--size-3);
+  position: sticky;
+  top: 0;
 }
 
 nav {

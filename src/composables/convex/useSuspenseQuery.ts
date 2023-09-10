@@ -14,35 +14,27 @@ export const useSuspenseQuery = <Query extends QueryReference>(
   return new Promise<Ref<Query['_returnType']>>((res, rej) => {
     const data = ref();
 
-    watchEffect(
-      onCleanup => {
-        console.log('watch');
-        const { onUpdate, localQueryResult } = convex.watchQuery(
-          queryReference,
-          ...toValue(args)
-        );
-        const initialValue = localQueryResult();
-        data.value = initialValue;
+    watchEffect(onCleanup => {
+      const { onUpdate, localQueryResult } = convex.watchQuery(
+        queryReference,
+        ...toValue(args)
+      );
+      const initialValue = localQueryResult();
+      data.value = initialValue;
 
-        const unsub = onUpdate(() => {
-          try {
-            const newVal = localQueryResult();
-            data.value = newVal;
-            res(data);
-          } catch (err) {
-            rej(err);
-          }
-        });
-
-        if (initialValue) res(data);
-
-        onCleanup(unsub);
-      },
-      {
-        onTrigger(event) {
-          console.log(event);
+      const unsub = onUpdate(() => {
+        try {
+          const newVal = localQueryResult();
+          data.value = newVal;
+          res(data);
+        } catch (err) {
+          rej(err);
         }
-      }
-    );
+      });
+
+      if (initialValue) res(data);
+
+      onCleanup(unsub);
+    });
   });
 };

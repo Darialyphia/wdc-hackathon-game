@@ -5,6 +5,7 @@ import { createUserability } from './users/user.ability';
 import { ensureAuthorized } from './utils/ability';
 import { GAME_STATES, GameAction } from './games/game.entity';
 import { subject } from '@casl/ability';
+import { internal } from './_generated/api';
 import { JOIN_CONFIRMATION_TIMEOUT } from './games/game.utils';
 import { createGameState } from '../src/game-logic/index';
 import { reducer, GameEvent as GameLogicEvent } from '../src/game-logic/events/reducer';
@@ -13,6 +14,7 @@ import { createSummonAction } from '../src/game-logic/actions/summon';
 import { createSkillAction } from '../src/game-logic/actions/skill';
 import { createEndTurnAction } from '../src/game-logic/actions/endTurn';
 import { exhaustiveSwitch } from '../src/utils/assertions';
+import { ensureAuthenticated } from './utils/auth';
 
 // Create a new task with the given text
 export const create = mutation({
@@ -87,9 +89,9 @@ export const join = mutation({
       state: GAME_STATES.WAITING_FOR_CREATOR_CONFIRMATION
     });
 
-    // await scheduler.runAfter(JOIN_CONFIRMATION_TIMEOUT, internal.games.decline, {
-    //   gameId: game._id
-    // });
+    await scheduler.runAfter(JOIN_CONFIRMATION_TIMEOUT, internal.games.decline, {
+      gameId: game._id
+    });
   }
 });
 
@@ -106,9 +108,9 @@ export const decline = internalMutation({
         state: GAME_STATES.DECLINED_BY_CREATOR
       });
 
-      // await scheduler.runAfter(5000, internal.games.internalCancel, {
-      //   gameId: game._id
-      // });
+      await scheduler.runAfter(5000, internal.games.internalCancel, {
+        gameId: game._id
+      });
     }
   }
 });
@@ -266,5 +268,38 @@ export const getById = query({
       ...game,
       events
     };
+  }
+});
+
+export const getList = query({
+  args: {},
+  handler: async ({ db }) => {
+    const games = await db
+      .query('games')
+      .filter(q => q.neq('state', GAME_STATES.ENDED))
+      .collect();
+
+    return Promise.all(
+      games.map(async game => ({
+        ...game,
+        creator: await db.get(game.creator)
+      }))
+    );
+  }
+});
+
+export const currentGame = query({
+  args: {},
+  handler: async ({ auth, db }) => {
+    const identity = await auth.getUserIdentity();
+    if (!identity) return null;
+
+    const me = await findMe({ db, auth });
+
+    return db
+      .query('games')
+      .withIndex('by_creator', q => q.eq('creator', me!._id))
+      .filter(q => q.neq('state', GAME_STATES.ENDED))
+      .first();
   }
 });
