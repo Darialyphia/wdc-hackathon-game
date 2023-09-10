@@ -37,4 +37,7 @@ watchEffect(() => {
   >
     Waiting for opponent...
   </div>
+  <div v-else-if="game?.state === 'ENDED'" class="grid place-content-center">
+    The game has ended
+  </div>
 </template>

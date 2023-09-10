@@ -259,6 +259,8 @@ watch(
     });
   }
 );
+
+const { mutate: surrender } = useMutation(api.games.surrender);
 </script>
 
 <template>
@@ -355,6 +357,14 @@ watch(
 
       <UiButton :theme="{ bg: 'red-9', hoverBg: 'red-7' }" @click="endTurnAction">
         End Turn
+      </UiButton>
+      <UiButton
+        class="ml-auto"
+        :theme="{ bg: 'red-9', hoverBg: 'red-7' }"
+        left-icon="mdi:flag-outline"
+        @click="surrender({ gameId: game._id })"
+      >
+        Surrender
       </UiButton>
     </footer>
   </div>

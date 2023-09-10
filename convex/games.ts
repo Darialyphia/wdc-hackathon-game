@@ -282,9 +282,8 @@ export const getList = query({
   handler: async ({ db }) => {
     const games = await db
       .query('games')
-      .filter(q => q.neq('state', GAME_STATES.ENDED))
+      .filter(q => q.neq(q.field('state'), GAME_STATES.ENDED))
       .collect();
-
     return Promise.all(
       games.map(async game => ({
         ...game,
