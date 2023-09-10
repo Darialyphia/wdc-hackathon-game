@@ -20,9 +20,21 @@ watchEffect(() => {
 </script>
 
 <template>
-  <UiCenter v-if="game === undefined">
+  <div v-if="game === undefined" class="grid place-content-center">
     <UiSpinner size="xl" />
-  </UiCenter>
+  </div>
 
-  <pre>{{ game }}</pre>
+  <GameScreen v-if="game?.state === 'ONGOING'" :game="game" />
+  <div
+    v-else-if="game?.state === 'WAITING_FOR_CREATOR_CONFIRMATION'"
+    class="grid place-content-center"
+  >
+    Waiting for opponent confirmation...
+  </div>
+  <div
+    v-else-if="game?.state === 'WAITING_FOR_OPPONENT'"
+    class="grid place-content-center"
+  >
+    Waiting for opponent...
+  </div>
 </template>

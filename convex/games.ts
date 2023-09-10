@@ -263,14 +263,16 @@ export const getById = query({
     const game = await db.get(gameId);
     if (!game) return null;
 
-    const events = await db
-      .query('gameEvents')
-      .withIndex('by_game_id', q => q.eq('gameId', gameId))
-      .collect();
-
     return {
       ...game,
-      events
+      events: await db
+        .query('gameEvents')
+        .withIndex('by_game_id', q => q.eq('gameId', gameId))
+        .collect(),
+      players: await db
+        .query('gamePlayers')
+        .withIndex('by_game_id', q => q.eq('gameId', gameId))
+        .collect()
     };
   }
 });
@@ -297,13 +299,16 @@ export const currentGame = query({
   handler: async ({ auth, db }) => {
     const identity = await auth.getUserIdentity();
     if (!identity) return null;
+    const me = await findMe({ auth, db });
+    if (!me) return null;
 
-    const me = await findMe({ db, auth });
+    const gamePlayers = await db
+      .query('gamePlayers')
+      .withIndex('by_user_id', q => q.eq('userId', me?._id))
+      .collect();
 
-    return db
-      .query('games')
-      .withIndex('by_creator', q => q.eq('creator', me!._id))
-      .filter(q => q.neq('state', GAME_STATES.ENDED))
-      .first();
+    const games = await Promise.all(gamePlayers.map(gp => db.get(gp.gameId)));
+
+    return games.find(game => game?.state !== 'ENDED') ?? null;
   }
 });

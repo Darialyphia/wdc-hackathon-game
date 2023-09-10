@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { createGameState } from '../../game-logic';
 import { createPlayerAbility } from '../../game-logic/abilities/player.ability';
+import { createMoveAction } from '../../game-logic/actions/move';
+import { createSummonAction } from '../../game-logic/actions/summon';
 import { type GameEvent } from '../../game-logic/events/reducer';
 import type { GameMapCell } from '../../game-logic/map';
 import { getActiveEntity, getEntityById } from '../../game-logic/utils/entity.helpers';
@@ -10,42 +12,30 @@ import { subject } from '@casl/ability';
 import { getSoldierById, type SoldierData } from '../../resources/soldiers';
 import { getSummonBlueprints } from '../../game-logic/utils/entity.helpers';
 import { getSkillById } from '../../game-logic/utils/skill.helper';
+import { createEndTurnAction } from '../../game-logic/actions/endTurn';
 import type { SkillData } from '../../resources/skills';
 import { createSkillAbility } from '../../game-logic/abilities/skill.ability';
+import { createSkillAction } from '../../game-logic/actions/skill';
 import type { Entity, EntityId } from '../../game-logic/entity';
 import { getEntityAt } from '../../game-logic/utils/entity.helpers';
 import { createEntityAbility } from '../../game-logic/abilities/entity.ability';
-import type { Doc } from '../../../convex/_generated/dataModel';
-import { api } from '../../api';
 
-const { game } = defineProps<{
-  game: Doc<'games'> & { events: Doc<'gameEvents'>[] } & {
-    players: Doc<'gamePlayers'>[];
-  };
-}>();
-
-const me = useQuery(api.users.me, []);
-
-const gameState = computed(() =>
+const gameState = ref(
   createGameState({
     players: [
       {
-        id: game.players[0].userId,
-        characterId: game.players[0].generalId,
-        atbSeed: game.players[0].atbSeed
+        id: 'player 1',
+        characterId: 'haven_hero',
+        atbSeed: Math.random()
       },
       {
-        id: game.players[1].userId,
-        characterId: game.players[1].generalId,
-        atbSeed: game.players[1].atbSeed
+        id: 'player 2',
+        characterId: 'necro_hero',
+        atbSeed: Math.random()
       }
-    ],
-    history: game.events.map(e => ({ type: e.type, payload: e.payload }) as GameEvent)
+    ]
   })
 );
-const activeEntity = computed(() => getActiveEntity(gameState.value));
-
-const isMyTurn = computed(() => activeEntity.value.owner === me.value?._id);
 const getEventLabel = ({ type, payload }: GameEvent) => {
   const getName = (id: EntityId) => getEntityById(gameState.value, id)?.blueprint.name;
   switch (type) {
@@ -105,6 +95,8 @@ const resetSelected = () => {
   selectedSkill.value = null;
 };
 
+const activeEntity = computed(() => getActiveEntity(gameState.value));
+
 const pathFinder = computed(() =>
   createPathFinder(gameState.value, gameState.value.activeEntityId)
 );
@@ -145,76 +137,59 @@ const isInCastRange = (cell: GameMapCell) => {
 };
 
 const isHighlighted = (cell: GameMapCell) => {
-  if (!isMyTurn.value) return;
   if (selectedSummon.value) return canSummonAt(cell);
   if (selectedSkill.value) return isInCastRange(cell);
 
   return canMoveTo(cell);
 };
 
-const { mutate: sendAction } = useMutation(api.games.actOn);
 const moveAction = (cell: GameMapCell) => {
-  if (!isMyTurn.value) return;
   if (!canMoveTo(cell)) return;
-
-  sendAction({
-    gameId: game._id,
-    action: {
-      type: 'move',
-      payload: { target: cell }
-    }
+  const action = createMoveAction({
+    playerId: activeEntity.value.owner,
+    target: cell
   });
+
+  action(gameState.value);
 };
 
 const summonAction = (cell: GameMapCell) => {
-  if (!isMyTurn.value) return;
   if (!canSummonAt(cell)) {
     selectedSummon.value = null;
   }
   if (!selectedSummon.value) return;
 
-  sendAction({
-    gameId: game._id,
-    action: {
-      type: 'summon',
-      payload: {
-        characterId: selectedSummon.value.characterId,
-        position: { x: cell.x, y: cell.y }
-      }
-    }
+  const action = createSummonAction({
+    playerId: activeEntity.value.owner,
+    characterId: selectedSummon.value.characterId,
+    position: { x: cell.x, y: cell.y }
   });
+
+  action(gameState.value);
   selectedSummon.value = null;
 };
 
 const skillAction = (cell: GameMapCell) => {
-  if (!isMyTurn.value) return;
   if (!canCastAt(cell)) {
     selectedSkill.value = null;
   }
   if (!selectedSkill.value) return;
-
-  sendAction({
-    gameId: game._id,
-    action: {
-      type: 'use_skill',
-      payload: {
-        skillId: selectedSkill.value.id,
-        target: { x: cell.x, y: cell.y }
-      }
-    }
+  const action = createSkillAction({
+    playerId: activeEntity.value.owner,
+    skillId: selectedSkill.value.id,
+    target: { x: cell.x, y: cell.y }
   });
+
+  action(gameState.value);
   selectedSkill.value = null;
 };
 
 const endTurnAction = () => {
-  if (!isMyTurn.value) return;
-  sendAction({
-    gameId: game._id,
-    action: {
-      type: 'end_turn',
-      payload: {}
-    }
+  const action = createEndTurnAction({
+    playerId: activeEntity.value.owner
   });
+
+  action(gameState.value);
 };
 
 const onCellClick = (cell: GameMapCell) => {
@@ -295,7 +270,7 @@ watch(
         <div class="atb-bar" :style="{ '--filled': Math.min(100, entity.atb) }" />
       </div>
     </EntityView.define>
-    <aside class="info-bar">
+    <aside class="action-bar">
       <div>
         <h2>{{ selectedEntity.blueprint.name }}</h2>
         <pre>{{ selectedEntity }}</pre>
@@ -368,14 +343,6 @@ watch(
   grid-template-rows: 1fr auto;
   gap: var(--size-3);
 
-  @screen lt-lg {
-    grid-template-columns: 0fr max-content 0fr;
-
-    aside {
-      overflow: hidden;
-    }
-  }
-
   height: 100%;
   padding: 0;
   padding-inline: var(--size-4);
@@ -389,7 +356,7 @@ h3 {
   font-size: var(--font-size-3);
   font-weight: var(--font-weight-4);
 }
-.info-bar {
+.action-bar {
   > div {
     position: sticky;
     top: 0;

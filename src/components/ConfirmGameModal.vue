@@ -2,7 +2,9 @@
 import { api } from '../api';
 
 const { push } = useRouter();
+
 const currentGame = useQuery(api.games.currentGame, []);
+const me = useQuery(api.users.me, []);
 
 const { mutate: confirm, isLoading } = useMutation(api.games.confirm);
 
@@ -17,7 +19,10 @@ const onConfirm = async () => {
 <template>
   <UiModal
     id="confirm-game"
-    :is-opened="currentGame?.state === 'WAITING_FOR_CREATOR_CONFIRMATION'"
+    :is-opened="
+      currentGame?.state === 'WAITING_FOR_CREATOR_CONFIRMATION' &&
+      currentGame.creator === me?._id
+    "
     :is-closable="false"
   >
     <UiModalContent>

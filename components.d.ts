@@ -26,6 +26,7 @@ declare module 'vue' {
     Default: typeof import('./src/components/layouts/default.vue')['default']
     DynamicLayout: typeof import('./src/components/DynamicLayout.vue')['default']
     EnsureAuthenticated: typeof import('./src/components/convex/EnsureAuthenticated.vue')['default']
+    FakeGameScreen: typeof import('./src/components/game/FakeGameScreen.vue')['default']
     GameScreen: typeof import('./src/components/game/GameScreen.vue')['default']
     HeaderMenu: typeof import('./src/components/HeaderMenu.vue')['default']
     PaginatedQuery: typeof import('./src/components/convex/PaginatedQuery.vue')['default']
