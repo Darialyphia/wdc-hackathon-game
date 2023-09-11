@@ -7,7 +7,6 @@ const { spritesheet } = defineProps<{
 }>();
 
 const textures = computed(() => Object.values(spritesheet.textures));
-console.log(textures.value);
 const { state } = useGame();
 </script>
 

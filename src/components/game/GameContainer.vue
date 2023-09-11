@@ -4,9 +4,10 @@ import { useApplication } from 'vue3-pixi';
 import { CELL_SIZE } from '../../game-logic/constants';
 import { Assets, Spritesheet } from 'pixi.js';
 import { ASSET_BUNDLES } from '../../assets/manifest';
-const { state } = useGame();
 
+const { state } = useGame();
 const app = useApplication();
+
 const PADDING = 20;
 
 const spritesheet = ref<Spritesheet>();
@@ -48,5 +49,20 @@ onMounted(async () => {
     "
   >
     <GameMap :spritesheet="spritesheet" />
+
+    <graphics
+      v-for="entity in state.entities"
+      :key="entity.id"
+      :x="entity.position.x * CELL_SIZE"
+      :y="entity.position.y * CELL_SIZE"
+      @render="
+        g => {
+          g.clear();
+          g.beginFill('red');
+          g.drawCircle(CELL_SIZE / 2, CELL_SIZE / 2, CELL_SIZE / 2);
+          g.endFill();
+        }
+      "
+    />
   </viewport>
 </template>

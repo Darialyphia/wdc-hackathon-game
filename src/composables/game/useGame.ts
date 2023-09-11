@@ -1,4 +1,4 @@
-import type { Doc } from '../../../convex/_generated/dataModel';
+import type { Doc, Id } from '../../../convex/_generated/dataModel';
 import { type GameState, createGameState } from '../../game-logic';
 import type { ComputedRef } from 'vue';
 import type { GameEvent } from '../../game-logic/events/reducer';
@@ -20,6 +20,7 @@ export type Action =
 export type ActionDispatcher = (arg: Action) => void;
 
 export type Game = {
+  me: Id<'users'>;
   game: ComputedRef<GameDetail>;
   state: ComputedRef<GameState>;
   sendAction: ActionDispatcher;
@@ -29,7 +30,8 @@ export const GAME_INJECTION_KEY = Symbol('game') as InjectionKey<Game>;
 
 export const useGameProvider = (
   game: ComputedRef<GameDetail>,
-  sendAction: ActionDispatcher
+  sendAction: ActionDispatcher,
+  me: Id<'users'>
 ) => {
   const state = computed(() =>
     createGameState({
@@ -53,6 +55,7 @@ export const useGameProvider = (
   const api: Game = {
     state,
     game,
+    me,
     sendAction
   };
 

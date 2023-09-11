@@ -24,40 +24,43 @@ const { width, height } = useElementBounding(root);
 
 <template>
   <main ref="root">
-    <div v-if="game === undefined" class="loader">
-      <UiSpinner size="xl" />
-      Loading game...
-    </div>
+    <Query v-slot="{ data: me }" :query="api => api.users.me" :args="{}">
+      <div v-if="game === undefined" class="loader">
+        <UiSpinner size="xl" />
+        Loading game...
+      </div>
 
-    <PixiApp
-      v-if="game?.state === 'ONGOING' && width && height"
-      :game="game"
-      :width="width"
-      :height="height"
-    />
+      <PixiApp
+        v-if="game?.state === 'ONGOING' && width && height && me"
+        :me="me?._id"
+        :game="game"
+        :width="width"
+        :height="height"
+      />
 
-    <div v-else-if="game?.state === 'WAITING_FOR_CREATOR_CONFIRMATION'" class="loader">
-      <UiSpinner size="xl" />
+      <div v-else-if="game?.state === 'WAITING_FOR_CREATOR_CONFIRMATION'" class="loader">
+        <UiSpinner size="xl" />
 
-      Waiting for opponent confirmation...
-    </div>
+        Waiting for opponent confirmation...
+      </div>
 
-    <div v-else-if="game?.state === 'WAITING_FOR_OPPONENT'" class="loader">
-      <UiSpinner size="xl" />
+      <div v-else-if="game?.state === 'WAITING_FOR_OPPONENT'" class="loader">
+        <UiSpinner size="xl" />
 
-      Waiting for opponent...
-    </div>
+        Waiting for opponent...
+      </div>
 
-    <div
-      v-else-if="game?.state === 'DECLINED_BY_CREATOR'"
-      class="grid place-content-center"
-    >
-      You declined the challenge or did not respond in time.
-    </div>
+      <div
+        v-else-if="game?.state === 'DECLINED_BY_CREATOR'"
+        class="grid place-content-center"
+      >
+        You declined the challenge or did not respond in time.
+      </div>
 
-    <div v-else-if="game?.state === 'ENDED'" class="grid place-content-center">
-      The game has ended
-    </div>
+      <div v-else-if="game?.state === 'ENDED'" class="grid place-content-center">
+        The game has ended
+      </div>
+    </Query>
   </main>
 </template>
 
