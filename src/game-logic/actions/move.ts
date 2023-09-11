@@ -8,14 +8,18 @@ import { createPathFinder } from '../utils/pathfinding.helpers';
 import { endTurnEvent } from '../events/endTurn.event';
 import { reducer } from '../events/reducer';
 
+export const moveActionInput = z.object({
+  playerId: z.string(),
+  target: z.object({
+    x: z.number(),
+    y: z.number()
+  })
+});
+
+export type MoveActionInput = z.infer<typeof moveActionInput>;
+
 export const createMoveAction = defineAction({
-  input: z.object({
-    playerId: z.string(),
-    target: z.object({
-      x: z.number(),
-      y: z.number()
-    })
-  }),
+  input: moveActionInput,
   handler: ({ input, state }) => {
     const entity = getActiveEntity(state);
     const playerAbility = createPlayerAbility(state, input.playerId);

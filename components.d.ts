@@ -27,10 +27,13 @@ declare module 'vue' {
     DynamicLayout: typeof import('./src/components/DynamicLayout.vue')['default']
     EnsureAuthenticated: typeof import('./src/components/convex/EnsureAuthenticated.vue')['default']
     FakeGameScreen: typeof import('./src/components/game/FakeGameScreen.vue')['default']
+    GameContainer: typeof import('./src/components/game/GameContainer.vue')['default']
+    GameMap: typeof import('./src/components/game/GameMap.vue')['default']
     GameScreen: typeof import('./src/components/game/GameScreen.vue')['default']
     HeaderMenu: typeof import('./src/components/HeaderMenu.vue')['default']
     PaginatedQuery: typeof import('./src/components/convex/PaginatedQuery.vue')['default']
     PaginatedQueryInner: typeof import('./src/components/convex/PaginatedQueryInner.vue')['default']
+    PixiApp: typeof import('./src/components/game/PixiApp.vue')['default']
     Query: typeof import('./src/components/convex/Query.vue')['default']
     QueryInner: typeof import('./src/components/convex/QueryInner.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
@@ -61,5 +64,6 @@ declare module 'vue' {
     UiSwitch: typeof import('./src/components/ui/inputs/UiSwitch.vue')['default']
     UiTextInput: typeof import('./src/components/ui/inputs/UiTextInput.vue')['default']
     VFocusOn: typeof import('./src/directives/vFocusOn.ts')['default']
+    ViewPort: typeof import('./src/components/game/ViewPort.vue')['default']
   }
 }

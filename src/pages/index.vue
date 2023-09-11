@@ -56,12 +56,26 @@ const onTryJoin = (id: Id<'games'>) => {
           <h3>{{ game.creator?.name }}'s game</h3>
           <span class="ml-auto">{{ game.state }}</span>
           <UiButton
-            v-if="canJoin"
+            v-if="canJoin && game.state === 'WAITING_FOR_OPPONENT'"
             left-icon="game-icons:crossed-swords"
             @click="onTryJoin(game._id)"
           >
             Join
           </UiButton>
+          <RouterLink
+            v-slot="{ href, navigate }"
+            custom
+            :to="{ name: 'Game', params: { id: game._id } }"
+          >
+            <UiButton
+              v-if="game.state === 'ONGOING'"
+              :href="href"
+              left-icon="game-icons:angry-eyes"
+              @click="navigate"
+            >
+              Spectate
+            </UiButton>
+          </RouterLink>
           <UiButton
             v-if="game.creator?._id === me?._id && game.state === 'WAITING_FOR_OPPONENT'"
             left-icon="material-symbols:close-rounded"

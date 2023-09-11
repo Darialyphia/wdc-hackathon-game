@@ -29,10 +29,13 @@
     "mitt": "^3.0.1",
     "nanoid": "^4.0.2",
     "open-props": "^1.5.15",
+    "pixi-viewport": "^5.0.2",
+    "pixi.js": "^7.2.4",
     "vee-validate": "^4.11.3",
     "vite-plugin-vue-layouts": "^0.8.0",
     "vue": "^3.3.4",
     "vue-router": "^4.2.4",
+    "vue3-pixi": "^0.8.1",
     "zod": "^3.22.2"
   },
   "devDependencies": {

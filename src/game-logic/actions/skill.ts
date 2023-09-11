@@ -11,15 +11,19 @@ import { createSkillAbility } from '../abilities/skill.ability';
 import { skillUsedEvent } from '../events/skillUsed.event';
 import type { SkillId } from '../../resources/skills';
 
+export const skillActionInput = z.object({
+  playerId: z.string(),
+  skillId: z.string(),
+  target: z.object({
+    x: z.number(),
+    y: z.number()
+  })
+});
+
+export type SkillActionInput = z.infer<typeof skillActionInput>;
+
 export const createSkillAction = defineAction({
-  input: z.object({
-    playerId: z.string(),
-    skillId: z.string(),
-    target: z.object({
-      x: z.number(),
-      y: z.number()
-    })
-  }),
+  input: skillActionInput,
   handler: ({ input, state }) => {
     const entity = getActiveEntity(state);
     const skill = getSkillById(input.skillId as SkillId);

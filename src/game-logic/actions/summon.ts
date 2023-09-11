@@ -7,15 +7,19 @@ import { soldierSummonedEvent } from '../events/soldierSummoned.event';
 import { endTurnEvent } from '../events/endTurn.event';
 import { reducer } from '../events/reducer';
 
+export const summonActionInput = z.object({
+  playerId: z.string(),
+  characterId: z.string(),
+  position: z.object({
+    x: z.number(),
+    y: z.number()
+  })
+});
+
+export type SummonActionInput = z.infer<typeof summonActionInput>;
+
 export const createSummonAction = defineAction({
-  input: z.object({
-    playerId: z.string(),
-    characterId: z.string(),
-    position: z.object({
-      x: z.number(),
-      y: z.number()
-    })
-  }),
+  input: summonActionInput,
   handler: ({ input, state }) => {
     const playerAbility = createPlayerAbility(state, input.playerId);
 
