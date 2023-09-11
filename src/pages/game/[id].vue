@@ -20,24 +20,38 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div v-if="game === undefined" class="grid place-content-center">
+  <div v-if="game === undefined" class="loader">
     <UiSpinner size="xl" />
+    Loading game...
   </div>
 
   <GameScreen v-if="game?.state === 'ONGOING'" :game="game" />
-  <div
-    v-else-if="game?.state === 'WAITING_FOR_CREATOR_CONFIRMATION'"
-    class="grid place-content-center"
-  >
+
+  <div v-else-if="game?.state === 'WAITING_FOR_CREATOR_CONFIRMATION'" class="loader">
+    <UiSpinner size="xl" />
+
     Waiting for opponent confirmation...
   </div>
-  <div
-    v-else-if="game?.state === 'WAITING_FOR_OPPONENT'"
-    class="grid place-content-center"
-  >
+
+  <div v-else-if="game?.state === 'WAITING_FOR_OPPONENT'" class="loader">
+    <UiSpinner size="xl" />
+
     Waiting for opponent...
   </div>
+
   <div v-else-if="game?.state === 'ENDED'" class="grid place-content-center">
     The game has ended
   </div>
 </template>
+
+<style scoped>
+.loader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-7);
+  align-items: center;
+  justify-content: center;
+
+  font-size: var(--font-size-4);
+}
+</style>

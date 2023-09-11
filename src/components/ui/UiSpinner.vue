@@ -10,7 +10,7 @@ const { size = 'md', delay = 0 } = defineProps<{
 </script>
 
 <template>
-  <UiIcon icon="svg-spinners:90-ring-with-bg" class="ui-spinner" :class="size" />
+  <UiIcon icon="game-icons:level-four-advanced" class="ui-spinner" :class="size" />
 </template>
 
 <style scoped lang="postcss">

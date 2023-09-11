@@ -74,6 +74,7 @@ const onTryJoin = (id: Id<'games'>) => {
         </article>
 
         <UiButton
+          v-if="me"
           left-icon="material-symbols:add-circle-outline"
           :theme="{ size: 'size-3' }"
           @click="isChooseGeneralModalOpened = true"
