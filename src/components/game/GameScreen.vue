@@ -19,7 +19,7 @@ import type { Doc } from '../../../convex/_generated/dataModel';
 import { api } from '../../api';
 
 const { game } = defineProps<{
-  game: Doc<'games'> & { events: Doc<'gameEvents'>[] } & {
+  game: Omit<Doc<'games'>, 'creator'> & { events: Doc<'gameEvents'>[] } & {
     players: Doc<'gamePlayers'>[];
   };
 }>();

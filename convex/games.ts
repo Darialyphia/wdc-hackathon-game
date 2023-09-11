@@ -265,6 +265,7 @@ export const getById = query({
 
     return {
       ...game,
+      creator: await db.get(game.creator),
       events: await db
         .query('gameEvents')
         .withIndex('by_game_id', q => q.eq('gameId', gameId))

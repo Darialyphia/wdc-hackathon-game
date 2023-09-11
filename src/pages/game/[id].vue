@@ -39,6 +39,13 @@ watchEffect(() => {
     Waiting for opponent...
   </div>
 
+  <div
+    v-else-if="game?.state === 'DECLINED_BY_CREATOR'"
+    class="grid place-content-center"
+  >
+    {{ game.creator?.name }} declined the challenge or did not respond in time.
+  </div>
+
   <div v-else-if="game?.state === 'ENDED'" class="grid place-content-center">
     The game has ended
   </div>
