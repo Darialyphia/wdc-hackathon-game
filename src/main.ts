@@ -30,6 +30,7 @@ app.use(
     domain: import.meta.env.VITE_AUTH0_DOMAIN,
     clientId: import.meta.env.VITE_AUTH0_CLIENTID,
     useRefreshTokens: true,
+    cacheLocation: 'localstorage',
     authorizationParams: {
       redirect_uri: window.location.origin
     }
