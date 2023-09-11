@@ -1,17 +1,13 @@
 <script setup lang="ts">
 import '../../utils/pixi-custom-elements';
+import type { Doc } from '../../../convex/_generated/dataModel';
+import type { Action } from '../../composables/game/useGame';
 import { Application, Assets, BaseTexture, SCALE_MODES, extensions } from 'pixi.js';
 import { appInjectKey, createApp } from 'vue3-pixi';
-import { Viewport } from 'pixi-viewport';
-
-// import { assetsManifest } from './assets-manifest';
-// import { spriteSheetParser } from './utils/spritesheet-parser';
+import { assetsManifest } from '../../assets/manifest';
 import { WRAP_MODES } from 'pixi.js';
-import type { Doc } from '../../../convex/_generated/dataModel';
 
-import { CELL_SIZE } from '../../game-logic/constants';
 import GameContainer from './GameContainer.vue';
-import type { Action } from '../../composables/game/useGame';
 
 const { game, width, height } = defineProps<{
   game: Omit<Doc<'games'>, 'creator'> & { events: Doc<'gameEvents'>[] } & {
@@ -51,8 +47,8 @@ onMounted(() => {
 
   BaseTexture.defaultOptions.wrapMode = WRAP_MODES.CLAMP;
   BaseTexture.defaultOptions.scaleMode = SCALE_MODES.NEAREST;
-  // extensions.add(spriteSheetParser);
-  // Assets.init({ manifest: assetsManifest });
+  extensions.add(spriteSheetParser);
+  Assets.init({ manifest: assetsManifest });
 
   const app = createApp(GameContainer);
   app.provide(appInjectKey, pixiApp);
@@ -71,7 +67,7 @@ onMounted(() => {
 <style scoped>
 .game-client-container {
   width: v-bind(width);
-  height: 100%;
+  height: v-bind(height);
   font-family: monospace;
 }
 </style>

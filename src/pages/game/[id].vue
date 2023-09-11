@@ -30,7 +30,7 @@ const { width, height } = useElementBounding(root);
     </div>
 
     <PixiApp
-      v-if="game?.state === 'ONGOING'"
+      v-if="game?.state === 'ONGOING' && width && height"
       :game="game"
       :width="width"
       :height="height"

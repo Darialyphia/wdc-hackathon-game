@@ -1,32 +1,39 @@
 <script setup lang="ts">
+import type { Spritesheet } from 'pixi.js';
 import { CELL_SIZE } from '../../game-logic/constants';
 
+const { spritesheet } = defineProps<{
+  spritesheet: Spritesheet;
+}>();
+
+const textures = computed(() => Object.values(spritesheet.textures));
+console.log(textures.value);
 const { state } = useGame();
 </script>
 
 <template>
   <container>
     <template v-for="row in state.map.rows">
-      <graphics
+      <sprite
         v-for="cell in row"
         :key="`${cell.x}:${cell.y}`"
         :x="cell.x * CELL_SIZE"
         :y="cell.y * CELL_SIZE"
-        @render="
-          graphics => {
-            graphics.clear();
-
-            graphics.beginFill('yellow', 0.25);
-            graphics.lineStyle({
-              color: 'yellow',
-              width: 1
-            });
-            graphics.drawRect(0, 0, CELL_SIZE, CELL_SIZE);
-
-            graphics.endFill();
-          }
-        "
-      />
+        :texture="textures[10]"
+      >
+        <graphics
+          @render="
+            g => {
+              g.lineStyle({
+                color: 'black',
+                alpha: 0.25,
+                width: 1
+              });
+              g.drawRect(0, 0, CELL_SIZE, CELL_SIZE);
+            }
+          "
+        />
+      </sprite>
     </template>
   </container>
 </template>
