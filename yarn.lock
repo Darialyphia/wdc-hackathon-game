@@ -1497,6 +1497,11 @@
   resolved "https://registry.yarnpkg.com/@pixi/extract/-/extract-7.2.4.tgz#2db62611a3135ee8232affdb7b26cab37cb2a0a3"
   integrity sha512-wlXZg+J2L/1jQhRi5nZQP/cXshovhjksjss91eAKMvY5aGxNAQovCP4xotJ/XJjfTvPMpeRzHPFYzm3PrOPQ7g==
 
+"@pixi/filter-adjustment@^5.1.1":
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-adjustment/-/filter-adjustment-5.1.1.tgz#d0320ef566a8a67fd536cc66c8331b90d8bdb1e2"
+  integrity sha512-AUHe03rmqXwV1ylAHq62t19AolPWOOYomCcL+Qycb1tf+LbM8FWpGXC6wmU1PkUrhgNc958uM9TrA9nRpplViA==
+
 "@pixi/filter-alpha@7.2.4":
   version "7.2.4"
   resolved "https://registry.yarnpkg.com/@pixi/filter-alpha/-/filter-alpha-7.2.4.tgz#f33621fa4bdc95de09457780aa33eb253fe6447f"

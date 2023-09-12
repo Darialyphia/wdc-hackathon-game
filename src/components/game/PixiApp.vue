@@ -82,6 +82,8 @@ const players = computed(() =>
       <div>{{ players[1].general?.blueprint.name }}</div>
       <div>{{ players[1].general?.hp }} / {{ players[1].general?.blueprint.maxHp }}</div>
     </div>
+
+    <GameActionBar class="game-action-bar" />
   </div>
 </template>
 
@@ -103,5 +105,12 @@ const players = computed(() =>
   top: var(--size-5);
   right: var(--size-5);
   text-align: right;
+}
+
+.game-action-bar {
+  position: absolute;
+  bottom: var(--size-5);
+  left: 50%;
+  transform: translateX(-50%);
 }
 </style>

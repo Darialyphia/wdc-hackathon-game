@@ -13,6 +13,7 @@ export type SkillData = {
   cost: number;
   range: number;
   targetType: TargetType;
+  icon: string;
   execute(reducer: GameReducer, state: GameState, caster: Entity, target: Point): void;
 };
 

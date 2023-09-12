@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    ActionBar: typeof import('./src/components/game/ActionBar.vue')['default']
     AddTodoForm: typeof import('./src/components/AddTodoForm.vue')['default']
     ArkCheckbox: typeof import('@ark-ui/vue')['Checkbox']
     ArkCheckboxControl: typeof import('@ark-ui/vue')['CheckboxControl']
@@ -26,9 +27,13 @@ declare module 'vue' {
     Default: typeof import('./src/components/layouts/default.vue')['default']
     DynamicLayout: typeof import('./src/components/DynamicLayout.vue')['default']
     EnsureAuthenticated: typeof import('./src/components/convex/EnsureAuthenticated.vue')['default']
+    Entity: typeof import('./src/components/game/Entity.vue')['default']
     FakeGameScreen: typeof import('./src/components/game/FakeGameScreen.vue')['default']
+    GameActionBar: typeof import('./src/components/game/GameActionBar.vue')['default']
     GameContainer: typeof import('./src/components/game/GameContainer.vue')['default']
+    GameEntity: typeof import('./src/components/game/GameEntity.vue')['default']
     GameMap: typeof import('./src/components/game/GameMap.vue')['default']
+    GameMapCell: typeof import('./src/components/game/GameMapCell.vue')['default']
     GameScreen: typeof import('./src/components/game/GameScreen.vue')['default']
     HeaderMenu: typeof import('./src/components/HeaderMenu.vue')['default']
     PaginatedQuery: typeof import('./src/components/convex/PaginatedQuery.vue')['default']

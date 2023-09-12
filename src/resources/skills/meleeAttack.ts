@@ -10,6 +10,7 @@ export const meleeAttack: SkillData = {
   cost: 2,
   range: 1,
   targetType: TARGET_TYPES.ENEMY,
+  icon: 'game-icons:mailed-fist',
   execute(reducer, state, caster, target) {
     const entity = getEntityAt(state, target);
     if (!entity) return [];

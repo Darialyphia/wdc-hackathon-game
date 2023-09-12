@@ -37,8 +37,9 @@ html.dark {
   --color-surface-2-hsl: var(--gray-11-hsl);
   --color-surface-3-hsl: var(--gray-12-hsl);
 
-  --color-primary-hsl: var(--violet-9-hsl);
-  --color-primary-hover-hsl: var(--violet-8-hsl);
+  --color-primary-hsl: var(--yellow-2-hsl);
+  --color-primary-hover-hsl: var(--yellow-4-hsl);
+  --color-text-on-primary-hsl: var(--gray-11-hsl);
 
   --color-error-hsl: var(--pink-5-hsl);
   --color-error-hover-hsl: var(--pink-4-hsl);
