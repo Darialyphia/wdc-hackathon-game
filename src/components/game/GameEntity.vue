@@ -5,19 +5,27 @@ import { CELL_SIZE } from '../../game-logic/constants';
 const { entity } = defineProps<{
   entity: Entity;
 }>();
+
+const { game } = useGame();
+const { resolveSprite } = useAssets();
+const textures = computed(() =>
+  Object.values(resolveSprite(entity.blueprint.spriteId).textures)
+);
 </script>
 
 <template>
-  <graphics
-    :x="0"
-    :y="0"
-    @render="
-      g => {
-        g.clear();
-        g.beginFill('red');
-        g.drawCircle(CELL_SIZE / 2, CELL_SIZE / 2, CELL_SIZE / 2);
-        g.endFill();
-      }
-    "
-  ></graphics>
+  <container
+    :z-index="entity.position.y"
+    :x="entity.position.x * CELL_SIZE + CELL_SIZE / 2"
+    :y="entity.position.y * CELL_SIZE + CELL_SIZE / 2"
+  >
+    <animated-sprite
+      v-if="textures?.length"
+      :textures="textures"
+      :scale-x="entity.owner === game.players[0]._id ? 1 : -1"
+      :anchor="0.5"
+      playing
+      loop
+    />
+  </container>
 </template>

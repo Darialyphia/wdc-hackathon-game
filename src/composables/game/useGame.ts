@@ -13,6 +13,10 @@ import type { Entity } from '../../game-logic/entity';
 import { getActiveEntity } from '../../game-logic/utils/entity.helpers';
 import { createPathFinder } from '../../game-logic/utils/pathfinding.helpers';
 import type { AStarFinder } from 'astar-typescript';
+import type { GameMapCell } from '../../game-logic/map';
+import { createPlayerAbility } from '../../game-logic/abilities/player.ability';
+import { subject } from '@casl/ability';
+import { createSkillAbility } from '../../game-logic/abilities/skill.ability';
 
 type GameDetail = Omit<Doc<'games'>, 'creator'> & { events: Doc<'gameEvents'>[] } & {
   players: Doc<'gamePlayers'>[];
@@ -37,6 +41,10 @@ export type Game = {
   selectedEntity: Ref<Entity>;
   isMyTurn: ComputedRef<boolean>;
   pathfinder: ComputedRef<AStarFinder>;
+  move: (cell: GameMapCell) => void;
+  summon: (cell: GameMapCell) => void;
+  useSkill: (cell: GameMapCell) => void;
+  endTurn: (cell: GameMapCell) => void;
 };
 
 export const GAME_INJECTION_KEY = Symbol('game') as InjectionKey<Game>;
@@ -92,6 +100,80 @@ export const useGameProvider = (
     createPathFinder(state.value, state.value.activeEntityId)
   );
 
+  const canSummonAt = (cell: GameMapCell) => {
+    const ability = createPlayerAbility(state.value, activeEntity.value.owner);
+    return ability.can('summon_at', subject('position', cell));
+  };
+
+  const canMoveTo = (cell: GameMapCell) => {
+    const path = pathfinder.value.findPath(activeEntity.value.position, cell);
+
+    return path.length > 0 && path.length <= activeEntity.value.ap;
+  };
+
+  const canCastAt = (cell: GameMapCell) => {
+    if (!selectedSkill.value) return;
+
+    const ability = createSkillAbility(
+      state.value,
+      selectedSkill.value,
+      activeEntity.value
+    );
+    return ability.can('target', subject('cell', { x: cell.x, y: cell.y }));
+  };
+
+  const move = (cell: GameMapCell) => {
+    if (!isMyTurn.value) return;
+    if (!canMoveTo(cell)) return;
+
+    sendAction({
+      type: 'move',
+      payload: { target: cell }
+    });
+  };
+
+  const summon = (cell: GameMapCell) => {
+    if (!isMyTurn.value) return;
+    if (!canSummonAt(cell)) {
+      selectedSummon.value = null;
+    }
+    if (!selectedSummon.value) return;
+
+    sendAction({
+      type: 'summon',
+      payload: {
+        characterId: selectedSummon.value.characterId,
+        position: { x: cell.x, y: cell.y }
+      }
+    });
+    selectedSummon.value = null;
+  };
+
+  const useSkill = (cell: GameMapCell) => {
+    if (!isMyTurn.value) return;
+    if (!canCastAt(cell)) {
+      selectedSkill.value = null;
+    }
+    if (!selectedSkill.value) return;
+
+    sendAction({
+      type: 'use_skill',
+      payload: {
+        skillId: selectedSkill.value.id,
+        target: { x: cell.x, y: cell.y }
+      }
+    });
+    selectedSkill.value = null;
+  };
+
+  const endTurn = () => {
+    if (!isMyTurn.value) return;
+    sendAction({
+      type: 'end_turn',
+      payload: {}
+    });
+  };
+
   const api: Game = {
     state,
     game,
@@ -101,6 +183,10 @@ export const useGameProvider = (
     sendAction,
     activeEntity,
     selectedEntity,
+    move,
+    summon,
+    useSkill,
+    endTurn,
     selectedSummon: computed({
       get() {
         return selectedSummon.value;

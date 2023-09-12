@@ -5,6 +5,7 @@ import { meleeAttack } from '../skills/meleeAttack';
 export const necroSoldiers: SoldierData[] = [
   {
     characterId: 'skeleton',
+    spriteId: 'necroSekeleton',
     factionId: FACTIONS_IDS.NECRO,
     name: 'Skeleton',
     cost: 2,

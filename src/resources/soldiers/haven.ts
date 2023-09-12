@@ -5,6 +5,7 @@ import {} from '../factions';
 export const havenSoldiers: SoldierData[] = [
   {
     characterId: 'swordsman',
+    spriteId: 'havenSwordsman',
     factionId: FACTIONS_IDS.HAVEN,
     name: 'Swordsman',
     cost: 2,

@@ -11,4 +11,5 @@ export type EntityData = {
   attack: number;
   defense: number;
   initiative: number;
+  spriteId: string;
 };

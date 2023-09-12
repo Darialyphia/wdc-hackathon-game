@@ -1,14 +1,10 @@
 <script setup lang="ts">
-import type { Spritesheet } from 'pixi.js';
 import { CELL_SIZE } from '../../game-logic/constants';
 import { getEntityAt } from '../../game-logic/utils/entity.helpers';
 import { AdjustmentFilter } from '@pixi/filter-adjustment';
 import type { Texture } from 'pixi.js';
 import type { GameMapCell } from '../../game-logic/map';
-import type { SkillData } from '../../resources/skills';
-import { createEntityAbility } from '../../game-logic/abilities/entity.ability';
 import { subject } from '@casl/ability';
-import { createSkillAbility } from '../../game-logic/abilities/skill.ability';
 import { createPlayerAbility } from '../../game-logic/abilities/player.ability';
 
 const { cell, texture } = defineProps<{
@@ -48,9 +44,24 @@ const isHighlighted = computed(() => {
   return canMoveTo(cell);
 });
 
-const targetableFilter = new AdjustmentFilter({ gamma: 2, blue: 1.5 });
+const targetableFilter = new AdjustmentFilter({ gamma: 1.8, contrast: 1.5 });
 
 const filters = computed(() => (isHighlighted.value ? [targetableFilter] : []));
+
+const isHovering = ref(false);
+const borderStyle = computed(() =>
+  isHovering.value
+    ? {
+        color: 'black',
+        alpha: 0.5,
+        width: 2
+      }
+    : {
+        color: 'black',
+        alpha: 0.25,
+        width: 1
+      }
+);
 </script>
 
 <template>
@@ -60,20 +71,21 @@ const filters = computed(() => (isHighlighted.value ? [targetableFilter] : []));
     :y="cell.y * CELL_SIZE"
     :texture="texture"
     :filters="filters"
+    @pointerenter="isHovering = true"
+    @pointerleave="isHovering = false"
   >
     <graphics
       @render="
         g => {
-          g.lineStyle({
-            color: 'black',
-            alpha: 0.25,
-            width: 1
-          });
-          g.drawRect(0, 0, CELL_SIZE, CELL_SIZE);
+          g.clear();
+          g.lineStyle(borderStyle);
+          if (isHovering) {
+            g.drawRect(1, 1, CELL_SIZE - 2, CELL_SIZE - 2);
+          } else {
+            g.drawRect(0, 0, CELL_SIZE, CELL_SIZE);
+          }
         }
       "
-    >
-      <GameEntity v-if="entity" :entity="entity" />
-    </graphics>
+    />
   </sprite>
 </template>

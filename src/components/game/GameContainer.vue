@@ -10,44 +10,39 @@ const app = useApplication();
 
 const PADDING = 20;
 
-const spritesheet = ref<Spritesheet>();
+const { isReady } = useAssetsProvider();
 
-onMounted(async () => {
-  const [tilesets] = await Promise.all([
-    Assets.loadBundle(ASSET_BUNDLES.TILESETS)
-    // Assets.loadBundle(ASSET_BUNDLES.SPRITES),
-    // Assets.loadBundle(ASSET_BUNDLES.PREFABS)
-  ]);
-
-  spritesheet.value = tilesets.base;
-});
+const vp = ref<Viewport>();
+until(vp)
+  .not.toBe(undefined)
+  .then(() => {
+    vp.value
+      ?.drag({
+        mouseButtons: 'right'
+      })
+      .pinch()
+      .wheel()
+      .zoomPercent(1, false)
+      .moveCenter(
+        (state.value.map.width * CELL_SIZE + PADDING) / 2,
+        (state.value.map.height * CELL_SIZE + PADDING) / 2
+      );
+  });
 </script>
 
 <template>
   <viewport
-    v-if="spritesheet"
+    v-if="isReady"
+    ref="vp"
     :screen-width="app.view.width"
     :screen-height="app.view.height"
     :world-width="state.map.width * CELL_SIZE + PADDING"
     :world-height="state.map.height * CELL_SIZE + PADDING"
     :events="app.renderer.events"
     :disable-on-context-menu="true"
-    @render="
-      (viewport: Viewport) => {
-        viewport
-          .drag({
-            mouseButtons: 'right'
-          })
-          .pinch()
-          .wheel()
-          .zoomPercent(1, false)
-          .moveCenter(
-            (state.map.width * CELL_SIZE + PADDING) / 2,
-            (state.map.height * CELL_SIZE + PADDING) / 2
-          );
-      }
-    "
   >
-    <GameMap :spritesheet="spritesheet" />
+    <GameMap />
+
+    <GameEntity v-for="entity in state.entities" :key="entity.id" :entity="entity" />
   </viewport>
 </template>

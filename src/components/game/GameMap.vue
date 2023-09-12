@@ -1,12 +1,20 @@
 <script setup lang="ts">
-import type { Spritesheet } from 'pixi.js';
+import type { GameMapCell } from '../../game-logic/map';
 
-const { spritesheet } = defineProps<{
-  spritesheet: Spritesheet;
-}>();
+const { resolveTileset } = useAssets();
+const textures = computed(() => Object.values(resolveTileset('base').textures));
 
-const textures = computed(() => Object.values(spritesheet.textures));
-const { state } = useGame();
+const { state, selectedSummon, selectedSkill, summon, useSkill, move } = useGame();
+
+const onClick = (cell: GameMapCell) => {
+  if (selectedSummon.value) {
+    summon(cell);
+  } else if (selectedSkill.value) {
+    useSkill(cell);
+  } else {
+    move(cell);
+  }
+};
 </script>
 
 <template>
@@ -16,7 +24,8 @@ const { state } = useGame();
         v-for="cell in row"
         :key="`${cell.x}:${cell.y}`"
         :cell="cell"
-        :texture="textures[10]"
+        :texture="textures[32]"
+        @click="onClick(cell)"
       />
     </template>
   </container>

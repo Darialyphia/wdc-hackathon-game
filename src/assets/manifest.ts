@@ -18,14 +18,14 @@ export const assetsManifest = {
         name,
         srcs
       }))
+    },
+    {
+      name: ASSET_BUNDLES.SPRITES,
+      assets: objectEntries(assetsUrls.sprites).map(([name, srcs]) => ({
+        name,
+        srcs
+      }))
     }
-    // {
-    //   name: ASSET_BUNDLES.SPRITES,
-    //   assets: objectEntries(assetsUrls.sprites).map(([name, srcs]) => ({
-    //     name,
-    //     srcs
-    //   }))
-    // },
     // {
     //   name: ASSET_BUNDLES.PREFABS,
     //   assets: objectEntries(assetsUrls.prefabs).map(([name, srcs]) => ({

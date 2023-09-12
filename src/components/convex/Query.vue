@@ -21,6 +21,7 @@ const emit = defineEmits<{
 
 const error = ref<Nullable<string>>();
 onErrorCaptured(err => {
+  console.error(err);
   error.value = err.message;
   emit('error', err);
   return propagateError;

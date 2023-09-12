@@ -2,7 +2,8 @@ import type { GeneralData } from '.';
 import { FACTIONS_IDS } from '../enums';
 
 export const necroGeneral: GeneralData = {
-  characterId: 'necro_hero',
+  characterId: 'necro_general_01',
+  spriteId: 'necroGeneral01',
   factionId: FACTIONS_IDS.NECRO,
   name: 'Necromancer',
   initiative: 6,

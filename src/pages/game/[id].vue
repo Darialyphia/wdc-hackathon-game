@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Id } from '../../../convex/_generated/dataModel';
 import { api } from '../../api';
+import type { Action } from '../../composables/game/useGame';
 
 definePage({
   name: 'Game'
@@ -20,6 +21,16 @@ watchEffect(() => {
 
 const root = ref<HTMLElement>();
 const { width, height } = useElementBounding(root);
+
+const { mutate: sendAction } = useMutation(api.games.actOn);
+const onAction = (action: Action) => {
+  if (!game.value) return;
+
+  sendAction({
+    gameId: game.value?._id,
+    action
+  });
+};
 </script>
 
 <template>
@@ -36,6 +47,7 @@ const { width, height } = useElementBounding(root);
         :game="game"
         :width="width"
         :height="height"
+        @action="onAction($event)"
       />
 
       <div v-else-if="game?.state === 'WAITING_FOR_CREATOR_CONFIRMATION'" class="loader">
