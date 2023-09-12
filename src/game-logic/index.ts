@@ -7,17 +7,15 @@ import {
 } from './entity';
 import { createGameMap, type GameMap } from './map';
 import { tickUntilActiveEntity } from './atb';
-import { MAP_WIDTH, MAP_HEIGHT } from './constants';
+import {
+  MAP_WIDTH,
+  MAP_HEIGHT,
+  type GameLifecycleState,
+  GAME_LIFECYCLE_STATES
+} from './constants';
 import { reducer, type GameEvent } from './events/reducer';
-import type { Nullable, Values } from '../utils/types';
+import type { Nullable } from '../utils/types';
 import { getGeneralById } from '../resources/generals';
-
-export const GAME_LIFECYCLE_STATES = {
-  STARTED: 'STARTED',
-  FINISHED: 'FINISHED'
-} as const;
-
-export type GameLifecycleState = Values<typeof GAME_LIFECYCLE_STATES>;
 
 export type GameState = {
   lifecycleState: GameLifecycleState;

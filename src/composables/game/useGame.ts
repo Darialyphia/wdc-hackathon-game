@@ -201,6 +201,7 @@ export const useGameProvider = (
         return selectedSkill.value;
       },
       set(val) {
+        console.log(val);
         if (!val) return;
         selectSkill(val);
       }

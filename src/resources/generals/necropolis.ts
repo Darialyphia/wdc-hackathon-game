@@ -4,6 +4,7 @@ import { FACTIONS_IDS } from '../enums';
 export const necroGeneral: GeneralData = {
   characterId: 'necro_general_01',
   spriteId: 'necroGeneral01',
+  iconUrl: '/icons/necro_general_01.gif',
   factionId: FACTIONS_IDS.NECRO,
   name: 'Necromancer',
   initiative: 6,

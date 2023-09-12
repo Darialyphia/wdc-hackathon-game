@@ -4,6 +4,7 @@ import { FACTIONS_IDS } from '../enums';
 export const havenGeneral: GeneralData = {
   characterId: 'haven_general_01',
   spriteId: 'havenGeneral01',
+  iconUrl: '/icons/haven_general_01.gif',
   factionId: FACTIONS_IDS.HAVEN,
   name: 'Paladin',
   initiative: 6,

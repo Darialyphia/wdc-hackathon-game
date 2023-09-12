@@ -1,11 +1,11 @@
 import type { SoldierData } from '.';
 import { FACTIONS_IDS } from '../enums';
-import {} from '../factions';
 
 export const havenSoldiers: SoldierData[] = [
   {
     characterId: 'swordsman',
     spriteId: 'havenSwordsman',
+    iconUrl: '/icons/haven_swordsman.gif',
     factionId: FACTIONS_IDS.HAVEN,
     name: 'Swordsman',
     cost: 2,

@@ -15,8 +15,6 @@ const { cell, texture } = defineProps<{
 const { state, activeEntity, isMyTurn, selectedSkill, selectedSummon, pathfinder } =
   useGame();
 
-const entity = computed(() => getEntityAt(state.value, cell));
-
 const canSummonAt = (cell: GameMapCell) => {
   const ability = createPlayerAbility(state.value, activeEntity.value.owner);
   return ability.can('summon_at', subject('position', cell));

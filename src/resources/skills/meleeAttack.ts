@@ -6,11 +6,11 @@ import { entityDiedEvent } from '../../game-logic/events/entityDied.event';
 
 export const meleeAttack: SkillData = {
   id: 'melee_attack',
+  iconUrl: '/icons/melee_attack.png',
   name: 'Melee attack',
   cost: 2,
   range: 1,
   targetType: TARGET_TYPES.ENEMY,
-  icon: 'game-icons:mailed-fist',
   execute(reducer, state, caster, target) {
     const entity = getEntityAt(state, target);
     if (!entity) return [];

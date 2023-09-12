@@ -90,9 +90,12 @@ const players = computed(() =>
 <style scoped>
 .game-client-container {
   position: relative;
+
   width: v-bind(width);
   height: v-bind(height);
+
   font-family: monospace;
+  font-size: monospace;
 }
 
 .player-1 {

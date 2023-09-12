@@ -1,11 +1,11 @@
 import type { SoldierData } from '.';
 import { FACTIONS_IDS } from '../enums';
-import { meleeAttack } from '../skills/meleeAttack';
 
 export const necroSoldiers: SoldierData[] = [
   {
     characterId: 'skeleton',
-    spriteId: 'necroSekeleton',
+    spriteId: 'necroSkeleton',
+    iconUrl: '/icons/necro_skeleton.gif',
     factionId: FACTIONS_IDS.NECRO,
     name: 'Skeleton',
     cost: 2,

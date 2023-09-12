@@ -5,6 +5,7 @@ import type { SkillId } from './skills';
 export type EntityData = {
   factionId: FactionId;
   characterId: CharacterId;
+  iconUrl: string;
   name: string;
   skills: SkillId[];
   maxHp: number;
