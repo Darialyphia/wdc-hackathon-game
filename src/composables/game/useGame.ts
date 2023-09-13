@@ -18,7 +18,7 @@ import { createPlayerAbility } from '../../game-logic/abilities/player.ability';
 import { subject } from '@casl/ability';
 import { createSkillAbility } from '../../game-logic/abilities/skill.ability';
 import { endTurnEvent } from '../../game-logic/events/endTurn.event';
-import { useFXSequencer } from './useFXSequencer';
+import { useFXSequencer, type FXSequenceContext } from './useFXSequencer';
 
 export type GameDetail = Omit<Doc<'games'>, 'creator'> & {
   events: Doc<'gameEvents'>[];
@@ -57,7 +57,8 @@ export const GAME_INJECTION_KEY = Symbol('game') as InjectionKey<Game>;
 export const useGameProvider = (
   game: ComputedRef<GameDetail>,
   sendAction: ActionDispatcher,
-  me: Id<'users'>
+  me: Id<'users'>,
+  sequencer: FXSequenceContext
 ) => {
   const state = ref(
     createGameState({
@@ -79,7 +80,6 @@ export const useGameProvider = (
     })
   );
 
-  const sequencer = useFXSequencer();
   watch(
     () => game.value.events.length,
     (newLength, oldLength) => {

@@ -20,9 +20,13 @@ import {
   type SoldierSummonedEvent
 } from '../../game-logic/events/soldierSummoned.event';
 import { getEntityById } from '../../game-logic/utils/entity.helpers';
-import gsap from 'gsap';
-import type { Spritesheet } from 'pixi.js';
+import gsap, { Power2 } from 'gsap';
+import type { AnimatedSprite, Spritesheet } from 'pixi.js';
 import type { EntityId } from '../../game-logic/entity';
+import { Power1 } from 'gsap';
+import type { MaybeRefOrGetter } from '@vueuse/core';
+import { getSkillById } from '../../game-logic/utils/skill.helper';
+import { getSoldierById } from '../../resources/soldiers';
 
 export type FXSequenceStep<T extends GameEvent> = {
   event: T;
@@ -34,21 +38,47 @@ export type FXSequence = {
 };
 
 export type EntitySequenceProps = {
-  textures: Spritesheet['textures'];
-  onComplete: () => void;
+  animationState: 'idle' | 'attacking';
+  onComplete: (() => void) | undefined;
+  onFrameChange: (() => void) | undefined;
   loop: boolean;
 };
 
 export type FXSequenceContext = {
-  getSequencePropsForEntity(id: EntityId): EntitySequenceProps;
+  linkSprite(
+    id: EntityId,
+    sprite: MaybeRefOrGetter<AnimatedSprite | undefined>,
+    spritesheet: MaybeRefOrGetter<Spritesheet>
+  ): void;
   buildSequence(events: GameEvent[]): FXSequence;
 };
 
-export const useFXSequencer = () => {
+export const FX_SEQUENCER_INJECTION_KEY = Symbol(
+  'fx_sequencer'
+) as InjectionKey<FXSequenceContext>;
+
+export const useFXSequencerProvider = () => {
+  const assetsLookup = new Map<
+    EntityId,
+    {
+      sprite: MaybeRefOrGetter<AnimatedSprite | undefined>;
+      sheet: MaybeRefOrGetter<Spritesheet>;
+    }
+  >();
+
+  const linkSprite = (
+    id: EntityId,
+    sprite: MaybeRefOrGetter<AnimatedSprite | undefined>,
+    sheet: MaybeRefOrGetter<Spritesheet>
+  ) => {
+    assetsLookup.set(id, { sprite, sheet });
+  };
+
   const endTurnSequence = (event: EndTurnEvent): FXSequenceStep<EndTurnEvent> => ({
     event,
     play: () => Promise.resolve()
   });
+
   const entityMovedSequence = (
     event: EntityMovedEvent
   ): FXSequenceStep<EntityMovedEvent> => ({
@@ -56,9 +86,22 @@ export const useFXSequencer = () => {
     play: (state, event) => {
       return new Promise(resolve => {
         const entity = getEntityById(state, event.payload.sourceId)!;
+
+        const ap = entity.ap;
+        gsap.to(entity, {
+          duration: 0.3,
+          ease: Power2.easeOut,
+          delay: 0,
+          onComplete: () => {
+            // set back hp to old value because the game reducer will decrease it as well
+            entity.ap = ap;
+          },
+          ap: entity.ap - 1
+        });
+
         gsap.to(entity.position, {
-          duration: 0.5,
-          ease: 'power2.out',
+          duration: 0.3,
+          ease: Power1.easeOut,
           onComplete: resolve,
           delay: 0,
           x: event.payload.to.x,
@@ -67,27 +110,96 @@ export const useFXSequencer = () => {
       });
     }
   });
+
   const entityDiedSequence = (
     event: EntityDiedEvent
   ): FXSequenceStep<EntityDiedEvent> => ({
     event,
     play: () => Promise.resolve()
   });
+
   const dealDamageSequence = (
     event: DealDamageEvent
   ): FXSequenceStep<DealDamageEvent> => ({
     event,
-    play: () => Promise.resolve()
+    play: (state, { payload }) =>
+      new Promise(resolve => {
+        const entity = getEntityById(state, event.payload.targetId)!;
+        const hp = entity.hp;
+        gsap.to(entity, {
+          duration: 0.3,
+          ease: Power2.easeOut,
+          onComplete: () => {
+            // set back hp to old value because the game reducer will decrease it as well
+            entity.hp = hp;
+            resolve();
+          },
+          delay: 0,
+          hp: entity.hp - payload.amount
+        });
+      })
   });
+
   const soldierSummonedSequence = (
     event: SoldierSummonedEvent
   ): FXSequenceStep<SoldierSummonedEvent> => ({
     event,
-    play: () => Promise.resolve()
+    play: (state, { payload }) =>
+      new Promise(resolve => {
+        const entity = getEntityById(state, event.payload.sourceId)!;
+
+        const ap = entity.ap;
+
+        gsap.to(entity, {
+          duration: 0.3,
+          ease: Power2.easeOut,
+          delay: 0,
+          onComplete: () => {
+            // set back hp to old value because the game reducer will decrease it as well
+            entity.ap = ap;
+            resolve();
+          },
+          ap: entity.ap - getSoldierById(payload.characterId)!.cost
+        });
+      })
   });
+
   const skillUsedSequence = (event: SkillUsedEvent): FXSequenceStep<SkillUsedEvent> => ({
     event,
-    play: () => Promise.resolve()
+    play: (state, { payload }) => {
+      return new Promise(resolve => {
+        const entity = getEntityById(state, event.payload.sourceId)!;
+        const ap = entity.ap;
+        gsap.to(entity, {
+          duration: 0.3,
+          ease: Power2.easeOut,
+          delay: 0,
+          onComplete: () => {
+            // set back hp to old value because the game reducer will decrease it as well
+            entity.ap = ap;
+          },
+          ap: entity.ap - getSkillById(payload.skillId)!.cost
+        });
+
+        // play attack animation
+        const assets = assetsLookup.get(payload.sourceId);
+        if (!assets) return resolve();
+        const sheet = toValue(assets.sheet);
+        const sprite = toValue(assets.sprite);
+        if (!sprite) return resolve();
+
+        sprite.textures = createSpritesheetFrameObject('attacking', sheet);
+        sprite.gotoAndPlay(0);
+        sprite.loop = false;
+        sprite.onComplete = () => {
+          sprite.textures = createSpritesheetFrameObject('idle', sheet);
+          sprite.gotoAndPlay(0);
+          sprite.loop = true;
+          sprite.onComplete = undefined;
+          resolve();
+        };
+      });
+    }
   });
 
   const buildSequence = (events: GameEvent[]) => {
@@ -126,5 +238,8 @@ export const useFXSequencer = () => {
     };
   };
 
-  return { buildSequence };
+  provide(FX_SEQUENCER_INJECTION_KEY, { linkSprite, buildSequence });
+  return { buildSequence, linkSprite };
 };
+
+export const useFXSequencer = () => useSafeInject(FX_SEQUENCER_INJECTION_KEY);

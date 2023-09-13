@@ -2,6 +2,9 @@
 const { isLoading } = useConvexAuth();
 
 const isReady = ref(false);
+
+const foo = ref({ bar: 0 });
+
 until(isLoading)
   .not.toBe(true)
   .then(() => {

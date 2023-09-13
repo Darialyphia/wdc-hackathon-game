@@ -41,8 +41,10 @@ until(vp)
     :events="app.renderer.events"
     :disable-on-context-menu="true"
   >
-    <GameMap />
+    <container :sortable-children="true">
+      <GameMap />
 
-    <GameEntity v-for="entity in state.entities" :key="entity.id" :entity="entity" />
+      <GameEntity v-for="entity in state.entities" :key="entity.id" :entity="entity" />
+    </container>
   </viewport>
 </template>

@@ -24,10 +24,12 @@ const emit = defineEmits<{
 
 const canvas = ref<HTMLCanvasElement>();
 
+const sequencer = useFXSequencerProvider();
 const gameState = useGameProvider(
   computed(() => game),
   arg => emit('action', arg),
-  me
+  me,
+  sequencer
 );
 
 onMounted(() => {
@@ -55,6 +57,7 @@ onMounted(() => {
   const app = createApp(GameContainer);
   app.provide(appInjectKey, pixiApp);
   app.provide(GAME_INJECTION_KEY, gameState);
+  app.provide(FX_SEQUENCER_INJECTION_KEY, sequencer);
 
   app.mount(pixiApp.stage);
 });
@@ -79,7 +82,7 @@ const selectedEntity = computed(() => gameState.selectedEntity.value);
       <img :src="players[0].general?.blueprint.iconUrl" />
       <div class="player-name">{{ players[0].user.name }}</div>
 
-      <div class="flex gap-1 items-center">
+      <div class="hp">
         <div class="i-game-icons:health-normal" />
         {{ players[0].general?.hp }} / {{ players[0].general?.blueprint.maxHp }}
       </div>
@@ -162,6 +165,7 @@ const selectedEntity = computed(() => gameState.selectedEntity.value);
   border-radius: var(--radius-3);
 
   img {
+    margin-inline: auto;
     border: solid 1px var(--primary);
   }
   [class^='i'] {
@@ -182,7 +186,7 @@ const selectedEntity = computed(() => gameState.selectedEntity.value);
   backdrop-filter: blur(5px);
   border-radius: var(--radius-3);
   img {
-    margin-left: auto;
+    margin-inline: auto;
     border: solid 1px var(--primary);
   }
   [class^='i'] {
@@ -202,7 +206,7 @@ const selectedEntity = computed(() => gameState.selectedEntity.value);
   gap: var(--size-1);
   align-items: center;
 
-  font-size: var(--font-size-3);
+  font-size: var(--font-size-2);
 }
 .game-action-bar {
   position: absolute;
