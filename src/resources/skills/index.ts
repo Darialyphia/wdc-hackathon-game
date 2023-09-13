@@ -14,7 +14,7 @@ export type SkillData = {
   range: number;
   targetType: TargetType;
   iconUrl: string;
-  execute(reducer: GameReducer, state: GameState, caster: Entity, target: Point): void;
+  execute(state: GameState, caster: Entity, target: Point): void;
 };
 
 export const skills = { meleeAttack };

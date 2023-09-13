@@ -10,14 +10,13 @@ import type { SoldierData } from '../../resources/soldiers';
 import type { Nullable } from '../../utils/types';
 import type { SkillData } from '../../resources/skills';
 import type { Entity } from '../../game-logic/entity';
-import { getActiveEntity, getEntityById } from '../../game-logic/utils/entity.helpers';
+import { getActiveEntity } from '../../game-logic/utils/entity.helpers';
 import { createPathFinder } from '../../game-logic/utils/pathfinding.helpers';
 import type { AStarFinder } from 'astar-typescript';
 import type { GameMapCell } from '../../game-logic/map';
 import { createPlayerAbility } from '../../game-logic/abilities/player.ability';
 import { subject } from '@casl/ability';
 import { createSkillAbility } from '../../game-logic/abilities/skill.ability';
-import { tickUntilActiveEntity } from '../../game-logic/atb';
 import { endTurnEvent } from '../../game-logic/events/endTurn.event';
 import { useFXSequencer } from './useFXSequencer';
 
@@ -215,7 +214,6 @@ export const useGameProvider = (
       reducer(timelineState, endTurnEvent.create(timelineState.activeEntityId));
       timeline.push(getActiveEntity(timelineState));
     }
-    console.log(timeline.length);
     return timeline;
   });
 
@@ -247,7 +245,6 @@ export const useGameProvider = (
         return selectedSkill.value;
       },
       set(val) {
-        console.log(val);
         if (!val) return;
         selectSkill(val);
       }

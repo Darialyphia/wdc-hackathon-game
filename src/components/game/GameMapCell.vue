@@ -28,7 +28,13 @@ const isInCastRange = (cell: GameMapCell) => {
 };
 
 const canMoveTo = (cell: GameMapCell) => {
-  const path = pathfinder.value.findPath(activeEntity.value.position, cell);
+  const path = pathfinder.value.findPath(
+    {
+      x: Math.round(activeEntity.value.position.x),
+      y: Math.round(activeEntity.value.position.y)
+    },
+    cell
+  );
 
   return path.length > 0 && path.length <= activeEntity.value.ap;
 };

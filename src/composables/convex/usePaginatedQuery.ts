@@ -186,7 +186,6 @@ export function usePaginatedQuery<Query extends PaginatedQueryReference>(
         !lastPage.message.includes('TooManyDocumentsRead') &&
         !lastPage.message.includes('ReadsTooLarge')
       ) {
-        console.log('throwing');
         throw lastPage;
       }
       allPages.push(...lastPage.page);
@@ -230,7 +229,6 @@ export function usePaginatedQuery<Query extends PaginatedQueryReference>(
   });
 
   const loadMore = (numItems: number) => {
-    console.log(isLoadingMore.value);
     if (isLoadingMore.value) return;
 
     const { lastPage } = results.value;

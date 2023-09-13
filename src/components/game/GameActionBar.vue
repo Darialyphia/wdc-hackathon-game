@@ -28,6 +28,7 @@ const canSummon = (blueprint: SoldierData) => {
       :theme="{ size: 'size-8' }"
       class="skill"
       :data-cost="getSkillById(skill)?.cost"
+      :disabled="activeEntity.ap < getSkillById(skill)!.cost"
       @click="selectedSkill = getSkillById(skill)"
     >
       <img :src="getSkillById(skill)!.iconUrl" />
@@ -93,6 +94,11 @@ const canSummon = (blueprint: SoldierData) => {
   &:hover {
     filter: brightness(125%);
     box-shadow: 0 0 8px 2px var(--primary);
+  }
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 75%;
+    filter: grayscale(75%);
   }
 
   img {

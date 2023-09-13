@@ -192,14 +192,11 @@ export const actOn = mutation({
           characterId: gamePlayers[1].generalId,
           atbSeed: gamePlayers[1].atbSeed
         }
-      ]
-    });
-
-    gameEvents.forEach(event => {
-      reducer(state, {
+      ],
+      history: gameEvents.map(event => ({
         type: event.type as GameLogicEvent['type'],
         payload: event.payload
-      });
+      }))
     });
 
     // Execute the new action
@@ -224,6 +221,7 @@ export const actOn = mutation({
 
     // collect the new events to save to the database
     const diff = state.history.length - gameEvents.length;
+    if (diff <= 0) return;
     const newEvents = state.history.slice(-1 * diff);
 
     await Promise.all(
@@ -319,5 +317,19 @@ export const currentGame = query({
     const games = await Promise.all(gamePlayers.map(gp => db.get(gp.gameId)));
 
     return games.find(game => game?.state !== 'ENDED') ?? null;
+  }
+});
+
+export const clearAllGames = internalMutation({
+  args: {},
+  handler: async ({ db }) => {
+    const games = await db.query('games').collect();
+    const players = await db.query('gamePlayers').collect();
+    const events = await db.query('gameEvents').collect();
+    await Promise.all([
+      ...events.map(e => db.delete(e._id)),
+      ...players.map(p => db.delete(p._id)),
+      ...games.map(g => db.delete(g._id))
+    ]);
   }
 });

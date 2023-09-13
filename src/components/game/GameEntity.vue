@@ -4,6 +4,7 @@ import { CELL_SIZE } from '../../game-logic/constants';
 import { getCellAt } from '../../game-logic/utils/map.helpers';
 import { OutlineFilter } from '@pixi/filter-outline';
 import type { Texture } from 'pixi.js';
+import gsap from 'gsap';
 
 const { entity } = defineProps<{
   entity: Entity;
@@ -32,6 +33,34 @@ const textStyle = {
   fontFamily: 'monospace',
   fill: 'white'
 };
+
+const animatableValues = ref({
+  hp: entity.hp,
+  ap: entity.ap
+});
+
+watch(
+  () => entity.hp,
+  () => {
+    gsap.to(animatableValues.value, {
+      duration: 0.3,
+      ease: 'power2.out',
+      delay: 0,
+      hp: entity.hp
+    });
+  }
+);
+watch(
+  () => entity.ap,
+  () => {
+    gsap.to(animatableValues.value, {
+      duration: 0.3,
+      ease: 'power2.out',
+      delay: 0,
+      ap: entity.ap
+    });
+  }
+);
 </script>
 
 <template>
@@ -70,7 +99,7 @@ const textStyle = {
           g.beginFill(0xcc0000);
           g.drawRect(0, 0, CELL_SIZE, 3);
           g.beginFill(0x00cc00);
-          g.drawRect(0, 0, (entity.hp * CELL_SIZE) / entity.blueprint.maxHp, 3);
+          g.drawRect(0, 0, (animatableValues.hp * CELL_SIZE) / entity.blueprint.maxHp, 3);
           g.endFill();
 
           g.lineStyle({
@@ -91,7 +120,7 @@ const textStyle = {
           g.clear();
 
           g.beginFill(0x0000ff);
-          g.drawRect(0, 0, (entity.ap * CELL_SIZE) / entity.maxAp, 3);
+          g.drawRect(0, 0, (animatableValues.ap * CELL_SIZE) / entity.maxAp, 3);
           g.endFill();
 
           g.lineStyle({

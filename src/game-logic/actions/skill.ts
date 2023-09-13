@@ -45,7 +45,7 @@ export const createSkillAction = defineAction({
     }
 
     reducer(state, skillUsedEvent.create(entity.id, skill.id));
-    skill.execute(reducer, state, entity, input.target);
+    skill.execute(state, entity, input.target);
 
     if (entity.ap === 0) {
       reducer(state, endTurnEvent.create(state.activeEntityId));
