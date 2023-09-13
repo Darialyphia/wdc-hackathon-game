@@ -19,6 +19,7 @@ import { subject } from '@casl/ability';
 import { createSkillAbility } from '../../game-logic/abilities/skill.ability';
 import { tickUntilActiveEntity } from '../../game-logic/atb';
 import { endTurnEvent } from '../../game-logic/events/endTurn.event';
+import { useFXSequencer } from './useFXSequencer';
 
 export type GameDetail = Omit<Doc<'games'>, 'creator'> & {
   events: Doc<'gameEvents'>[];
@@ -37,7 +38,7 @@ export type ActionDispatcher = (arg: Action) => void;
 export type Game = {
   me: Id<'users'>;
   game: ComputedRef<GameDetail>;
-  state: ComputedRef<GameState>;
+  state: Ref<GameState>;
   sendAction: ActionDispatcher;
   activeEntity: ComputedRef<Entity>;
   selectedSummon: WritableComputedRef<Nullable<SoldierData>>;
@@ -59,7 +60,7 @@ export const useGameProvider = (
   sendAction: ActionDispatcher,
   me: Id<'users'>
 ) => {
-  const state = computed(() =>
+  const state = ref(
     createGameState({
       players: [
         {
@@ -77,6 +78,21 @@ export const useGameProvider = (
         e => ({ type: e.type, payload: e.payload }) as GameEvent
       )
     })
+  );
+
+  const sequencer = useFXSequencer();
+  watch(
+    () => game.value.events.length,
+    (newLength, oldLength) => {
+      const newEvents = game.value.events.slice(
+        -1 * (newLength - oldLength)
+      ) as GameEvent[];
+      const sequence = sequencer.buildSequence(newEvents);
+
+      sequence.play(state, event => {
+        reducer(state.value, event);
+      });
+    }
   );
 
   const activeEntity = computed(() => getActiveEntity(state.value));

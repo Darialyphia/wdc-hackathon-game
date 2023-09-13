@@ -106,6 +106,8 @@ const selectedEntity = computed(() => gameState.selectedEntity.value);
     <Transition>
       <div v-if="selectedEntity" class="selected-entity">
         <img :src="selectedEntity.blueprint.iconUrl" />
+        {{ selectedEntity.blueprint.name }}
+        <br />
         Hp: {{ selectedEntity.hp }} / {{ selectedEntity.blueprint.maxHp }}
         <br />
         Atk:

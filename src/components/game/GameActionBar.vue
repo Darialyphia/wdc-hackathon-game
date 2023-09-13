@@ -85,7 +85,7 @@ const canSummon = (blueprint: SoldierData) => {
     padding: var(--size-1);
 
     background-color: black;
-    border: solid 1px var(--primary);
+    border: solid 2px var(--primary);
     border-radius: var(--radius-round);
     outline: solid 5px black;
   }
