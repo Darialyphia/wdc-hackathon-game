@@ -22,7 +22,7 @@ until(vp)
       })
       .pinch()
       .wheel()
-      .zoomPercent(1, false)
+      // .zoomPercent(0.5, false)
       .moveCenter(
         (state.value.map.width * CELL_SIZE + PADDING) / 2,
         (state.value.map.height * CELL_SIZE + PADDING) / 2

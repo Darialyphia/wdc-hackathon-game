@@ -263,6 +263,18 @@ export const getById = query({
     const game = await db.get(gameId);
     if (!game) return null;
 
+    const players = await db
+      .query('gamePlayers')
+      .withIndex('by_game_id', q => q.eq('gameId', gameId))
+      .collect();
+
+    const playersWithUser = await Promise.all(
+      players.map(async player => {
+        const user = await db.get(player.userId);
+        return Object.assign({}, player, { user });
+      })
+    );
+
     return {
       ...game,
       creator: await db.get(game.creator),
@@ -270,10 +282,7 @@ export const getById = query({
         .query('gameEvents')
         .withIndex('by_game_id', q => q.eq('gameId', gameId))
         .collect(),
-      players: await db
-        .query('gamePlayers')
-        .withIndex('by_game_id', q => q.eq('gameId', gameId))
-        .collect()
+      players: playersWithUser
     };
   }
 });

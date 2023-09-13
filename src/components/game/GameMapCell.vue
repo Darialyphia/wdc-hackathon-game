@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { CELL_SIZE } from '../../game-logic/constants';
-import { getEntityAt } from '../../game-logic/utils/entity.helpers';
 import { AdjustmentFilter } from '@pixi/filter-adjustment';
 import type { Texture } from 'pixi.js';
 import type { GameMapCell } from '../../game-logic/map';
@@ -47,43 +46,46 @@ const targetableFilter = new AdjustmentFilter({ gamma: 1.8, contrast: 1.5 });
 const filters = computed(() => (isHighlighted.value ? [targetableFilter] : []));
 
 const isHovering = ref(false);
-const borderStyle = computed(() =>
-  isHovering.value
-    ? {
-        color: 'black',
-        alpha: 0.5,
-        width: 2
-      }
-    : {
-        color: 'black',
-        alpha: 0.25,
-        width: 1
-      }
-);
+const onPointerenter = () => {
+  isHovering.value = true;
+};
+const onPointerleave = () => {
+  isHovering.value = false;
+};
 </script>
 
 <template>
-  <sprite
-    :key="`${cell.x}:${cell.y}`"
-    :x="cell.x * CELL_SIZE"
-    :y="cell.y * CELL_SIZE"
-    :texture="texture"
-    :filters="filters"
-    @pointerenter="isHovering = true"
-    @pointerleave="isHovering = false"
-  >
+  <container @pointerenter="onPointerenter()" @pointerleave="onPointerleave()">
+    <sprite
+      :key="`${cell.x}:${cell.y}`"
+      :x="cell.x * CELL_SIZE"
+      :y="cell.y * CELL_SIZE"
+      :texture="texture"
+      :filters="filters"
+      :scale-x="1.5"
+      :scale-y="1.5"
+      @pointerenter="onPointerenter()"
+      @pointerleave="onPointerleave()"
+    />
     <graphics
+      :x="cell.x * CELL_SIZE"
+      :y="cell.y * CELL_SIZE"
       @render="
         g => {
           g.clear();
-          g.lineStyle(borderStyle);
           if (isHovering) {
-            g.drawRect(1, 1, CELL_SIZE - 2, CELL_SIZE - 2);
-          } else {
-            g.drawRect(0, 0, CELL_SIZE, CELL_SIZE);
+            g.beginFill('white', 0.15);
           }
+          g.lineStyle({
+            color: 'black',
+            alpha: 0.25,
+            width: 1
+          });
+          g.drawRect(0, 0, CELL_SIZE, CELL_SIZE);
+
+          g.endFill();
         }
       "
     />
-  </sprite>
+  </container>
 </template>

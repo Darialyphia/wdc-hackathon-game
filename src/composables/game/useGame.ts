@@ -1,7 +1,7 @@
 import type { WritableComputedRef, ComputedRef, Ref } from 'vue';
 import type { Doc, Id } from '../../../convex/_generated/dataModel';
 import { type GameState, createGameState } from '../../game-logic';
-import type { GameEvent } from '../../game-logic/events/reducer';
+import { reducer, type GameEvent } from '../../game-logic/events/reducer';
 import type { EndTurnActionInput } from '../../game-logic/actions/endTurn';
 import type { MoveActionInput } from '../../game-logic/actions/move';
 import type { SkillActionInput } from '../../game-logic/actions/skill';
@@ -10,16 +10,20 @@ import type { SoldierData } from '../../resources/soldiers';
 import type { Nullable } from '../../utils/types';
 import type { SkillData } from '../../resources/skills';
 import type { Entity } from '../../game-logic/entity';
-import { getActiveEntity } from '../../game-logic/utils/entity.helpers';
+import { getActiveEntity, getEntityById } from '../../game-logic/utils/entity.helpers';
 import { createPathFinder } from '../../game-logic/utils/pathfinding.helpers';
 import type { AStarFinder } from 'astar-typescript';
 import type { GameMapCell } from '../../game-logic/map';
 import { createPlayerAbility } from '../../game-logic/abilities/player.ability';
 import { subject } from '@casl/ability';
 import { createSkillAbility } from '../../game-logic/abilities/skill.ability';
+import { tickUntilActiveEntity } from '../../game-logic/atb';
+import { endTurnEvent } from '../../game-logic/events/endTurn.event';
 
-type GameDetail = Omit<Doc<'games'>, 'creator'> & { events: Doc<'gameEvents'>[] } & {
-  players: Doc<'gamePlayers'>[];
+export type GameDetail = Omit<Doc<'games'>, 'creator'> & {
+  events: Doc<'gameEvents'>[];
+} & {
+  players: (Doc<'gamePlayers'> & { user: Doc<'users'> })[];
 };
 
 export type Action =
@@ -38,9 +42,10 @@ export type Game = {
   activeEntity: ComputedRef<Entity>;
   selectedSummon: WritableComputedRef<Nullable<SoldierData>>;
   selectedSkill: WritableComputedRef<Nullable<SkillData>>;
-  selectedEntity: Ref<Entity>;
+  selectedEntity: Ref<Nullable<Entity>>;
   isMyTurn: ComputedRef<boolean>;
   pathfinder: ComputedRef<AStarFinder>;
+  atbTimeline: ComputedRef<Entity[]>;
   move: (cell: GameMapCell) => void;
   summon: (cell: GameMapCell) => void;
   useSkill: (cell: GameMapCell) => void;
@@ -78,11 +83,7 @@ export const useGameProvider = (
 
   const selectedSummon = ref<Nullable<SoldierData>>();
   const selectedSkill = ref<Nullable<SkillData>>();
-  const selectedEntity = ref<Entity>(getActiveEntity(state.value));
-
-  watchEffect(() => {
-    selectedEntity.value = getActiveEntity(state.value);
-  });
+  const selectedEntity = ref<Nullable<Entity>>(null);
 
   const selectSummon = (summon: SoldierData) => {
     selectedSummon.value = summon;
@@ -174,6 +175,34 @@ export const useGameProvider = (
     });
   };
 
+  const atbTimeline = computed(() => {
+    const timelineState = createGameState({
+      players: [
+        {
+          id: game.value.players[0].userId,
+          characterId: game.value.players[0].generalId,
+          atbSeed: game.value.players[0].atbSeed
+        },
+        {
+          id: game.value.players[1].userId,
+          characterId: game.value.players[1].generalId,
+          atbSeed: game.value.players[1].atbSeed
+        }
+      ],
+      history: game.value.events.map(
+        e => ({ type: e.type, payload: e.payload }) as GameEvent
+      )
+    });
+
+    const timeline = [getActiveEntity(timelineState)];
+    for (let i = 0; i < 10; i++) {
+      reducer(timelineState, endTurnEvent.create(timelineState.activeEntityId));
+      timeline.push(getActiveEntity(timelineState));
+    }
+    console.log(timeline.length);
+    return timeline;
+  });
+
   const api: Game = {
     state,
     game,
@@ -187,6 +216,7 @@ export const useGameProvider = (
     summon,
     useSkill,
     endTurn,
+    atbTimeline,
     selectedSummon: computed({
       get() {
         return selectedSummon.value;

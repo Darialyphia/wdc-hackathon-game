@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Id } from '../../../convex/_generated/dataModel';
 import { api } from '../../api';
-import type { Action } from '../../composables/game/useGame';
+import type { Action, GameDetail } from '../../composables/game/useGame';
 
 definePage({
   name: 'Game'
@@ -31,6 +31,8 @@ const onAction = (action: Action) => {
     action
   });
 };
+
+const { mutate: surrender } = useMutation(api.games.surrender);
 </script>
 
 <template>
@@ -44,10 +46,11 @@ const onAction = (action: Action) => {
       <PixiApp
         v-if="game?.state === 'ONGOING' && width && height && me"
         :me="me?._id"
-        :game="game"
+        :game="game as GameDetail"
         :width="width"
         :height="height"
         @action="onAction($event)"
+        @surrender="surrender({ gameId: game._id })"
       />
 
       <div v-else-if="game?.state === 'WAITING_FOR_CREATOR_CONFIRMATION'" class="loader">

@@ -63,6 +63,7 @@ label {
   }
 
   &.is-selected {
+    color: var(--text-on-primary);
     background-color: var(--primary);
   }
 }
