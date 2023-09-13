@@ -3,6 +3,7 @@ import type { Entity } from '../../game-logic/entity';
 import { CELL_SIZE } from '../../game-logic/constants';
 import { getCellAt } from '../../game-logic/utils/map.helpers';
 import { OutlineFilter } from '@pixi/filter-outline';
+import type { Texture } from 'pixi.js';
 
 const { entity } = defineProps<{
   entity: Entity;
@@ -45,7 +46,7 @@ const textStyle = {
   >
     <animated-sprite
       v-if="textures?.length"
-      :textures="textures"
+      :textures="textures as unknown as Texture[]"
       :filters="filters"
       :scale-x="entity.owner === game.players[0].userId ? 1 : -1"
       :anchor="0.5"
