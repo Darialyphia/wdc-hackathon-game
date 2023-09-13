@@ -252,6 +252,8 @@ const selectedEntity = computed(() => gameState.selectedEntity.value);
   gap: var(--size-2);
   align-items: center;
 
+  padding-inline: var(--size-2);
+
   background-color: hsl(0 0% 0% / 0.6);
   backdrop-filter: blur(5px);
   border-radius: var(--radius-3);

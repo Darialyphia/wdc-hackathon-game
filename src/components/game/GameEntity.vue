@@ -11,7 +11,7 @@ const { entity } = defineProps<{
 const { game, state, useSkill, selectedSkill, activeEntity, selectedEntity } = useGame();
 const { resolveSprite } = useAssets();
 const textures = computed(() =>
-  Object.values(resolveSprite(entity.blueprint.spriteId).textures)
+  createSpritesheetFrameObject('idle', resolveSprite(entity.blueprint.spriteId))
 );
 
 const onClick = () => {
