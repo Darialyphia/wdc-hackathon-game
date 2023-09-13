@@ -1,38 +1,43 @@
-import { Assets, Spritesheet } from 'pixi.js';
-import { ASSET_BUNDLES } from '../../assets/manifest';
-import type { Ref, InjectionKey } from 'vue';
+import { Assets, Spritesheet, extensions } from 'pixi.js';
+import { ASSET_BUNDLES, assetsManifest } from '../../assets/manifest';
+import type { InjectionKey } from 'vue';
 
-type AssetsContext = {
+export type AssetsContext = {
   resolveSprite(key: string): Spritesheet;
   resolveTileset(key: string): Spritesheet;
-  isReady: Ref<boolean>;
+  resolveFx(key: string): Spritesheet;
+  load: () => Promise<void>;
 };
 
 export const ASSETS_INJECTION_KEY = Symbol('assets') as InjectionKey<AssetsContext>;
 
 export const useAssetsProvider = () => {
-  const isReady = ref(false);
-
   let tilesets: Record<string, Spritesheet>;
   let sprites: Record<string, Spritesheet>;
+  let fxs: Record<string, Spritesheet>;
 
   const load = async () => {
-    [tilesets, sprites] = await Promise.all([
+    extensions.add(spriteSheetParser);
+    Assets.init({ manifest: assetsManifest });
+
+    [tilesets, sprites, fxs] = await Promise.all([
       Assets.loadBundle(ASSET_BUNDLES.TILESETS),
-      Assets.loadBundle(ASSET_BUNDLES.SPRITES)
+      Assets.loadBundle(ASSET_BUNDLES.SPRITES),
+      Assets.loadBundle(ASSET_BUNDLES.FX)
       // Assets.loadBundle(ASSET_BUNDLES.PREFABS)
     ]);
-    isReady.value = true;
   };
 
-  load();
   const api = {
-    isReady,
+    load,
     resolveSprite(key: string) {
       return sprites[key];
     },
     resolveTileset(key: string) {
       return tilesets[key];
+    },
+    resolveFx(key: string) {
+      return fxs[key];
     }
   };
 

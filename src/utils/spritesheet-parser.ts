@@ -45,7 +45,10 @@ const asepriteJsonSchema = z.object({
 type AsepriteJson = z.infer<typeof asepriteJsonSchema>;
 
 const tilesetUrls = Object.values(assetsUrls.tilesets);
-const spriteUrls: string[] = [...Object.values(assetsUrls.sprites)];
+const spriteUrls: string[] = [
+  ...Object.values(assetsUrls.sprites),
+  ...Object.values(assetsUrls.fxs)
+];
 const isTileset = (url: string) => !!tilesetUrls.find(path => url.includes(path));
 const isSprite = (url: string) => !!spriteUrls.find(path => url.includes(path));
 

@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import '../../utils/pixi-custom-elements';
-import type { Doc, Id } from '../../../convex/_generated/dataModel';
+import type { Id } from '../../../convex/_generated/dataModel';
 import type { Action, GameDetail } from '../../composables/game/useGame';
-import { Application, Assets, BaseTexture, SCALE_MODES, extensions } from 'pixi.js';
+import { Application, BaseTexture, SCALE_MODES } from 'pixi.js';
 import { appInjectKey, createApp } from 'vue3-pixi';
-import { assetsManifest } from '../../assets/manifest';
 import { WRAP_MODES } from 'pixi.js';
 
 import GameContainer from './GameContainer.vue';
@@ -24,7 +23,8 @@ const emit = defineEmits<{
 
 const canvas = ref<HTMLCanvasElement>();
 
-const sequencer = useFXSequencerProvider();
+const assets = useAssetsProvider();
+const sequencer = useFXSequencerProvider(assets);
 const gameState = useGameProvider(
   computed(() => game),
   arg => emit('action', arg),
@@ -51,15 +51,15 @@ onMounted(() => {
 
   BaseTexture.defaultOptions.wrapMode = WRAP_MODES.CLAMP;
   BaseTexture.defaultOptions.scaleMode = SCALE_MODES.NEAREST;
-  extensions.add(spriteSheetParser);
-  Assets.init({ manifest: assetsManifest });
 
   const app = createApp(GameContainer);
   app.provide(appInjectKey, pixiApp);
   app.provide(GAME_INJECTION_KEY, gameState);
   app.provide(FX_SEQUENCER_INJECTION_KEY, sequencer);
-
-  app.mount(pixiApp.stage);
+  app.provide(ASSETS_INJECTION_KEY, assets);
+  assets.load().then(() => {
+    app.mount(pixiApp.stage);
+  });
 });
 
 const players = computed(() =>

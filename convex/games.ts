@@ -233,6 +233,12 @@ export const actOn = mutation({
         })
       )
     );
+
+    if (state.lifecycleState === 'FINISHED') {
+      await db.patch(game._id, {
+        state: GAME_STATES.ENDED
+      });
+    }
   }
 });
 

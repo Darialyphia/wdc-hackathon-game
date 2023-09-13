@@ -21,12 +21,14 @@ import {
 } from '../../game-logic/events/soldierSummoned.event';
 import { getEntityById } from '../../game-logic/utils/entity.helpers';
 import gsap, { Power2 } from 'gsap';
-import type { AnimatedSprite, Spritesheet } from 'pixi.js';
+import { Container, AnimatedSprite } from 'pixi.js';
 import type { EntityId } from '../../game-logic/entity';
 import { Power1 } from 'gsap';
 import type { MaybeRefOrGetter } from '@vueuse/core';
 import { getSkillById } from '../../game-logic/utils/skill.helper';
 import { getSoldierById } from '../../resources/soldiers';
+import type { AssetsContext } from './useAssets';
+import { CELL_SIZE } from '../../game-logic/constants';
 
 export type FXSequenceStep<T extends GameEvent> = {
   event: T;
@@ -37,41 +39,30 @@ export type FXSequence = {
   play(state: Ref<GameState>, onStepComplete: (event: GameEvent) => void): Promise<void>;
 };
 
-export type EntitySequenceProps = {
-  animationState: 'idle' | 'attacking';
-  onComplete: (() => void) | undefined;
-  onFrameChange: (() => void) | undefined;
-  loop: boolean;
-};
-
 export type FXSequenceContext = {
-  linkSprite(
-    id: EntityId,
-    sprite: MaybeRefOrGetter<AnimatedSprite | undefined>,
-    spritesheet: MaybeRefOrGetter<Spritesheet>
-  ): void;
+  linkSprite(id: EntityId, sprite: MaybeRefOrGetter<AnimatedSprite | undefined>): void;
   buildSequence(events: GameEvent[]): FXSequence;
+  fxContainer: Container;
 };
 
 export const FX_SEQUENCER_INJECTION_KEY = Symbol(
   'fx_sequencer'
 ) as InjectionKey<FXSequenceContext>;
 
-export const useFXSequencerProvider = () => {
+export const useFXSequencerProvider = (assetsCtx: AssetsContext) => {
+  const fxContainer = new Container();
   const assetsLookup = new Map<
     EntityId,
     {
       sprite: MaybeRefOrGetter<AnimatedSprite | undefined>;
-      sheet: MaybeRefOrGetter<Spritesheet>;
     }
   >();
 
   const linkSprite = (
     id: EntityId,
-    sprite: MaybeRefOrGetter<AnimatedSprite | undefined>,
-    sheet: MaybeRefOrGetter<Spritesheet>
+    sprite: MaybeRefOrGetter<AnimatedSprite | undefined>
   ) => {
-    assetsLookup.set(id, { sprite, sheet });
+    assetsLookup.set(id, { sprite });
   };
 
   const endTurnSequence = (event: EndTurnEvent): FXSequenceStep<EndTurnEvent> => ({
@@ -149,7 +140,6 @@ export const useFXSequencerProvider = () => {
         const entity = getEntityById(state, event.payload.sourceId)!;
 
         const ap = entity.ap;
-
         gsap.to(entity, {
           duration: 0.3,
           ease: Power2.easeOut,
@@ -157,10 +147,32 @@ export const useFXSequencerProvider = () => {
           onComplete: () => {
             // set back hp to old value because the game reducer will decrease it as well
             entity.ap = ap;
-            resolve();
           },
           ap: entity.ap - getSoldierById(payload.characterId)!.cost
         });
+
+        const sheet = assetsCtx.resolveFx('summoningCircle');
+        const summonCircle = new AnimatedSprite(
+          createSpritesheetFrameObject('idle', sheet)
+        );
+        summonCircle.position.set(
+          payload.position.x * CELL_SIZE + CELL_SIZE / 2,
+          payload.position.y * CELL_SIZE + CELL_SIZE / 2
+        );
+        summonCircle.loop = false;
+        summonCircle.onFrameChange = frame => {
+          if (frame > summonCircle.totalFrames / 2) {
+            resolve();
+            summonCircle.onFrameChange = undefined;
+          }
+        };
+        summonCircle.onComplete = () => {
+          summonCircle.destroy();
+        };
+        summonCircle.anchor.set(0.5);
+
+        fxContainer.addChild(summonCircle);
+        summonCircle.play();
       })
   });
 
@@ -169,6 +181,7 @@ export const useFXSequencerProvider = () => {
     play: (state, { payload }) => {
       return new Promise(resolve => {
         const entity = getEntityById(state, event.payload.sourceId)!;
+
         const ap = entity.ap;
         gsap.to(entity, {
           duration: 0.3,
@@ -184,7 +197,7 @@ export const useFXSequencerProvider = () => {
         // play attack animation
         const assets = assetsLookup.get(payload.sourceId);
         if (!assets) return resolve();
-        const sheet = toValue(assets.sheet);
+        const sheet = assetsCtx.resolveSprite(entity.blueprint.spriteId);
         const sprite = toValue(assets.sprite);
         if (!sprite) return resolve();
 
@@ -238,8 +251,8 @@ export const useFXSequencerProvider = () => {
     };
   };
 
-  provide(FX_SEQUENCER_INJECTION_KEY, { linkSprite, buildSequence });
-  return { buildSequence, linkSprite };
+  provide(FX_SEQUENCER_INJECTION_KEY, { linkSprite, buildSequence, fxContainer });
+  return { buildSequence, linkSprite, fxContainer };
 };
 
 export const useFXSequencer = () => useSafeInject(FX_SEQUENCER_INJECTION_KEY);

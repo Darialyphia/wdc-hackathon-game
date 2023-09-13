@@ -2,21 +2,19 @@
 import { Viewport } from 'pixi-viewport';
 import { useApplication } from 'vue3-pixi';
 import { CELL_SIZE } from '../../game-logic/constants';
-import { Assets, Spritesheet } from 'pixi.js';
-import { ASSET_BUNDLES } from '../../assets/manifest';
 
 const { state } = useGame();
 const app = useApplication();
 
 const PADDING = 20;
 
-const { isReady } = useAssetsProvider();
+const { fxContainer } = useFXSequencer();
+const viewport = ref<Viewport>();
 
-const vp = ref<Viewport>();
-until(vp)
+until(viewport)
   .not.toBe(undefined)
   .then(() => {
-    vp.value
+    viewport.value
       ?.drag({
         mouseButtons: 'right'
       })
@@ -32,19 +30,22 @@ until(vp)
 
 <template>
   <viewport
-    v-if="isReady"
-    ref="vp"
+    ref="viewport"
     :screen-width="app.view.width"
     :screen-height="app.view.height"
     :world-width="state.map.width * CELL_SIZE + PADDING"
     :world-height="state.map.height * CELL_SIZE + PADDING"
     :events="app.renderer.events"
     :disable-on-context-menu="true"
+    @render="
+      (viewport: Viewport) => {
+        viewport.addChild(fxContainer);
+        viewport.sortableChildren = true;
+      }
+    "
   >
-    <container :sortable-children="true">
-      <GameMap />
+    <GameMap />
 
-      <GameEntity v-for="entity in state.entities" :key="entity.id" :entity="entity" />
-    </container>
+    <GameEntity v-for="entity in state.entities" :key="entity.id" :entity="entity" />
   </viewport>
 </template>

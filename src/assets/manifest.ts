@@ -5,7 +5,8 @@ import type { Values } from '../utils/types';
 export const ASSET_BUNDLES = {
   TILESETS: 'tilesets',
   SPRITES: 'sprites',
-  PREFABS: 'prefabs'
+  PREFABS: 'prefabs',
+  FX: 'fx'
 } as const;
 
 export type AssetBundle = Values<typeof ASSET_BUNDLES>;
@@ -22,6 +23,13 @@ export const assetsManifest = {
     {
       name: ASSET_BUNDLES.SPRITES,
       assets: objectEntries(assetsUrls.sprites).map(([name, srcs]) => ({
+        name,
+        srcs
+      }))
+    },
+    {
+      name: ASSET_BUNDLES.FX,
+      assets: objectEntries(assetsUrls.fxs).map(([name, srcs]) => ({
         name,
         srcs
       }))

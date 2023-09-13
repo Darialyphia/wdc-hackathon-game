@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { PTransition } from 'vue3-pixi';
+
 import type { Entity } from '../../game-logic/entity';
 import { CELL_SIZE } from '../../game-logic/constants';
 import { getCellAt } from '../../game-logic/utils/map.helpers';
@@ -6,7 +8,13 @@ import { OutlineFilter } from '@pixi/filter-outline';
 import { ColorOverlayFilter } from '@pixi/filter-color-overlay';
 import type { Texture } from 'pixi.js';
 import gsap from 'gsap';
+import PixiPlugin from 'gsap/PixiPlugin';
 import type { AnimatedSprite } from 'pixi.js';
+import * as PIXI from 'pixi.js';
+import { Power2 } from 'gsap';
+
+gsap.registerPlugin(PixiPlugin);
+PixiPlugin.registerPIXI(PIXI);
 
 const { entity } = defineProps<{
   entity: Entity;
@@ -29,7 +37,7 @@ const textures = computed(() =>
 
 const sprite = ref<AnimatedSprite>();
 
-linkSprite(entity.id, sprite, () => resolveSprite(entity.blueprint.spriteId));
+linkSprite(entity.id, sprite);
 
 const outlineFilter = new OutlineFilter(2, 0xffffff, 0.2, 0.5);
 const filters = computed(() =>
@@ -42,6 +50,36 @@ const textStyle = {
   fontSize: 22,
   fontFamily: 'monospace',
   fill: 'white'
+};
+
+const onBeforeEnter = (el: AnimatedSprite) => {
+  nextTick(() => {
+    console.log('on before enter');
+    gsap.set(el, {
+      pixi: {
+        alpha: 0,
+        scaleX: entity.owner === game.value.players[0].userId ? 0.5 : -0.5,
+        scaleY: 0.5,
+        y: CELL_SIZE / 2
+      }
+    });
+  });
+};
+
+const onEnter = (el: AnimatedSprite, done: () => void) => {
+  console.log('on enter');
+  gsap.to(el, {
+    duration: 0.5,
+    ease: Power2.easeOut,
+    onComplete: done,
+    delay: 0,
+    pixi: {
+      alpha: 1,
+      scaleX: entity.owner === game.value.players[0].userId ? 1 : -1,
+      scaleY: 1,
+      y: 0
+    }
+  });
 };
 </script>
 
@@ -56,17 +94,19 @@ const textStyle = {
     @pointerleave="selectedEntity = null"
     @click="onClick"
   >
-    <animated-sprite
-      v-if="textures?.length"
-      ref="sprite"
-      :z-index="2"
-      :textures="textures as unknown as Texture[]"
-      :filters="filters"
-      :scale-x="entity.owner === game.players[0].userId ? 1 : -1"
-      :anchor="0.5"
-      loop
-      playing
-    />
+    <PTransition appear @before-enter="onBeforeEnter" @enter="onEnter">
+      <animated-sprite
+        v-if="textures?.length"
+        ref="sprite"
+        :z-index="2"
+        :textures="textures as unknown as Texture[]"
+        :filters="filters"
+        :scale-x="entity.owner === game.players[0].userId ? 1 : -1"
+        :anchor="0.5"
+        loop
+        playing
+      />
+    </PTransition>
     <animated-sprite
       v-if="textures?.length"
       :z-index="1"
