@@ -80,6 +80,15 @@ const hoverFilter = new ColorGradientFilter({
 });
 
 const filters = computed(() => {
+  if (
+    x < state.value.map.width ||
+    x > state.value.map.width ||
+    y < state.value.map.height ||
+    y > state.value.map.height
+  ) {
+    return [];
+  }
+
   const _filters = [];
   if (isHighlighted.value) _filters.push(targetableFilter);
   if (hoveredCell.value === cell.value) _filters.push(hoverFilter);

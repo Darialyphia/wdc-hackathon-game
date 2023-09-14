@@ -17,6 +17,12 @@ export default defineSchema({
     history: v.optional(v.string())
   }).index('by_creator', ['creator']),
 
+  gameMessages: defineTable({
+    gameId: v.id('games'),
+    userId: v.id('users'),
+    text: v.string()
+  }).index('by_game_id', ['gameId']),
+
   gamePlayers: defineTable({
     userId: v.id('users'),
     generalId: v.string(),
@@ -24,11 +30,5 @@ export default defineSchema({
     atbSeed: v.number()
   })
     .index('by_user_id', ['userId'])
-    .index('by_game_id', ['gameId']),
-
-  gameEvents: defineTable({
-    gameId: v.id('games'),
-    type: v.string(),
-    payload: v.any()
-  }).index('by_game_id', ['gameId'])
+    .index('by_game_id', ['gameId'])
 });

@@ -326,14 +326,58 @@ export const currentGame = query({
   }
 });
 
+export const getGameMessages = query({
+  args: {
+    gameId: v.id('games')
+  },
+  handler: async ({ db }, { gameId }) => {
+    const game = await db.get(gameId);
+    if (!game) return null;
+
+    const players = await db
+      .query('gamePlayers')
+      .withIndex('by_game_id', q => q.eq('gameId', gameId))
+      .collect();
+
+    const users = await Promise.all(
+      players.map(async player => {
+        return db.get(player.userId);
+      })
+    );
+
+    const messages = await db
+      .query('gameMessages')
+      .withIndex('by_game_id', q => q.eq('gameId', gameId))
+      .collect();
+
+    return messages.map(m => ({
+      ...m,
+      user: users.find(u => u?._id === m.userId)!
+    }));
+  }
+});
+
+export const postMessageToGame = mutation({
+  args: {
+    gameId: v.id('games'),
+    text: v.string()
+  },
+  handler: async ({ db, auth }, { gameId, text }) => {
+    const identity = await auth.getUserIdentity();
+    if (!identity) return null;
+    const me = await findMe({ auth, db });
+    if (!me) return null;
+
+    return db.insert('gameMessages', { gameId, text, userId: me._id });
+  }
+});
+
 export const clearAllGames = internalMutation({
   args: {},
   handler: async ({ db }) => {
     const games = await db.query('games').collect();
     const players = await db.query('gamePlayers').collect();
-    const events = await db.query('gameEvents').collect();
     await Promise.all([
-      ...events.map(e => db.delete(e._id)),
       ...players.map(p => db.delete(p._id)),
       ...games.map(g => db.delete(g._id))
     ]);

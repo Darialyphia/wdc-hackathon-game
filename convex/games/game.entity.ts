@@ -3,7 +3,6 @@ import type { Doc } from '../_generated/dataModel';
 
 export type Game = Doc<'games'>;
 export type GamePlayer = Doc<'gamePlayers'>;
-export type GameEvent = Doc<'gameEvents'>;
 
 export const GAME_STATES = {
   WAITING_FOR_OPPONENT: 'WAITING_FOR_OPPONENT',

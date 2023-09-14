@@ -9,6 +9,7 @@ import { WRAP_MODES } from 'pixi.js';
 import GameContainer from './GameContainer.vue';
 import { getSkillById } from '../../game-logic/utils/skill.helper';
 import type { Point } from 'pixi.js';
+import { api } from '../../api';
 
 const { game, width, height, me } = defineProps<{
   game: GameDetail;
@@ -79,6 +80,15 @@ const resetTargetMode = () => {
     gameState.targetMode.value = null;
   });
 };
+
+const { mutate: postMessage, isLoading: isPosting } = useMutation(
+  api.games.postMessageToGame
+);
+const text = ref('');
+const onSubmit = async () => {
+  await postMessage({ gameId: game._id, text: text.value });
+  text.value = '';
+};
 </script>
 
 <template>
@@ -138,6 +148,28 @@ const resetTargetMode = () => {
 
     <GameActionBar class="game-action-bar" />
 
+    <div class="chat">
+      <Query
+        v-slot="{ data: messages }"
+        :query="api => api.games.getGameMessages"
+        :args="{ gameId: game._id }"
+      >
+        <ul>
+          <li v-for="message in messages" :key="message._id">
+            <span>{{ message.user.name }}</span>
+            : {{ message.text }}
+          </li>
+        </ul>
+      </Query>
+
+      <form @submit.prevent="onSubmit">
+        <UiTextInput
+          id="game-message-input"
+          v-model="text"
+          placeholder="Send a message"
+        />
+      </form>
+    </div>
     <UiIconButton
       icon="ic:sharp-emoji-flags"
       :theme="{ size: 'font-size-5' }"
@@ -150,6 +182,8 @@ const resetTargetMode = () => {
 
 <style scoped>
 .game-client-container {
+  --link: var(--primary);
+
   position: relative;
 
   width: v-bind(width);
@@ -279,6 +313,41 @@ const resetTargetMode = () => {
     &:first-of-type {
       width: 64px;
     }
+  }
+}
+
+.chat {
+  position: absolute;
+  top: var(--size-15);
+  right: var(--size-3);
+
+  display: grid;
+  grid-template-rows: 1fr auto;
+
+  width: var(--size-14);
+  height: var(--size-14);
+  padding: var(--size-4);
+
+  color: var(--gray-0);
+
+  background-color: hsl(0 0% 0% / 0.5);
+  backdrop-filter: blur(5px);
+  border-radius: var(--radius-2);
+
+  ul {
+    overflow-y: auto;
+    li + li {
+      margin-block-start: var(--size-2);
+    }
+
+    li > span {
+      font-weight: var(--font-weight-6);
+      color: var(--primary);
+    }
+  }
+
+  form {
+    color: var(--text-1);
   }
 }
 </style>
