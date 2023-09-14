@@ -186,6 +186,7 @@ const selectedEntity = computed(() => gameState.selectedEntity.value);
   backdrop-filter: blur(5px);
   border-radius: var(--radius-3);
   img {
+    transform: scaleX(-1);
     margin-inline: auto;
     border: solid 1px var(--primary);
   }

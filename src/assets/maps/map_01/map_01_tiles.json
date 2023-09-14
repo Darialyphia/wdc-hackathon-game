@@ -1,0 +1,14 @@
+{ "columns":9,
+ "image":"..\/..\/tilesets\/map_01\/map_01.png",
+ "imageheight":432,
+ "imagewidth":432,
+ "margin":0,
+ "name":"map_01",
+ "spacing":0,
+ "tilecount":81,
+ "tiledversion":"1.9.2",
+ "tileheight":48,
+ "tilewidth":48,
+ "type":"tileset",
+ "version":"1.9"
+}

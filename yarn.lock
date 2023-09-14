@@ -2361,6 +2361,13 @@
   dependencies:
     vue-demi ">=0.14.5"
 
+"@workadventure/tiled-map-type-guard@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@workadventure/tiled-map-type-guard/-/tiled-map-type-guard-2.1.1.tgz#63b47f478b8778452980508111a05de2a217f705"
+  integrity sha512-KAHDdTChcvF6184aFH49q06n7ZdLUis2LsjkquHcfBjy81dup+KiM+CE0DEXBzpUKUrZi4OT6oOQyLjppT9szA==
+  dependencies:
+    zod "^3.17.3"
+
 "@zag-js/accordion@0.17.0":
   version "0.17.0"
   resolved "https://registry.yarnpkg.com/@zag-js/accordion/-/accordion-0.17.0.tgz#e1ebe421a80d45800dda8de4e52efd6e50ca0015"
@@ -7015,7 +7022,7 @@ zipson@^0.2.12:
   resolved "https://registry.yarnpkg.com/zipson/-/zipson-0.2.12.tgz#501f92e93f1c602ff908ad2c1c602e72746ecebb"
   integrity sha512-+u+fyZQXJUJDTf4NGCChW+LoWGqCrhwHAfvtCtcmE0e40KmQt4YSP4l3TOay1WjRNv+VfODgBD/vNwaSSGnDwA==
 
-zod@^3.22.2:
+zod@^3.17.3, zod@^3.22.2:
   version "3.22.2"
   resolved "https://registry.yarnpkg.com/zod/-/zod-3.22.2.tgz#3add8c682b7077c05ac6f979fea6998b573e157b"
   integrity sha512-wvWkphh5WQsJbVk1tbx1l1Ly4yg+XecD+Mq280uBGt9wa5BKSWf4Mhp6GmrkPixhMxmabYY7RbzlwVP32pbGCg==

@@ -1,5 +1,5 @@
-import base from './base/base.json?url';
+import map_01 from './map_01/map_01.json?url';
 
 export const tilesetUrls = {
-  base
+  map_01
 };

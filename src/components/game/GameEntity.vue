@@ -54,7 +54,6 @@ const textStyle = {
 
 const onBeforeEnter = (el: AnimatedSprite) => {
   nextTick(() => {
-    console.log('on before enter');
     gsap.set(el, {
       pixi: {
         alpha: 0,
@@ -67,7 +66,6 @@ const onBeforeEnter = (el: AnimatedSprite) => {
 };
 
 const onEnter = (el: AnimatedSprite, done: () => void) => {
-  console.log('on enter');
   gsap.to(el, {
     duration: 0.5,
     ease: Power2.easeOut,

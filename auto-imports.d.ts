@@ -43,6 +43,7 @@ declare global {
   const createSharedComposable: typeof import('@vueuse/core')['createSharedComposable']
   const createSpritesheetFrameObject: typeof import('./src/utils/spritesheet-parser')['createSpritesheetFrameObject']
   const createTemplatePromise: typeof import('@vueuse/core')['createTemplatePromise']
+  const createTiledMap: typeof import('./src/utils/tiled')['createTiledMap']
   const createUnrefFn: typeof import('@vueuse/core')['createUnrefFn']
   const customRef: typeof import('vue')['customRef']
   const debouncedRef: typeof import('@vueuse/core')['debouncedRef']

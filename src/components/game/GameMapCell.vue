@@ -2,49 +2,57 @@
 import { CELL_SIZE } from '../../game-logic/constants';
 import { AdjustmentFilter } from '@pixi/filter-adjustment';
 import type { Texture } from 'pixi.js';
-import type { GameMapCell } from '../../game-logic/map';
 import { subject } from '@casl/ability';
 import { createPlayerAbility } from '../../game-logic/abilities/player.ability';
+import { getCellAt } from '../../game-logic/utils/map.helpers';
 
-const { cell, texture } = defineProps<{
+const { x, y, texture } = defineProps<{
   texture: Texture;
-  cell: GameMapCell;
+  x: number;
+  y: number;
 }>();
 
 const { state, activeEntity, isMyTurn, selectedSkill, selectedSummon, pathfinder } =
   useGame();
 
-const canSummonAt = (cell: GameMapCell) => {
+const cell = computed(() => getCellAt(state.value, { x, y }));
+const canSummonAt = computed(() => {
+  if (!cell.value) return;
+
   const ability = createPlayerAbility(state.value, activeEntity.value.owner);
-  return ability.can('summon_at', subject('position', cell));
-};
+  return ability.can('summon_at', subject('position', cell.value));
+});
 
-const isInCastRange = (cell: GameMapCell) => {
+const isInCastRange = computed(() => {
   if (!selectedSkill.value) return;
-  return (
-    Math.abs(cell.x - activeEntity.value.position.x) <= selectedSkill.value.range &&
-    Math.abs(cell.y - activeEntity.value.position.y) <= selectedSkill.value.range
-  );
-};
+  if (!cell.value) return;
 
-const canMoveTo = (cell: GameMapCell) => {
+  return (
+    Math.abs(cell.value.x - activeEntity.value.position.x) <= selectedSkill.value.range &&
+    Math.abs(cell.value.y - activeEntity.value.position.y) <= selectedSkill.value.range
+  );
+});
+
+const canMoveTo = computed(() => {
+  if (!cell.value) return;
+
   const path = pathfinder.value.findPath(
     {
       x: Math.round(activeEntity.value.position.x),
       y: Math.round(activeEntity.value.position.y)
     },
-    cell
+    cell.value
   );
 
   return path.length > 0 && path.length <= activeEntity.value.ap;
-};
+});
 
 const isHighlighted = computed(() => {
   if (!isMyTurn.value) return;
-  if (selectedSummon.value) return canSummonAt(cell);
-  if (selectedSkill.value) return isInCastRange(cell);
+  if (selectedSummon.value) return canSummonAt.value;
+  if (selectedSkill.value) return isInCastRange.value;
 
-  return canMoveTo(cell);
+  return canMoveTo.value;
 });
 
 const targetableFilter = new AdjustmentFilter({ gamma: 1.8, contrast: 1.5 });
@@ -63,19 +71,17 @@ const onPointerleave = () => {
 <template>
   <container @pointerenter="onPointerenter()" @pointerleave="onPointerleave()">
     <sprite
-      :key="`${cell.x}:${cell.y}`"
-      :x="cell.x * CELL_SIZE"
-      :y="cell.y * CELL_SIZE"
+      :key="`${x}:${y}`"
+      :x="x * CELL_SIZE"
+      :y="y * CELL_SIZE"
       :texture="texture"
       :filters="filters"
-      :scale-x="1.5"
-      :scale-y="1.5"
       @pointerenter="onPointerenter()"
       @pointerleave="onPointerleave()"
     />
-    <graphics
-      :x="cell.x * CELL_SIZE"
-      :y="cell.y * CELL_SIZE"
+    <!-- <graphics
+      :x="x * CELL_SIZE"
+      :y="y * CELL_SIZE"
       @render="
         g => {
           g.clear();
@@ -92,6 +98,6 @@ const onPointerleave = () => {
           g.endFill();
         }
       "
-    />
+    /> -->
   </container>
 </template>
