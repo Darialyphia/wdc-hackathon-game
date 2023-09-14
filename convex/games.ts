@@ -3,17 +3,18 @@ import { v } from 'convex/values';
 import { findMe } from './users/user.utils';
 import { createUserability } from './users/user.ability';
 import { ensureAuthorized } from './utils/ability';
-import { GAME_STATES, GameAction } from './games/game.entity';
+import { GAME_STATES, type GameAction } from './games/game.entity';
 import { subject } from '@casl/ability';
 import { internal } from './_generated/api';
 import { JOIN_CONFIRMATION_TIMEOUT } from './games/game.utils';
 import { createGameState } from '../src/game-logic/index';
-import { reducer, GameEvent as GameLogicEvent } from '../src/game-logic/events/reducer';
+import type { GameEvent as GameLogicEvent } from '../src/game-logic/events/reducer';
 import { createMoveAction } from '../src/game-logic/actions/move';
 import { createSummonAction } from '../src/game-logic/actions/summon';
 import { createSkillAction } from '../src/game-logic/actions/skill';
 import { createEndTurnAction } from '../src/game-logic/actions/endTurn';
 import { exhaustiveSwitch } from '../src/utils/assertions';
+import { stringify, parse } from 'zipson';
 
 // Create a new task with the given text
 export const create = mutation({
@@ -174,10 +175,8 @@ export const actOn = mutation({
       .query('gamePlayers')
       .withIndex('by_game_id', q => q.eq('gameId', gameId))
       .collect();
-    const gameEvents = await db
-      .query('gameEvents')
-      .withIndex('by_game_id', q => q.eq('gameId', gameId))
-      .collect();
+
+    const gameEvents: GameLogicEvent[] = game.history ? parse(game.history) : [];
 
     // replay game event to get to current state
     const state = createGameState({
@@ -193,10 +192,7 @@ export const actOn = mutation({
           atbSeed: gamePlayers[1].atbSeed
         }
       ],
-      history: gameEvents.map(event => ({
-        type: event.type as GameLogicEvent['type'],
-        payload: event.payload
-      }))
+      history: gameEvents
     });
 
     // Execute the new action
@@ -220,19 +216,23 @@ export const actOn = mutation({
     }
 
     // collect the new events to save to the database
-    const diff = state.history.length - gameEvents.length;
-    if (diff <= 0) return;
-    const newEvents = state.history.slice(-1 * diff);
+    await db.patch(game._id, {
+      history: stringify(state.history)
+    });
 
-    await Promise.all(
-      newEvents.map(event =>
-        db.insert('gameEvents', {
-          gameId,
-          type: event.type,
-          payload: event.payload
-        })
-      )
-    );
+    // const diff = state.history.length - gameEvents.length;
+    // if (diff <= 0) return;
+    // const newEvents = state.history.slice(-1 * diff);
+
+    // await Promise.all(
+    //   newEvents.map(event =>
+    //     db.insert('gameEvents', {
+    //       gameId,
+    //       type: event.type,
+    //       payload: event.payload
+    //     })
+    //   )
+    // );
 
     if (state.lifecycleState === 'FINISHED') {
       await db.patch(game._id, {
@@ -282,10 +282,10 @@ export const getById = query({
     return {
       ...game,
       creator: await db.get(game.creator),
-      events: await db
-        .query('gameEvents')
-        .withIndex('by_game_id', q => q.eq('gameId', gameId))
-        .collect(),
+      // events: await db
+      //   .query('gameEvents')
+      //   .withIndex('by_game_id', q => q.eq('gameId', gameId))
+      //   .collect(),
       players: playersWithUser
     };
   }

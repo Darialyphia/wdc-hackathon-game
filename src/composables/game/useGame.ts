@@ -18,11 +18,10 @@ import { createPlayerAbility } from '../../game-logic/abilities/player.ability';
 import { subject } from '@casl/ability';
 import { createSkillAbility } from '../../game-logic/abilities/skill.ability';
 import { endTurnEvent } from '../../game-logic/events/endTurn.event';
-import { useFXSequencer, type FXSequenceContext } from './useFXSequencer';
+import { type FXSequenceContext } from './useFXSequencer';
+import { parse } from 'zipson';
 
 export type GameDetail = Omit<Doc<'games'>, 'creator'> & {
-  events: Doc<'gameEvents'>[];
-} & {
   players: (Doc<'gamePlayers'> & { user: Doc<'users'> })[];
 };
 
@@ -60,6 +59,10 @@ export const useGameProvider = (
   me: Id<'users'>,
   sequencer: FXSequenceContext
 ) => {
+  const gameEvents = computed<GameEvent[]>(() =>
+    game.value.history ? parse(game.value.history) : []
+  );
+
   const state = ref(
     createGameState({
       players: [
@@ -74,16 +77,17 @@ export const useGameProvider = (
           atbSeed: game.value.players[1].atbSeed
         }
       ],
-      history: game.value.events.map(
-        e => ({ type: e.type, payload: e.payload }) as GameEvent
-      )
+      history: gameEvents.value
+      // game.value.events.map(
+      //   e => ({ type: e.type, payload: e.payload }) as GameEvent
+      // )
     })
   );
 
   watch(
-    () => game.value.events.length,
+    () => gameEvents.value.length,
     (newLength, oldLength) => {
-      const newEvents = game.value.events.slice(
+      const newEvents = gameEvents.value.slice(
         -1 * (newLength - oldLength)
       ) as GameEvent[];
       const sequence = sequencer.buildSequence(newEvents);
@@ -204,7 +208,7 @@ export const useGameProvider = (
           atbSeed: game.value.players[1].atbSeed
         }
       ],
-      history: game.value.events.map(
+      history: gameEvents.value.map(
         e => ({ type: e.type, payload: e.payload }) as GameEvent
       )
     });

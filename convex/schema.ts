@@ -13,7 +13,8 @@ export default defineSchema({
 
   games: defineTable({
     creator: v.id('users'),
-    state: v.string() as Validator<GameState>
+    state: v.string() as Validator<GameState>,
+    history: v.optional(v.string())
   }).index('by_creator', ['creator']),
 
   gamePlayers: defineTable({
