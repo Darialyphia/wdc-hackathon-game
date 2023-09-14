@@ -47,6 +47,9 @@ export type Game = {
   pathfinder: ComputedRef<AStarFinder>;
   atbTimeline: ComputedRef<Entity[]>;
   hoveredCell: Ref<Nullable<GameMapCell>>;
+  canSummonAt: (cell: GameMapCell) => boolean;
+  canCastAt: (cell: GameMapCell) => boolean;
+  isInCastRange: (cell: GameMapCell) => boolean;
   move: (cell: GameMapCell) => void;
   summon: (cell: GameMapCell) => void;
   useSkill: (cell: GameMapCell) => void;
@@ -122,6 +125,16 @@ export const useGameProvider = (
     createPathFinder(state.value, state.value.activeEntityId)
   );
 
+  const isInCastRange = (cell: GameMapCell) => {
+    if (!selectedSkill.value) return false;
+    if (!cell) return false;
+
+    return (
+      Math.abs(cell.x - activeEntity.value.position.x) <= selectedSkill.value.range &&
+      Math.abs(cell.y - activeEntity.value.position.y) <= selectedSkill.value.range
+    );
+  };
+
   const canSummonAt = (cell: GameMapCell) => {
     const ability = createPlayerAbility(state.value, activeEntity.value.owner);
     return ability.can('summon_at', subject('position', cell));
@@ -134,7 +147,7 @@ export const useGameProvider = (
   };
 
   const canCastAt = (cell: GameMapCell) => {
-    if (!selectedSkill.value) return;
+    if (!selectedSkill.value) return false;
 
     const ability = createSkillAbility(
       state.value,
@@ -241,6 +254,9 @@ export const useGameProvider = (
     atbTimeline,
     targetMode,
     hoveredCell,
+    canSummonAt,
+    canCastAt,
+    isInCastRange,
     selectedSummon: computed({
       get() {
         return selectedSummon.value;

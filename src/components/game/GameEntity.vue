@@ -12,6 +12,7 @@ import PixiPlugin from 'gsap/PixiPlugin';
 import type { AnimatedSprite } from 'pixi.js';
 import * as PIXI from 'pixi.js';
 import { Power2 } from 'gsap';
+import { getEntityAt } from '../../game-logic/utils/entity.helpers';
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -29,11 +30,13 @@ const {
   selectedEntity,
   isMyTurn,
   targetMode,
+  canCastAt,
+  isInCastRange,
   hoveredCell
 } = useGame();
 const { resolveSprite } = useAssets();
 
-const onClick = () => {
+const onPointerup = () => {
   if (selectedSkill.value) {
     useSkill(getCellAt(state.value, entity.position)!);
   }
@@ -65,10 +68,29 @@ const sprite = ref<AnimatedSprite>();
 
 linkSprite(entity.id, sprite);
 
-const outlineFilter = new OutlineFilter(2, 0xffffff, 0.2, 0.5);
-const filters = computed(() =>
-  activeEntity.value.id === entity.id ? [outlineFilter] : []
-);
+const activeFilter = new OutlineFilter(2, 0xffffff, 0.2, 0.5);
+const targetedOutlineFilter = new OutlineFilter(3, 0xff0000, 0.2, 0.5);
+const targetedOverlayFilter = new ColorOverlayFilter(0xff0000, 0.35);
+
+const filters = computed(() => {
+  const _filters = [];
+  if (activeEntity.value.id === entity.id) {
+    _filters.push(activeFilter);
+  }
+  const cell = getCellAt(state.value, entity.position);
+
+  if (
+    targetMode.value === 'skill' &&
+    selectedEntity.value?.id === entity.id &&
+    cell &&
+    canCastAt(cell) &&
+    isInCastRange(cell)
+  ) {
+    _filters.push(targetedOutlineFilter, targetedOverlayFilter);
+  }
+  return _filters;
+});
+
 const shadowFilters = [new ColorOverlayFilter(0x000000)];
 
 const circleSize = 6;
@@ -117,7 +139,7 @@ const onEnter = (el: AnimatedSprite, done: () => void) => {
     @pointerenter="onPointerenter"
     @pointerleave="onPointerleave"
     @pointerdown="onPointerdown"
-    @click="onClick"
+    @pointerup="onPointerup"
   >
     <PTransition appear @before-enter="onBeforeEnter" @enter="onEnter">
       <animated-sprite

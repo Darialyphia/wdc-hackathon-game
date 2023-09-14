@@ -4,8 +4,10 @@ import { createPlayerAbility } from '../../game-logic/abilities/player.ability';
 import { getSummonBlueprints } from '../../game-logic/utils/entity.helpers';
 import type { SoldierData } from '../../resources/soldiers';
 import { getSkillById } from '../../game-logic/utils/skill.helper';
+import type { SkillId } from '../../resources/skills';
 
-const { activeEntity, selectedSummon, selectedSkill, endTurn, state, me } = useGame();
+const { activeEntity, selectedSummon, selectedSkill, endTurn, state, me, targetMode } =
+  useGame();
 
 const availableSummons = computed(() => {
   if (activeEntity.value.kind !== 'general') return [];
@@ -17,6 +19,16 @@ const canSummon = (blueprint: SoldierData) => {
   const ability = createPlayerAbility(state.value, activeEntity.value.owner);
   return ability.can('summon', subject('soldier', blueprint));
 };
+
+const onSkillPointerdown = (skill: SkillId) => {
+  selectedSkill.value = getSkillById(skill);
+  targetMode.value = 'skill';
+};
+
+const onSummonPointerdown = (summon: SoldierData) => {
+  selectedSummon.value = summon;
+  targetMode.value = 'summon';
+};
 </script>
 
 <template>
@@ -27,11 +39,12 @@ const canSummon = (blueprint: SoldierData) => {
       :title="`use ${getSkillById(skill)!.name}`"
       :theme="{ size: 'size-8' }"
       class="skill"
+      :class="targetMode === 'skill' && 'active'"
       :data-cost="getSkillById(skill)?.cost"
       :disabled="activeEntity.ap < getSkillById(skill)!.cost"
-      @click="selectedSkill = getSkillById(skill)"
+      @pointerdown="onSkillPointerdown(skill)"
     >
-      <img :src="getSkillById(skill)!.iconUrl" />
+      <img :src="getSkillById(skill)!.iconUrl" draggable="false" />
     </button>
 
     <button
@@ -40,10 +53,11 @@ const canSummon = (blueprint: SoldierData) => {
       :disabled="!canSummon(summon)"
       :title="`Summon ${summon.name}`"
       class="summon"
+      :class="targetMode === 'summon' && 'active'"
       :data-cost="summon.cost"
-      @click="selectedSummon = summon"
+      @pointerdown="onSummonPointerdown(summon)"
     >
-      <img :src="summon.iconUrl" />
+      <img :src="summon.iconUrl" draggable="false" />
     </button>
 
     <UiButton
@@ -91,7 +105,8 @@ const canSummon = (blueprint: SoldierData) => {
     outline: solid 5px black;
   }
 
-  &:hover {
+  &:hover,
+  &.active {
     filter: brightness(125%);
     box-shadow: 0 0 8px 2px var(--primary);
   }

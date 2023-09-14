@@ -8,6 +8,7 @@ import { WRAP_MODES } from 'pixi.js';
 
 import GameContainer from './GameContainer.vue';
 import { getSkillById } from '../../game-logic/utils/skill.helper';
+import type { Point } from 'pixi.js';
 
 const { game, width, height, me } = defineProps<{
   game: GameDetail;
@@ -72,10 +73,16 @@ const players = computed(() =>
 );
 
 const selectedEntity = computed(() => gameState.selectedEntity.value);
+
+const resetTargetMode = () => {
+  setTimeout(() => {
+    gameState.targetMode.value = null;
+  });
+};
 </script>
 
 <template>
-  <div class="game-client-container" @contextmenu.prevent>
+  <div class="game-client-container" @contextmenu.prevent @pointerup="resetTargetMode">
     <canvas ref="canvas" />
 
     <div class="player-1">

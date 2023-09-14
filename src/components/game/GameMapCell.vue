@@ -2,6 +2,7 @@
 import { CELL_SIZE } from '../../game-logic/constants';
 import { AdjustmentFilter } from '@pixi/filter-adjustment';
 import { ColorGradientFilter } from '@pixi/filter-color-gradient';
+import { ColorOverlayFilter } from '@pixi/filter-color-overlay';
 import type { Texture } from 'pixi.js';
 import { subject } from '@casl/ability';
 import { createPlayerAbility } from '../../game-logic/abilities/player.ability';
@@ -60,10 +61,15 @@ const isHighlighted = computed(() => {
   if (targetMode.value === 'summon') return canSummonAt.value;
   if (targetMode.value === 'skill') return isInCastRange.value;
 
-  return targetMode.value === 'move' && canMoveTo.value;
+  return (
+    (targetMode.value === 'move' ||
+      hoveredCell.value === getCellAt(state.value, activeEntity.value.position)) &&
+    canMoveTo.value
+  );
 });
 
-const targetableFilter = new AdjustmentFilter({ gamma: 1.5, contrast: 1.3 });
+const targetableFilter = new AdjustmentFilter({ gamma: 1.5 });
+const pathFilter = new ColorOverlayFilter(0x00aaff, 0.35);
 const hoverFilter = new ColorGradientFilter({
   type: ColorGradientFilter.RADIAL,
   stops: [
@@ -77,6 +83,24 @@ const filters = computed(() => {
   const _filters = [];
   if (isHighlighted.value) _filters.push(targetableFilter);
   if (hoveredCell.value === cell.value) _filters.push(hoverFilter);
+  if (!hoveredCell.value || targetMode.value !== 'move') return _filters;
+
+  const path = pathfinder.value.findPath(
+    {
+      x: Math.round(activeEntity.value.position.x),
+      y: Math.round(activeEntity.value.position.y)
+    },
+    hoveredCell.value
+  );
+
+  const isInPath = path.some(([pathX, pathY], index) => {
+    return x === pathX && y === pathY && index <= activeEntity.value.ap;
+  });
+
+  if (isInPath && path.length > 0 && path.length <= activeEntity.value.ap) {
+    _filters.push(pathFilter);
+  }
+
   return _filters;
 });
 </script>
