@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { CELL_SIZE } from '../../game-logic/constants';
 import { AdjustmentFilter } from '@pixi/filter-adjustment';
+import { ColorGradientFilter } from '@pixi/filter-color-gradient';
 import type { Texture } from 'pixi.js';
 import { subject } from '@casl/ability';
 import { createPlayerAbility } from '../../game-logic/abilities/player.ability';
@@ -12,8 +13,15 @@ const { x, y, texture } = defineProps<{
   y: number;
 }>();
 
-const { state, activeEntity, isMyTurn, selectedSkill, selectedSummon, pathfinder } =
-  useGame();
+const {
+  state,
+  activeEntity,
+  isMyTurn,
+  selectedSkill,
+  pathfinder,
+  targetMode,
+  hoveredCell
+} = useGame();
 
 const cell = computed(() => getCellAt(state.value, { x, y }));
 const canSummonAt = computed(() => {
@@ -49,55 +57,38 @@ const canMoveTo = computed(() => {
 
 const isHighlighted = computed(() => {
   if (!isMyTurn.value) return;
-  if (selectedSummon.value) return canSummonAt.value;
-  if (selectedSkill.value) return isInCastRange.value;
+  if (targetMode.value === 'summon') return canSummonAt.value;
+  if (targetMode.value === 'skill') return isInCastRange.value;
 
-  return canMoveTo.value;
+  return targetMode.value === 'move' && canMoveTo.value;
 });
 
-const targetableFilter = new AdjustmentFilter({ gamma: 1.8, contrast: 1.5 });
+const targetableFilter = new AdjustmentFilter({ gamma: 1.5, contrast: 1.3 });
+const hoverFilter = new ColorGradientFilter({
+  type: ColorGradientFilter.RADIAL,
+  stops: [
+    { offset: 0.0, color: 'white', alpha: 0 },
+    { offset: 0.5, color: 'white', alpha: 0 },
+    { offset: 1.0, color: 'white', alpha: 0.3 }
+  ]
+});
 
-const filters = computed(() => (isHighlighted.value ? [targetableFilter] : []));
-
-const isHovering = ref(false);
-const onPointerenter = () => {
-  isHovering.value = true;
-};
-const onPointerleave = () => {
-  isHovering.value = false;
-};
+const filters = computed(() => {
+  const _filters = [];
+  if (isHighlighted.value) _filters.push(targetableFilter);
+  if (hoveredCell.value === cell.value) _filters.push(hoverFilter);
+  return _filters;
+});
 </script>
 
 <template>
-  <container @pointerenter="onPointerenter()" @pointerleave="onPointerleave()">
-    <sprite
-      :key="`${x}:${y}`"
-      :x="x * CELL_SIZE"
-      :y="y * CELL_SIZE"
-      :texture="texture"
-      :filters="filters"
-      @pointerenter="onPointerenter()"
-      @pointerleave="onPointerleave()"
-    />
-    <!-- <graphics
-      :x="x * CELL_SIZE"
-      :y="y * CELL_SIZE"
-      @render="
-        g => {
-          g.clear();
-          if (isHovering) {
-            g.beginFill('white', 0.15);
-          }
-          g.lineStyle({
-            color: 'black',
-            alpha: 0.25,
-            width: 1
-          });
-          g.drawRect(0, 0, CELL_SIZE, CELL_SIZE);
-
-          g.endFill();
-        }
-      "
-    /> -->
-  </container>
+  <sprite
+    :key="`${x}:${y}`"
+    :x="x * CELL_SIZE"
+    :y="y * CELL_SIZE"
+    :texture="texture"
+    :filters="filters"
+    @pointerenter="hoveredCell = cell"
+    @pointerleave="hoveredCell = null"
+  />
 </template>

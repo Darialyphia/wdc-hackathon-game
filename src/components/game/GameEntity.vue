@@ -20,15 +20,41 @@ const { entity } = defineProps<{
   entity: Entity;
 }>();
 
-const { game, state, useSkill, selectedSkill, activeEntity, selectedEntity } = useGame();
+const {
+  game,
+  state,
+  useSkill,
+  selectedSkill,
+  activeEntity,
+  selectedEntity,
+  isMyTurn,
+  targetMode,
+  hoveredCell
+} = useGame();
 const { resolveSprite } = useAssets();
 
 const onClick = () => {
   if (selectedSkill.value) {
     useSkill(getCellAt(state.value, entity.position)!);
   }
+  targetMode.value = null;
 };
 
+const onPointerdown = () => {
+  if (isMyTurn.value && entity.id === activeEntity.value.id) {
+    targetMode.value = 'move';
+  }
+};
+
+const onPointerenter = () => {
+  selectedEntity.value = entity;
+  hoveredCell.value = getCellAt(state.value, entity.position);
+};
+
+const onPointerleave = () => {
+  selectedEntity.value = null;
+  hoveredCell.value = null;
+};
 const { linkSprite } = useFXSequencer();
 
 const textures = computed(() =>
@@ -88,8 +114,9 @@ const onEnter = (el: AnimatedSprite, done: () => void) => {
     :x="entity.position.x * CELL_SIZE + CELL_SIZE / 2"
     :y="entity.position.y * CELL_SIZE + CELL_SIZE / 2"
     :sortable-children="true"
-    @pointerenter="selectedEntity = entity"
-    @pointerleave="selectedEntity = null"
+    @pointerenter="onPointerenter"
+    @pointerleave="onPointerleave"
+    @pointerdown="onPointerdown"
     @click="onClick"
   >
     <PTransition appear @before-enter="onBeforeEnter" @enter="onEnter">

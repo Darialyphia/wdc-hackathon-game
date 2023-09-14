@@ -42,9 +42,11 @@ export type Game = {
   selectedSummon: WritableComputedRef<Nullable<SoldierData>>;
   selectedSkill: WritableComputedRef<Nullable<SkillData>>;
   selectedEntity: Ref<Nullable<Entity>>;
+  targetMode: Ref<'move' | 'summon' | 'skill' | null>;
   isMyTurn: ComputedRef<boolean>;
   pathfinder: ComputedRef<AStarFinder>;
   atbTimeline: ComputedRef<Entity[]>;
+  hoveredCell: Ref<Nullable<GameMapCell>>;
   move: (cell: GameMapCell) => void;
   summon: (cell: GameMapCell) => void;
   useSkill: (cell: GameMapCell) => void;
@@ -221,6 +223,8 @@ export const useGameProvider = (
     return timeline;
   });
 
+  const targetMode = ref(null);
+  const hoveredCell = ref(null);
   const api: Game = {
     state,
     game,
@@ -235,6 +239,8 @@ export const useGameProvider = (
     useSkill,
     endTurn,
     atbTimeline,
+    targetMode,
+    hoveredCell,
     selectedSummon: computed({
       get() {
         return selectedSummon.value;

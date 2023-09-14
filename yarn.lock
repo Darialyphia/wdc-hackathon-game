@@ -1519,6 +1519,11 @@
   resolved "https://registry.yarnpkg.com/@pixi/filter-blur/-/filter-blur-7.2.4.tgz#834447f9d6edec7d27414c9961b9e6009acd678a"
   integrity sha512-aLyXIoxy14bTansCPtbY8x7Sdn2OrrqkF/pcKiRXHJGGhi7wPacvB/NcmYJdnI/n2ExQ6V5Njuj/nfrsejVwcA==
 
+"@pixi/filter-color-gradient@^5.2.0":
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-color-gradient/-/filter-color-gradient-5.2.0.tgz#4c40ad973ee93a8cbae53821a15ac63fe018839f"
+  integrity sha512-po3JBEKgfowqhAh2D75Ii1bhNl1gA8Agt+ESIMnSbrTVIkemno8zOVlVmP7xaf8+PKYnX7JWH5buTnnDfA7Hnw==
+
 "@pixi/filter-color-matrix@7.2.4":
   version "7.2.4"
   resolved "https://registry.yarnpkg.com/@pixi/filter-color-matrix/-/filter-color-matrix-7.2.4.tgz#4c9e6e174b27635ce5e92f34d372366b901e250f"

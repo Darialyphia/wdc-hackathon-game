@@ -9,9 +9,10 @@ import { getCellAt } from '../../game-logic/utils/map.helpers';
 const { resolveTileset } = useAssets();
 const textures = computed(() => Object.values(resolveTileset('map_01').textures));
 
-const { state, selectedSummon, selectedSkill, summon, useSkill, move } = useGame();
+const { state, selectedSummon, selectedSkill, summon, useSkill, move, targetMode } =
+  useGame();
 
-const onClick = ({ x, y }: Point) => {
+const onPointerup = ({ x, y }: Point) => {
   const cell = getCellAt(state.value, { x, y });
   if (!cell) return;
 
@@ -22,6 +23,7 @@ const onClick = ({ x, y }: Point) => {
   } else {
     move(cell);
   }
+  targetMode.value = null;
 };
 
 const tiledMap = createTiledMap(hardcodedmap as ITiledMap);
@@ -29,7 +31,6 @@ const offset = computed(() => ({
   x: (state.value.map.width - hardcodedmap.width) / 2,
   y: (state.value.map.height - hardcodedmap.height) / 2
 }));
-console.log(offset.value);
 </script>
 
 <template>
@@ -40,7 +41,7 @@ console.log(offset.value);
       :x="tile.x + offset.x"
       :y="tile.y + offset.y"
       :texture="textures[tile.id]"
-      @click="onClick({ x: tile.x + offset.x, y: tile.y + offset.y })"
+      @pointerup="onPointerup({ x: tile.x + offset.x, y: tile.y + offset.y })"
     />
   </container>
 </template>
