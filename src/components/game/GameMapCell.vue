@@ -83,6 +83,7 @@ const filters = computed(() => {
   if (x < 0 || x > state.value.map.width || y < 0 || y > state.value.map.height) {
     return [];
   }
+  if (!cell.value) return [];
 
   const _filters = [];
   if (isHighlighted.value) _filters.push(targetableFilter);

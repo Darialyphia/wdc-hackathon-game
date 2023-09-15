@@ -5,10 +5,8 @@ import type { Action, GameDetail } from '../../composables/game/useGame';
 import { Application, BaseTexture, SCALE_MODES } from 'pixi.js';
 import { appInjectKey, createApp } from 'vue3-pixi';
 import { WRAP_MODES } from 'pixi.js';
-
-import GameContainer from './GameContainer.vue';
+import PixiRenderer from './PixiRenderer.vue';
 import { getSkillById } from '../../game-logic/utils/skill.helper';
-import type { Point } from 'pixi.js';
 import { api } from '../../api';
 
 const { game, width, height, me } = defineProps<{
@@ -54,7 +52,7 @@ onMounted(() => {
   BaseTexture.defaultOptions.wrapMode = WRAP_MODES.CLAMP;
   BaseTexture.defaultOptions.scaleMode = SCALE_MODES.NEAREST;
 
-  const app = createApp(GameContainer);
+  const app = createApp(PixiRenderer);
   app.provide(appInjectKey, pixiApp);
   app.provide(GAME_INJECTION_KEY, gameState);
   app.provide(FX_SEQUENCER_INJECTION_KEY, sequencer);
@@ -332,6 +330,7 @@ const onSubmit = async () => {
 
   background-color: hsl(0 0% 0% / 0.5);
   backdrop-filter: blur(5px);
+  border: solid 1px var(--link);
   border-radius: var(--radius-2);
 
   ul {

@@ -15,6 +15,7 @@ import { createSkillAction } from '../src/game-logic/actions/skill';
 import { createEndTurnAction } from '../src/game-logic/actions/endTurn';
 import { exhaustiveSwitch } from '../src/utils/assertions';
 import { stringify, parse } from 'zipson';
+import { Id } from './_generated/dataModel';
 
 // Create a new task with the given text
 export const create = mutation({
@@ -236,7 +237,8 @@ export const actOn = mutation({
 
     if (state.lifecycleState === 'FINISHED') {
       await db.patch(game._id, {
-        state: GAME_STATES.ENDED
+        state: GAME_STATES.ENDED,
+        winnerId: state.winner as Id<'users'>
       });
     }
   }
@@ -247,14 +249,27 @@ export const surrender = mutation({
     gameId: v.id('games')
   },
   handler: async ({ auth, db }, { gameId }) => {
+    const identity = await auth.getUserIdentity();
+    if (!identity) return null;
+    const me = await findMe({ auth, db });
+    if (!me) return null;
+
     const game = await db.get(gameId);
     if (!game) throw new Error('Game not found');
 
     const userAbility = await createUserability({ auth, db });
     await ensureAuthorized(userAbility.can('surrender', subject('game', game)));
 
+    const players = await db
+      .query('gamePlayers')
+      .withIndex('by_game_id', q => q.eq('gameId', game._id))
+      .collect();
+
+    const winner = players.find(p => p.userId !== me._id)!;
+
     await db.patch(game._id, {
-      state: GAME_STATES.ENDED
+      state: GAME_STATES.ENDED,
+      winnerId: winner.userId
     });
   }
 });

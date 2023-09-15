@@ -37,6 +37,9 @@ const onAction = (action: Action) => {
 };
 
 const { mutate: surrender } = useMutation(api.games.surrender);
+
+// syntax highlighting doesn't like type assertions in template
+const gameInfo = computed(() => game.value as GameDetail);
 </script>
 
 <template>
@@ -46,16 +49,6 @@ const { mutate: surrender } = useMutation(api.games.surrender);
         <UiSpinner size="xl" />
         Loading game...
       </div>
-
-      <PixiApp
-        v-if="game?.state === 'ONGOING' && width && height && me"
-        :me="me?._id"
-        :game="game as GameDetail"
-        :width="width"
-        :height="height"
-        @action="onAction($event)"
-        @surrender="surrender({ gameId: game._id })"
-      />
 
       <div v-else-if="game?.state === 'WAITING_FOR_CREATOR_CONFIRMATION'" class="loader">
         <UiSpinner size="xl" />
@@ -76,9 +69,29 @@ const { mutate: surrender } = useMutation(api.games.surrender);
         You declined the challenge or did not respond in time.
       </div>
 
-      <div v-else-if="game?.state === 'ENDED'" class="grid place-content-center">
-        The game has ended
-      </div>
+      <template v-else-if="game?.state === 'ONGOING' || game?.state === 'ENDED'">
+        <GameClient
+          v-if="width && height && me"
+          :me="me?._id"
+          :game="gameInfo"
+          :width="width"
+          :height="height"
+          @action="onAction($event)"
+          @surrender="surrender({ gameId: game._id })"
+        />
+
+        <UiModal id="Game-result" :is-opened="game.state == 'ENDED'" :is-closable="false">
+          <UiModalContent>
+            <h2 class="text-center">
+              {{ game.winnerId === me?._id ? 'You won !' : 'You lost' }}
+            </h2>
+
+            <RouterLink v-slot="{ navigate, href }" custom :to="{ name: 'Home' }">
+              <UiLinkButton :href="href" @click="navigate">Back to lobby</UiLinkButton>
+            </RouterLink>
+          </UiModalContent>
+        </UiModal>
+      </template>
     </Query>
   </main>
 </template>

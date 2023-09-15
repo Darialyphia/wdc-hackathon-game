@@ -14,7 +14,8 @@ export default defineSchema({
   games: defineTable({
     creator: v.id('users'),
     state: v.string() as Validator<GameState>,
-    history: v.optional(v.string())
+    history: v.optional(v.string()),
+    winnerId: v.optional(v.id('users'))
   }).index('by_creator', ['creator']),
 
   gameMessages: defineTable({
