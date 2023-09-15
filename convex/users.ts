@@ -7,6 +7,7 @@ import { toUserDto } from './users/user.mapper';
 import { mutationWithZod } from './utils/zod';
 import { signupInput } from '../src/inputs/users';
 import { v } from 'convex/values';
+import { isDefined } from '../src/utils/assertions';
 
 export const signUp = mutationWithZod({
   args: signupInput,
@@ -44,25 +45,28 @@ export const getProfile = query({
       .withIndex('by_user_id', q => q.eq('userId', userId))
       .collect();
 
-    const games = await Promise.all(
-      gamePlayers.map(async gp => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { history, ...game } = (await db.get(gp.gameId))!;
+    const games = (
+      await Promise.all(
+        gamePlayers.map(async gp => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { history, ...game } = (await db.get(gp.gameId))!;
+          if (game.state !== 'ENDED') return null;
 
-        const players = await db
-          .query('gamePlayers')
-          .withIndex('by_game_id', q => q.eq('gameId', game._id))
-          .collect();
+          const players = await db
+            .query('gamePlayers')
+            .withIndex('by_game_id', q => q.eq('gameId', game._id))
+            .collect();
 
-        const opponent = await db.get(players.find(p => p.userId !== userId)!.userId);
+          const opponent = await db.get(players.find(p => p.userId !== userId)!.userId);
 
-        return {
-          ...game,
-          opponent,
-          isWinner: game.winnerId === userId
-        };
-      })
-    );
+          return {
+            ...game,
+            opponent,
+            isWinner: game.winnerId === userId
+          };
+        })
+      )
+    ).filter(isDefined);
 
     return {
       ...user,

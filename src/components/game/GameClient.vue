@@ -9,11 +9,18 @@ import PixiRenderer from './PixiRenderer.vue';
 import { getSkillById } from '../../game-logic/utils/skill.helper';
 import { api } from '../../api';
 
-const { game, width, height, me } = defineProps<{
+const {
+  game,
+  width,
+  height,
+  me,
+  isReplay = false
+} = defineProps<{
   game: GameDetail;
   width: number;
   height: number;
   me: Id<'users'>;
+  isReplay?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -25,12 +32,29 @@ const canvas = ref<HTMLCanvasElement>();
 
 const assets = useAssetsProvider();
 const sequencer = useFXSequencerProvider(assets);
-const gameState = useGameProvider(
-  computed(() => game),
-  arg => emit('action', arg),
-  me,
-  sequencer
-);
+
+const replayStep = ref(0);
+const isPlaying = ref(false);
+
+watch(isPlaying, newValue => {
+  if (newValue) replayStep.value++;
+});
+
+const gameState = isReplay
+  ? useReplayProvider(
+      computed(() => game),
+      arg => emit('action', arg),
+      me,
+      sequencer,
+      replayStep,
+      isPlaying
+    )
+  : useGameProvider(
+      computed(() => game),
+      arg => emit('action', arg),
+      me,
+      sequencer
+    );
 
 onMounted(() => {
   // We create the pixi app manually instead of using vue3-pixi's <Application /> component
@@ -79,9 +103,7 @@ const resetTargetMode = () => {
   });
 };
 
-const { mutate: postMessage, isLoading: isPosting } = useMutation(
-  api.games.postMessageToGame
-);
+const { mutate: postMessage } = useMutation(api.games.postMessageToGame);
 const text = ref('');
 const onSubmit = async () => {
   await postMessage({ gameId: game._id, text: text.value });
@@ -144,9 +166,9 @@ const onSubmit = async () => {
       </div>
     </Transition>
 
-    <GameActionBar class="game-action-bar" />
+    <GameActionBar v-if="!isReplay" class="game-action-bar" />
 
-    <div class="chat">
+    <div v-if="!isReplay" class="chat">
       <Query
         v-slot="{ data: messages }"
         :query="api => api.games.getGameMessages"
@@ -165,16 +187,32 @@ const onSubmit = async () => {
           id="game-message-input"
           v-model="text"
           placeholder="Send a message"
+          :disabled="isReplay"
         />
       </form>
     </div>
     <UiIconButton
+      v-if="!isReplay"
       icon="ic:sharp-emoji-flags"
       :theme="{ size: 'font-size-5' }"
       title="Surrender"
       class="surrender-button"
       @click="emit('surrender')"
     />
+
+    <div v-if="isReplay" class="replay-controls" style="--ui-icon-size: var(--size-7)">
+      <UiIconButton
+        :icon="isPlaying ? 'material-symbols:stop' : 'material-symbols:play-arrow'"
+        :title="isPlaying ? 'pause' : 'play'"
+        @click="isPlaying = !isPlaying"
+      />
+      <UiIconButton
+        :disabled="isPlaying"
+        icon="ion:ios-fastforward"
+        title="skip"
+        @click="replayStep++"
+      />
+    </div>
   </div>
 </template>
 
@@ -348,5 +386,21 @@ const onSubmit = async () => {
   form {
     color: var(--text-1);
   }
+}
+
+.replay-controls {
+  position: absolute;
+  bottom: var(--size-7);
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  gap: var(--size-4);
+
+  padding: var(--size-2);
+
+  background-color: hsl(0 0% 0% / 0.6);
+  backdrop-filter: blur(5px);
+  border-radius: var(--radius-3);
 }
 </style>

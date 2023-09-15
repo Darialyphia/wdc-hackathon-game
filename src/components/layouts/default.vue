@@ -17,7 +17,7 @@ const isMenuOpened = ref(false);
 
       <div class="container">
         <h1>
-          <RouterLink :to="{ name: 'Home' }">Hackathon Winning App</RouterLink>
+          <RouterLink :to="{ name: 'Home' }">Baldur's gate 3 but better</RouterLink>
         </h1>
 
         <nav>

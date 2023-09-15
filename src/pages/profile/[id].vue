@@ -50,7 +50,19 @@ const dateFormatter = new Intl.DateTimeFormat('en-US');
             {{ game.isWinner ? 'WIN' : 'LOSS' }}
           </div>
 
-          <UiButton>Replay</UiButton>
+          <RouterLink
+            v-slot="{ href, navigate }"
+            custom
+            :to="{ name: 'Replay', params: { id: game._id } }"
+          >
+            <UiButton
+              :href="href"
+              left-icon="ic:baseline-remove-red-eye"
+              @click="navigate"
+            >
+              Replay
+            </UiButton>
+          </RouterLink>
         </article>
       </section>
     </Query>

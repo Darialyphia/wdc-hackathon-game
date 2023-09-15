@@ -245,7 +245,7 @@ export const useFXSequencerProvider = (assetsCtx: AssetsContext) => {
       async play(state: Ref<GameState>, onStepComplete: (event: GameEvent) => void) {
         for (const step of steps) {
           await step.play(state.value, step.event as any);
-          onStepComplete(step.event);
+          await onStepComplete(step.event);
         }
       }
     };

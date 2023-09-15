@@ -300,6 +300,8 @@ declare global {
   const useQuery: typeof import('./src/composables/convex/useQuery')['useQuery']
   const useRafFn: typeof import('@vueuse/core')['useRafFn']
   const useRefHistory: typeof import('@vueuse/core')['useRefHistory']
+  const useReplayProvider: typeof import('./src/composables/game/useReplay')['useReplayProvider']
+  const useReplayrovider: typeof import('./src/composables/game/useReplay')['useReplayrovider']
   const useResetForm: typeof import('vee-validate')['useResetForm']
   const useResizeObserver: typeof import('@vueuse/core')['useResizeObserver']
   const useRoute: typeof import('vue-router/auto')['useRoute']

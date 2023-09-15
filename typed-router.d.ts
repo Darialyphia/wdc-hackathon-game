@@ -42,6 +42,7 @@ declare module 'vue-router/auto/routes' {
     'Home': RouteRecordInfo<'Home', '/', Record<never, never>, Record<never, never>>,
     'Game': RouteRecordInfo<'Game', '/game/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'Profile': RouteRecordInfo<'Profile', '/profile/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    'Replay': RouteRecordInfo<'Replay', '/replay/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
   }
 }
 
