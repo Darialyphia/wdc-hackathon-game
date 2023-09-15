@@ -80,12 +80,7 @@ const hoverFilter = new ColorGradientFilter({
 });
 
 const filters = computed(() => {
-  if (
-    x < state.value.map.width ||
-    x > state.value.map.width ||
-    y < state.value.map.height ||
-    y > state.value.map.height
-  ) {
+  if (x < 0 || x > state.value.map.width || y < 0 || y > state.value.map.height) {
     return [];
   }
 

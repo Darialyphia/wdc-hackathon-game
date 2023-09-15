@@ -4,8 +4,12 @@ import { api } from '../../api';
 import type { Action, GameDetail } from '../../composables/game/useGame';
 
 definePage({
-  name: 'Game'
+  name: 'Game',
+  meta: {
+    layout: 'fullscreen'
+  }
 });
+
 const route = useRoute('Game');
 const { push } = useRouter();
 

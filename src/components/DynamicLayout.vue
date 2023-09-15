@@ -6,6 +6,10 @@ layoutMap.set(
   'default',
   defineAsyncComponent(() => import('./layouts/default.vue'))
 );
+layoutMap.set(
+  'fullscreen',
+  defineAsyncComponent(() => import('./layouts/fullscreen.vue'))
+);
 
 const route = useRoute();
 const layoutComponent = computed(() => {

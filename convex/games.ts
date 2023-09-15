@@ -377,9 +377,12 @@ export const clearAllGames = internalMutation({
   handler: async ({ db }) => {
     const games = await db.query('games').collect();
     const players = await db.query('gamePlayers').collect();
+    const messages = await db.query('gameMessages').collect();
+
     await Promise.all([
       ...players.map(p => db.delete(p._id)),
-      ...games.map(g => db.delete(g._id))
+      ...games.map(g => db.delete(g._id)),
+      ...messages.map(m => db.delete(m._id))
     ]);
   }
 });

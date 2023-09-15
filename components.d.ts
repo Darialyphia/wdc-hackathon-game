@@ -29,6 +29,7 @@ declare module 'vue' {
     EnsureAuthenticated: typeof import('./src/components/convex/EnsureAuthenticated.vue')['default']
     Entity: typeof import('./src/components/game/Entity.vue')['default']
     FakeGameScreen: typeof import('./src/components/game/FakeGameScreen.vue')['default']
+    Fullscreen: typeof import('./src/components/layouts/fullscreen.vue')['default']
     GameActionBar: typeof import('./src/components/game/GameActionBar.vue')['default']
     GameContainer: typeof import('./src/components/game/GameContainer.vue')['default']
     GameEntity: typeof import('./src/components/game/GameEntity.vue')['default']
