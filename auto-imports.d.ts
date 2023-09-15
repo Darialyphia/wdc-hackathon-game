@@ -41,7 +41,7 @@ declare global {
   const createReactiveFn: typeof import('@vueuse/core')['createReactiveFn']
   const createReusableTemplate: typeof import('@vueuse/core')['createReusableTemplate']
   const createSharedComposable: typeof import('@vueuse/core')['createSharedComposable']
-  const createSpritesheetFrameObject: typeof import('./src/utils/spritesheet-parser')['createSpritesheetFrameObject']
+  const createSpritesheetFrameObject: typeof import('./src/utils/sprite-utils')['createSpritesheetFrameObject']
   const createTemplatePromise: typeof import('@vueuse/core')['createTemplatePromise']
   const createTiledMap: typeof import('./src/utils/tiled')['createTiledMap']
   const createUnrefFn: typeof import('@vueuse/core')['createUnrefFn']

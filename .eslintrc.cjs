@@ -20,6 +20,7 @@ module.exports = {
     'vue/no-setup-props-destructure': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
-    '@typescript-eslint/no-explicit-any': 'off'
+    '@typescript-eslint/no-explicit-any': 'off',
+    'no-restricted-globals': ['gsap']
   }
 };

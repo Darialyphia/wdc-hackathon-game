@@ -25,5 +25,21 @@ export const dealDamageEvent = defineEvent({
     entity.hp = Math.max(0, entity.hp - amount);
 
     return state;
-  }
+  },
+  sequence: (state, { payload }) =>
+    new Promise(resolve => {
+      const entity = getEntityById(state, payload.targetId)!;
+      const hp = entity.hp;
+      gsap.to(entity, {
+        duration: 0.3,
+        ease: Power2.easeOut,
+        onComplete: () => {
+          // set back hp to old value because the game reducer will decrease it as well
+          entity.hp = hp;
+          resolve();
+        },
+        delay: 0,
+        hp: entity.hp - payload.amount
+      });
+    })
 });

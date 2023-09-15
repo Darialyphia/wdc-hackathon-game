@@ -18,5 +18,6 @@ export const endTurnEvent = defineEvent({
     endTurn(state);
 
     return state;
-  }
+  },
+  sequence: () => Promise.resolve()
 });

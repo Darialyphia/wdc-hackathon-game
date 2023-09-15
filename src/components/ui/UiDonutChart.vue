@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import gsap from 'gsap';
-import { Power3 } from 'gsap';
-
 const { label, value } = defineProps<{
   value: number;
   label: string;

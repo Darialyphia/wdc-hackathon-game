@@ -1,5 +1,7 @@
+import type { AnimatedSprite, Container, Spritesheet } from 'pixi.js';
 import type { GameState } from '..';
 import type { EntityId } from '../entity';
+import type { Nullable } from '../../utils/types';
 
 export type EventHandler<
   TName extends string,
@@ -8,7 +10,29 @@ export type EventHandler<
 > = {
   create(...args: TArgs): { type: TName; payload: TPayload };
   execute(state: GameState, payload: TPayload): GameState;
+  sequence: EventSequence<{ type: TName; payload: TPayload }>;
 };
+
+type AnyEvent = {
+  type: string;
+  payload: any;
+};
+
+export type EventSequence<T extends AnyEvent> = (
+  state: GameState,
+  event: T,
+  ctx: {
+    assets: {
+      resolveSprite(key: string): Spritesheet;
+      resolveTileset(key: string): Spritesheet;
+      resolveFx(key: string): Spritesheet;
+    };
+    fxContainer: Container;
+    sprites: {
+      resolve(id: EntityId): Nullable<AnimatedSprite>;
+    };
+  }
+) => Promise<void>;
 
 export const defineEvent = <
   TName extends string,

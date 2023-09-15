@@ -28,5 +28,6 @@ export const entityDiedEvent = defineEvent({
         state.players[0] === entity.owner ? state.players[1] : state.players[0];
     }
     return state;
-  }
+  },
+  sequence: () => Promise.resolve()
 });
