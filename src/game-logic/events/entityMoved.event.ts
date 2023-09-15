@@ -31,18 +31,6 @@ export const entityMovedEvent = defineEvent({
     return new Promise(resolve => {
       const entity = getEntityById(state, event.payload.sourceId)!;
 
-      const ap = entity.ap;
-      gsap.to(entity, {
-        duration: 0.3,
-        ease: Power2.easeOut,
-        delay: 0,
-        onComplete: () => {
-          // set back hp to old value because the game reducer will decrease it as well
-          entity.ap = ap;
-        },
-        ap: entity.ap - 1
-      });
-
       gsap.to(entity.position, {
         duration: 0.3,
         ease: Power1.easeOut,

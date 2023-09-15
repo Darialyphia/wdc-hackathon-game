@@ -167,54 +167,25 @@ const onEnter = (el: AnimatedSprite, done: () => void) => {
       playing
     />
 
-    <graphics
+    <StatBar
       :z-index="entity.position.y + 1"
       :x="-CELL_SIZE / 2"
       :y="CELL_SIZE / 2 - 6"
-      @render="
-        g => {
-          g.clear();
-
-          g.lineStyle({
-            width: 1,
-            color: 0xcc0000,
-            alpha: 0
-          });
-          g.beginFill(0xcc0000);
-          g.drawRect(0, 0, CELL_SIZE, 3);
-          g.beginFill(0x00cc00);
-          g.drawRect(0, 0, (entity.hp * CELL_SIZE) / entity.blueprint.maxHp, 3);
-          g.endFill();
-
-          g.lineStyle({
-            width: 0.5,
-            color: 'black',
-            alpha: 1
-          });
-          g.drawRect(0, 0, CELL_SIZE, 3);
-        }
-      "
+      :size="3"
+      :value="entity.hp"
+      :max-value="entity.blueprint.maxHp"
+      :filled-color="0x00cc00"
+      :empty-color="0xcc0000"
     />
-    <graphics
+
+    <StatBar
       :z-index="entity.position.y + 1"
       :x="-CELL_SIZE / 2"
       :y="CELL_SIZE / 2 - 3"
-      @render="
-        g => {
-          g.clear();
-
-          g.beginFill(0x0000ff);
-          g.drawRect(0, 0, (entity.ap * CELL_SIZE) / entity.maxAp, 3);
-          g.endFill();
-
-          g.lineStyle({
-            width: 0.5,
-            color: 0x000000,
-            alpha: 1
-          });
-          g.drawRect(0, 0, CELL_SIZE, 3);
-        }
-      "
+      :size="3"
+      :value="entity.ap"
+      :max-value="entity.maxAp"
+      :filled-color="0x0000cc"
     />
   </container>
 

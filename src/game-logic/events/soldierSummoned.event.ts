@@ -59,20 +59,6 @@ export const soldierSummonedEvent = defineEvent({
 
   sequence: (state, { payload }, { assets, fxContainer }) =>
     new Promise(resolve => {
-      const entity = getEntityById(state, payload.sourceId)!;
-
-      const ap = entity.ap;
-      gsap.to(entity, {
-        duration: 0.3,
-        ease: Power2.easeOut,
-        delay: 0,
-        onComplete: () => {
-          // set back hp to old value because the game reducer will decrease it as well
-          entity.ap = ap;
-        },
-        ap: entity.ap - getSoldierById(payload.characterId)!.cost
-      });
-
       const sheet = assets.resolveFx('summoningCircle');
       const summonCircle = new AnimatedSprite(
         createSpritesheetFrameObject('idle', sheet)

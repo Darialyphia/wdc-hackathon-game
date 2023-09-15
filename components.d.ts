@@ -49,6 +49,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     ServiceWorkerPrompt: typeof import('./src/components/ServiceWorkerPrompt.vue')['default']
     SignupModal: typeof import('./src/components/SignupModal.vue')['default']
+    StatBar: typeof import('./src/components/game/StatBar.vue')['default']
     Todo: typeof import('./src/components/Todo.vue')['default']
     TodoListPaginated: typeof import('./src/components/TodoListPaginated.vue')['default']
     UiButton: typeof import('./src/components/ui/buttons/UiButton.vue')['default']

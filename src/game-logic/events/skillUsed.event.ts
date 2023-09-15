@@ -30,18 +30,6 @@ export const skillUsedEvent = defineEvent({
     return new Promise(resolve => {
       const entity = getEntityById(state, payload.sourceId)!;
 
-      const ap = entity.ap;
-      gsap.to(entity, {
-        duration: 0.3,
-        ease: Power2.easeOut,
-        delay: 0,
-        onComplete: () => {
-          // set back hp to old value because the game reducer will decrease it as well
-          entity.ap = ap;
-        },
-        ap: entity.ap - getSkillById(payload.skillId)!.cost
-      });
-
       // play attack animation
       const sprite = sprites.resolve(payload.sourceId);
       if (!sprite) return resolve();
