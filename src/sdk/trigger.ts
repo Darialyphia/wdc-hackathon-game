@@ -1,7 +1,7 @@
 import type { GameState } from '.';
 import type { Values } from '../utils/types';
 import type { Entity } from './entity';
-import { reducer, type GameEvent } from './events/reducer';
+import { type GameEvent, createReducer, type GameReducer } from './events/reducer';
 
 export const TRIGGERS = {
   NEW_TURN: 'new_turn'
@@ -10,9 +10,9 @@ export const TRIGGERS = {
 export type TriggerId = Values<typeof TRIGGERS>;
 
 export type TriggerContext = {
-  reducer: (state: GameState, event: GameEvent) => void;
   state: GameState;
   from: Entity;
+  reducer: GameReducer;
 };
 
 export type Trigger = {
@@ -27,7 +27,7 @@ export const executeTrigger = (state: GameState, id: TriggerId) => {
     entity.triggers.forEach(trigger => {
       if (trigger.on === id) {
         trigger.execute({
-          reducer,
+          reducer: createReducer({ persist: false }),
           state,
           from: entity
         });

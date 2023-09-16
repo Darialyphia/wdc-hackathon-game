@@ -1,7 +1,7 @@
 import type { WritableComputedRef, ComputedRef, Ref } from 'vue';
 import type { Doc, Id } from '../../../convex/_generated/dataModel';
 import { type GameState, createGameState } from '../../sdk';
-import { reducer, type GameEvent } from '../../sdk/events/reducer';
+import { createReducer, type GameEvent } from '../../sdk/events/reducer';
 import type { EndTurnActionInput } from '../../sdk/actions/endTurn';
 import type { MoveActionInput } from '../../sdk/actions/move';
 import type { SkillActionInput } from '../../sdk/actions/skill';
@@ -98,7 +98,7 @@ export const useGameProvider = (
       const sequence = sequencer.buildSequence(newEvents);
 
       sequence.play(state, event => {
-        reducer(state.value, event);
+        state.value.reducer(state.value, event);
       });
     }
   );
@@ -228,9 +228,12 @@ export const useGameProvider = (
       )
     });
 
+    const timelineReducer = createReducer({
+      persist: false
+    });
     const timeline = [getActiveEntity(timelineState)];
     for (let i = 0; i < 10; i++) {
-      reducer(timelineState, endTurnEvent.create(timelineState.activeEntityId));
+      timelineReducer(timelineState, endTurnEvent.create(timelineState.activeEntityId));
       timeline.push(getActiveEntity(timelineState));
     }
     return timeline;

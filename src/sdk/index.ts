@@ -13,7 +13,7 @@ import {
   type GameLifecycleState,
   GAME_LIFECYCLE_STATES
 } from './constants';
-import { reducer, type GameEvent } from './events/reducer';
+import { createReducer, type GameEvent, type GameReducer } from './events/reducer';
 import type { Nullable } from '../utils/types';
 import { getGeneralById } from './generals';
 
@@ -28,6 +28,7 @@ export type GameState = {
   history: GameEvent[];
   globalAtb: number;
   turn: number;
+  reducer: GameReducer;
 };
 
 type CreateGamOptionsPlayer = {
@@ -54,7 +55,8 @@ export const createGameState = ({
     entities: [],
     history: [],
     globalAtb: 0,
-    turn: 1
+    turn: 1,
+    reducer: createReducer({ persist: true })
   };
 
   players.forEach((player, i) => {
@@ -71,7 +73,7 @@ export const createGameState = ({
 
   if (history) {
     history.forEach(event => {
-      reducer(state, event);
+      state.reducer(state, event);
     });
   }
   return state;

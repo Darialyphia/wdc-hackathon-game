@@ -23,32 +23,36 @@ export type GameEvent =
   | DealDamageEvent
   | SkillUsedEvent;
 
-export type GameReducer = typeof reducer;
-export const reducer = (state: GameState, event: GameEvent) => {
-  const { type, payload } = event;
+export type GameReducer = ReturnType<typeof createReducer>;
+export const createReducer =
+  ({ persist }: { persist: boolean }) =>
+  (state: GameState, event: GameEvent) => {
+    const { type, payload } = event;
 
-  switch (type) {
-    case ENTITY_MOVED:
-      entityMovedEvent.execute(state, payload);
-      break;
-    case SOLDIER_SUMMONED:
-      soldierSummonedEvent.execute(state, payload);
-      break;
-    case END_TURN:
-      endTurnEvent.execute(state, payload);
-      break;
-    case DEAL_DAMAGE:
-      dealDamageEvent.execute(state, payload);
-      break;
-    case SKILL_USED:
-      skillUsedEvent.execute(state, payload);
-      break;
-    case ENTITY_DIED:
-      entityDiedEvent.execute(state, payload);
-      break;
-    default:
-      exhaustiveSwitch(type);
-  }
+    switch (type) {
+      case ENTITY_MOVED:
+        entityMovedEvent.execute(state, payload);
+        break;
+      case SOLDIER_SUMMONED:
+        soldierSummonedEvent.execute(state, payload);
+        break;
+      case END_TURN:
+        endTurnEvent.execute(state, payload);
+        break;
+      case DEAL_DAMAGE:
+        dealDamageEvent.execute(state, payload);
+        break;
+      case SKILL_USED:
+        skillUsedEvent.execute(state, payload);
+        break;
+      case ENTITY_DIED:
+        entityDiedEvent.execute(state, payload);
+        break;
+      default:
+        exhaustiveSwitch(type);
+    }
 
-  state.history.push(event);
-};
+    if (persist) {
+      state.history.push(event);
+    }
+  };

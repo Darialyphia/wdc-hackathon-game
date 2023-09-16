@@ -5,7 +5,6 @@ import { getGeneral, getSummonBlueprints } from '../utils/entity.helpers';
 import { subject } from '@casl/ability';
 import { soldierSummonedEvent } from '../events/soldierSummoned.event';
 import { endTurnEvent } from '../events/endTurn.event';
-import { reducer } from '../events/reducer';
 
 export const summonActionInput = z.object({
   playerId: z.string(),
@@ -35,7 +34,7 @@ export const createSummonAction = defineAction({
       return;
     }
 
-    reducer(
+    state.reducer(
       state,
       soldierSummonedEvent.create(
         state.activeEntityId,
@@ -46,7 +45,7 @@ export const createSummonAction = defineAction({
     );
 
     if (general.ap === 0) {
-      reducer(state, endTurnEvent.create(state.activeEntityId));
+      state.reducer(state, endTurnEvent.create(state.activeEntityId));
     }
   }
 });

@@ -4,7 +4,6 @@ import { getActiveEntity } from '../utils/entity.helpers';
 import { createPlayerAbility } from '../abilities/player.ability';
 import { subject } from '@casl/ability';
 import { endTurnEvent } from '../events/endTurn.event';
-import { reducer } from '../events/reducer';
 import { getSkillById } from '../utils/skill.helpers';
 import { createEntityAbility } from '../abilities/entity.ability';
 import { createSkillAbility } from '../abilities/skill.ability';
@@ -44,11 +43,11 @@ export const createSkillAction = defineAction({
       return;
     }
 
-    reducer(state, skillUsedEvent.create(entity.id, skill.id));
-    skill.execute({ reducer, state, caster: entity, target: input.target });
+    state.reducer(state, skillUsedEvent.create(entity.id, skill.id));
+    skill.execute({ state, caster: entity, target: input.target });
 
     if (entity.ap === 0) {
-      reducer(state, endTurnEvent.create(state.activeEntityId));
+      state.reducer(state, endTurnEvent.create(state.activeEntityId));
     }
   }
 });

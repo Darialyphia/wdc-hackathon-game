@@ -17,16 +17,17 @@ export const necroGeneral: GeneralData = {
   attack: 3,
   defense: 1,
   triggers: [
-    // {
-    //   on: TRIGGERS.NEW_TURN,
-    //   execute({ state, reducer, from }) {
-    //     console.log('necromancer new turn tirgger');
-    //     reducer(
-    //       state,
-    //       dealDamageEvent.create(from.id, getEnemyGeneral(state, from.owner).id, 1)
-    //     );
-    //   }
-    // }
+    {
+      on: TRIGGERS.NEW_TURN,
+      execute({ state, reducer, from }) {
+        console.log('necromancer new turn trigger', state.turn);
+        reducer(
+          state,
+          dealDamageEvent.create(from.id, getEnemyGeneral(state, from.owner).id, 1)
+        );
+        console.log('new hp: ', getEnemyGeneral(state, from.owner).hp);
+      }
+    }
   ],
   skills: [
     {

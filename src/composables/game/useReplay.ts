@@ -1,7 +1,7 @@
 import type { ComputedRef } from 'vue';
 import type { Id } from '../../../convex/_generated/dataModel';
 import { createGameState } from '../../sdk';
-import { reducer, type GameEvent } from '../../sdk/events/reducer';
+import { createReducer, type GameEvent } from '../../sdk/events/reducer';
 import type { SoldierData } from '../../sdk/soldiers';
 import type { Nullable } from '../../utils/types';
 import type { Entity } from '../../sdk/entity';
@@ -66,7 +66,7 @@ export const useReplayProvider = (
       const sequence = sequencer.buildSequence(newEvents);
 
       sequence.play(state, async event => {
-        reducer(state.value, event);
+        state.value.reducer(state.value, event);
         if (isPlaying.value) {
           await waitFor(800);
           replayStep.value++;
@@ -114,8 +114,9 @@ export const useReplayProvider = (
     });
 
     const timeline = [getActiveEntity(timelineState)];
+    const timelineReducer = createReducer({ persist: true });
     for (let i = 0; i < 10; i++) {
-      reducer(timelineState, endTurnEvent.create(timelineState.activeEntityId));
+      timelineReducer(timelineState, endTurnEvent.create(timelineState.activeEntityId));
       timeline.push(getActiveEntity(timelineState));
     }
     return timeline;

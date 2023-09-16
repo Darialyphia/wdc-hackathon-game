@@ -9,13 +9,13 @@ export const getSkillById = (entity: Entity, skillId: SkillId) => {
 };
 
 export const dealSingleTargetDamage = (
-  { state, caster, target, reducer }: SkillExecutionContext,
+  { state, caster, target }: SkillExecutionContext,
   { basePower }: { basePower: number }
 ) => {
   const entity = getEntityAt(state, target);
   if (!entity) return;
 
-  reducer(
+  state.reducer(
     state,
     dealDamageEvent.create(
       state.activeEntityId,
@@ -25,6 +25,6 @@ export const dealSingleTargetDamage = (
   );
 
   if (entity.hp <= 0) {
-    reducer(state, entityDiedEvent.create(caster.id, entity.id));
+    state.reducer(state, entityDiedEvent.create(caster.id, entity.id));
   }
 };

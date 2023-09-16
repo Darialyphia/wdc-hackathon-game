@@ -26,7 +26,6 @@ export type TargetZone = Values<typeof TARGET_ZONES>;
 export type SkillId = string;
 
 export type SkillExecutionContext = {
-  reducer: (state: GameState, event: GameEvent) => void;
   state: GameState;
   caster: Entity;
   target: Point;

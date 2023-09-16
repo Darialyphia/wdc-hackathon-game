@@ -6,7 +6,6 @@ import { subject } from '@casl/ability';
 import { entityMovedEvent } from '../events/entityMoved.event';
 import { createPathFinder } from '../utils/pathfinding.helpers';
 import { endTurnEvent } from '../events/endTurn.event';
-import { reducer } from '../events/reducer';
 
 export const moveActionInput = z.object({
   playerId: z.string(),
@@ -35,11 +34,11 @@ export const createMoveAction = defineAction({
     if (path.length > entity.ap) return;
 
     path.forEach(([x, y]) =>
-      reducer(state, entityMovedEvent.create(entity.id, { x, y }))
+      state.reducer(state, entityMovedEvent.create(entity.id, { x, y }))
     );
 
     if (entity.ap === 0) {
-      reducer(state, endTurnEvent.create(state.activeEntityId));
+      state.reducer(state, endTurnEvent.create(state.activeEntityId));
     }
   }
 });

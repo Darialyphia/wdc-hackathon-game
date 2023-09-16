@@ -20,7 +20,6 @@ const tickGlobalAtb = (state: GameState) => {
     executeTrigger(state, TRIGGERS.NEW_TURN);
     state.globalAtb = 0;
     state.turn++;
-    console.log('new turn', state.turn);
   }
 };
 
