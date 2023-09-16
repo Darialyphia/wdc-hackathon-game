@@ -13,6 +13,7 @@ import {
   soldierSummonedEvent,
   type SoldierSummonedEvent
 } from './soldierSummoned.event';
+import { HEAL, type HealEvent, healEvent } from './healEvent';
 import { exhaustiveSwitch } from '../../utils/assertions';
 
 export type GameEvent =
@@ -21,7 +22,8 @@ export type GameEvent =
   | SoldierSummonedEvent
   | EndTurnEvent
   | DealDamageEvent
-  | SkillUsedEvent;
+  | SkillUsedEvent
+  | HealEvent;
 
 export type GameReducer = ReturnType<typeof createReducer>;
 export const createReducer =
@@ -47,6 +49,9 @@ export const createReducer =
         break;
       case ENTITY_DIED:
         entityDiedEvent.execute(state, payload);
+        break;
+      case HEAL:
+        healEvent.execute(state, payload);
         break;
       default:
         exhaustiveSwitch(type);

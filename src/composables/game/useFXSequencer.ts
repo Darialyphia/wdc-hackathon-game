@@ -15,6 +15,7 @@ import type { EntityId } from '../../sdk/entity';
 import type { MaybeRefOrGetter } from '@vueuse/core';
 import type { AssetsContext } from './useAssets';
 import type { EventSequence } from '../../sdk/events';
+import { HEAL, healEvent } from '../../sdk/events/healEvent';
 
 export type FXSequenceStep<T extends { type: string; payload: any }> = {
   event: T;
@@ -73,6 +74,9 @@ export const useFXSequencerProvider = (assetsCtx: AssetsContext) => {
 
         case SKILL_USED:
           return { event, play: skillUsedEvent.sequence };
+
+        case HEAL:
+          return { event, play: healEvent.sequence };
 
         default:
           return exhaustiveSwitch(type);

@@ -2,6 +2,7 @@ import type { GeneralData } from '.';
 import { dealSingleTargetDamage } from '../utils/skill.helpers';
 import { TARGET_TYPES, TARGET_ZONES } from '../utils/entityData';
 import { FACTIONS_IDS } from '../enums';
+import { getEntityAt } from '../utils/entity.helpers';
 
 export const havenGeneral: GeneralData = {
   characterId: 'haven_general_01',
@@ -25,7 +26,10 @@ export const havenGeneral: GeneralData = {
       targetZone: TARGET_ZONES.RADIUS,
       targetType: TARGET_TYPES.ENEMY,
       execute(ctx) {
-        dealSingleTargetDamage(ctx, { basePower: 1 });
+        dealSingleTargetDamage(ctx, {
+          to: getEntityAt(ctx.state, ctx.target)!.id,
+          basePower: 1
+        });
       }
     }
   ]

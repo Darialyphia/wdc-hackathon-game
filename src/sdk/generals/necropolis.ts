@@ -4,7 +4,7 @@ import { TARGET_TYPES, TARGET_ZONES } from '../utils/entityData';
 import { FACTIONS_IDS } from '../enums';
 import { TRIGGERS } from '../trigger';
 import { dealDamageEvent } from '../events/dealDamage.event';
-import { getEnemyGeneral } from '../utils/entity.helpers';
+import { getEnemyGeneral, getEntityAt } from '../utils/entity.helpers';
 
 export const necroGeneral: GeneralData = {
   characterId: 'necro_general_01',
@@ -40,7 +40,10 @@ export const necroGeneral: GeneralData = {
       targetZone: TARGET_ZONES.RADIUS,
       targetType: TARGET_TYPES.ENEMY,
       execute(ctx) {
-        dealSingleTargetDamage(ctx, { basePower: 1 });
+        dealSingleTargetDamage(ctx, {
+          to: getEntityAt(ctx.state, ctx.target)!.id,
+          basePower: 1
+        });
       }
     }
   ]
