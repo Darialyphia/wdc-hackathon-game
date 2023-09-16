@@ -1,9 +1,9 @@
-import { type SkillId } from '../../resources/skills';
 import { defineEvent } from '.';
 import type { EntityId } from '../entity';
 import { getEntityById } from '../utils/entity.helpers';
-import { getSkillById } from '../utils/skill.helper';
+import { getSkillById } from '../utils/skill.helpers';
 import { createSpritesheetFrameObject } from '../../utils/sprite-utils';
+import type { SkillId } from '../../resources/entity';
 
 export const SKILL_USED = 'skill_used';
 

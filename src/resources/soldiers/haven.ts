@@ -2,10 +2,9 @@ import type { SoldierData } from '.';
 import { dealDamageEvent } from '../../game-logic/events/dealDamage.event';
 import { entityDiedEvent } from '../../game-logic/events/entityDied.event';
 import { getEntityAt } from '../../game-logic/utils/entity.helpers';
+import { dealSingleTargetDamage } from '../../game-logic/utils/skill.helpers';
 import { TARGET_TYPES, TARGET_ZONES } from '../entity';
 import { FACTIONS_IDS } from '../enums';
-import { meleeAttack } from '../skills/meleeAttack';
-import { rangedAttack } from '../skills/rangedAttack';
 
 export const havenSoldiers: SoldierData[] = [
   {
@@ -29,20 +28,8 @@ export const havenSoldiers: SoldierData[] = [
         range: 1,
         targetZone: TARGET_ZONES.RADIUS,
         targetType: TARGET_TYPES.ENEMY,
-        execute(reducer, state, caster, target) {
-          const entity = getEntityAt(state, target);
-          if (!entity) return [];
-          reducer(
-            state,
-            dealDamageEvent.create(
-              state.activeEntityId,
-              entity.id,
-              Math.max(1, 1 + caster.blueprint.attack - entity.blueprint.defense)
-            )
-          );
-          if (entity.hp <= 0) {
-            reducer(state, entityDiedEvent.create(caster.id, entity.id));
-          }
+        execute(ctx) {
+          dealSingleTargetDamage(ctx, { basePower: 1 });
         }
       }
     ]
@@ -56,7 +43,7 @@ export const havenSoldiers: SoldierData[] = [
     cost: 2,
     initiative: 5,
     maxHp: 4,
-    attack: 1,
+    attack: 2,
     defense: 1,
     skills: [
       {
@@ -68,20 +55,8 @@ export const havenSoldiers: SoldierData[] = [
         minRange: 2,
         targetZone: TARGET_ZONES.LINE,
         targetType: TARGET_TYPES.ENEMY,
-        execute(reducer, state, caster, target) {
-          const entity = getEntityAt(state, target);
-          if (!entity) return [];
-          reducer(
-            state,
-            dealDamageEvent.create(
-              state.activeEntityId,
-              entity.id,
-              Math.max(1, 1 + caster.blueprint.attack - entity.blueprint.defense)
-            )
-          );
-          if (entity.hp <= 0) {
-            reducer(state, entityDiedEvent.create(caster.id, entity.id));
-          }
+        execute(ctx) {
+          dealSingleTargetDamage(ctx, { basePower: 1 });
         }
       }
     ]

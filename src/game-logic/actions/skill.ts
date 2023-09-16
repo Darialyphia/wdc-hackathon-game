@@ -5,11 +5,11 @@ import { createPlayerAbility } from '../abilities/player.ability';
 import { subject } from '@casl/ability';
 import { endTurnEvent } from '../events/endTurn.event';
 import { reducer } from '../events/reducer';
-import { getSkillById } from '../utils/skill.helper';
+import { getSkillById } from '../utils/skill.helpers';
 import { createEntityAbility } from '../abilities/entity.ability';
 import { createSkillAbility } from '../abilities/skill.ability';
 import { skillUsedEvent } from '../events/skillUsed.event';
-import type { SkillId } from '../../resources/skills';
+import type { SkillId } from '../../resources/entity';
 
 export const skillActionInput = z.object({
   playerId: z.string(),
@@ -45,7 +45,7 @@ export const createSkillAction = defineAction({
     }
 
     reducer(state, skillUsedEvent.create(entity.id, skill.id));
-    skill.execute(reducer, state, entity, input.target);
+    skill.execute({ reducer, state, caster: entity, target: input.target });
 
     if (entity.ap === 0) {
       reducer(state, endTurnEvent.create(state.activeEntityId));

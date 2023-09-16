@@ -1,11 +1,11 @@
 import { PureAbility } from '@casl/ability';
 import type { GameState } from '..';
-import type { SkillData } from '../../resources/skills';
 import type { Point } from '../../utils/geometry';
 import { exhaustiveSwitch } from '../../utils/assertions';
 import type { Entity } from '../entity';
 import { getActiveEntity, getEntityAt } from '../utils/entity.helpers';
 import { createAbility } from '../../utils/casl';
+import type { SkillData } from '../../resources/entity';
 
 type TargetActions = 'target' | 'highlight';
 
