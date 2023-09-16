@@ -7,6 +7,9 @@ import type { Texture } from 'pixi.js';
 import { subject } from '@casl/ability';
 import { createPlayerAbility } from '../../game-logic/abilities/player.ability';
 import { getCellAt } from '../../game-logic/utils/map.helpers';
+import { getBitMask } from '../../game-logic/utils/bit-maksing';
+import type { GameMapCell } from '../../game-logic/map';
+import { createSkillAbility } from '../../game-logic/abilities/skill.ability';
 
 const { x, y, texture } = defineProps<{
   texture: Texture;
@@ -18,6 +21,8 @@ const {
   state,
   activeEntity,
   isMyTurn,
+  canCastAt,
+  canSummonAt,
   selectedSkill,
   pathfinder,
   targetMode,
@@ -25,24 +30,27 @@ const {
 } = useGame();
 
 const cell = computed(() => getCellAt(state.value, { x, y }));
-const canSummonAt = computed(() => {
+const isValidSummonTarget = computed(() => {
   if (!cell.value) return;
 
-  const ability = createPlayerAbility(state.value, activeEntity.value.owner);
-  return ability.can('summon_at', subject('position', cell.value));
+  return canSummonAt(cell.value);
 });
 
-const isInCastRange = computed(() => {
-  if (!selectedSkill.value) return;
+const isValidSkillTarget = computed(() => {
   if (!cell.value) return;
+  if (!selectedSkill.value) return false;
+  if (targetMode.value !== 'skill') return false;
 
-  return (
-    Math.abs(cell.value.x - activeEntity.value.position.x) <= selectedSkill.value.range &&
-    Math.abs(cell.value.y - activeEntity.value.position.y) <= selectedSkill.value.range
+  const ability = createSkillAbility(
+    state.value,
+    selectedSkill.value,
+    activeEntity.value
   );
+
+  return ability.can('highlight', subject('cell', cell.value));
 });
 
-const canMoveTo = computed(() => {
+const isValidMoveTarget = computed(() => {
   if (!cell.value) return;
 
   const path = pathfinder.value.findPath(
@@ -58,17 +66,17 @@ const canMoveTo = computed(() => {
 
 const isHighlighted = computed(() => {
   if (!isMyTurn.value) return;
-  if (targetMode.value === 'summon') return canSummonAt.value;
-  if (targetMode.value === 'skill') return isInCastRange.value;
+  if (targetMode.value === 'summon') return isValidSummonTarget.value;
 
   return (
     (targetMode.value === 'move' ||
       hoveredCell.value === getCellAt(state.value, activeEntity.value.position)) &&
-    canMoveTo.value
+    isValidMoveTarget.value
   );
 });
 
 const targetableFilter = new AdjustmentFilter({ gamma: 1.5 });
+const skillTargetableFilter = new ColorOverlayFilter(0xff0000, 0.25);
 const pathFilter = new ColorOverlayFilter(0x00aaff, 0.35);
 const hoverFilter = new ColorGradientFilter({
   type: ColorGradientFilter.RADIAL,
@@ -87,6 +95,7 @@ const filters = computed(() => {
 
   const _filters = [];
   if (isHighlighted.value) _filters.push(targetableFilter);
+  if (isValidSkillTarget.value) _filters.push(skillTargetableFilter);
   if (hoveredCell.value === cell.value) _filters.push(hoverFilter);
   if (!hoveredCell.value || targetMode.value !== 'move') return _filters;
 

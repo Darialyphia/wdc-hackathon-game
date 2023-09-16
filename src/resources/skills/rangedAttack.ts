@@ -4,14 +4,14 @@ import { getEntityAt } from '../../game-logic/utils/entity.helpers';
 import { dealDamageEvent } from '../../game-logic/events/dealDamage.event';
 import { entityDiedEvent } from '../../game-logic/events/entityDied.event';
 
-export const meleeAttack: SkillData = {
-  id: 'melee_attack',
-  iconUrl: '/icons/melee_attack.png',
-  name: 'Melee attack',
+export const rangedAttack: SkillData = {
+  id: 'ranged_attack',
+  iconUrl: '/icons/ranged_attack.png',
+  name: 'Ranged attack',
   cost: 2,
-  minRange: 0,
-  range: 1,
-  targetZone: TARGET_ZONES.RADIUS,
+  range: 5,
+  minRange: 2,
+  targetZone: TARGET_ZONES.LINE,
   targetType: TARGET_TYPES.ENEMY,
   execute(reducer, state, caster, target) {
     const entity = getEntityAt(state, target);

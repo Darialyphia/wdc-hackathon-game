@@ -37,6 +37,7 @@ const replayStep = ref(0);
 const isPlaying = ref(false);
 
 watch(isPlaying, newValue => {
+  console.log(newValue);
   if (newValue) replayStep.value++;
 });
 
@@ -121,7 +122,7 @@ const onSubmit = async () => {
 
       <div class="hp">
         <div class="i-game-icons:health-normal" />
-        {{ players[0].general?.hp }} / {{ players[0].general?.blueprint.maxHp }}
+        {{ players[0].general?.hp.toFixed() }}
       </div>
     </div>
 
@@ -131,7 +132,7 @@ const onSubmit = async () => {
 
       <div class="hp">
         <div class="i-game-icons:health-normal" />
-        {{ players[1].general?.hp }} / {{ players[1].general?.blueprint.maxHp }}
+        {{ players[1].general?.hp.toFixed() }}
       </div>
     </div>
 
@@ -148,7 +149,7 @@ const onSubmit = async () => {
         <img :src="selectedEntity.blueprint.iconUrl" />
         {{ selectedEntity.blueprint.name }}
         <br />
-        Hp: {{ selectedEntity.hp }} / {{ selectedEntity.blueprint.maxHp }}
+        Hp: {{ selectedEntity.hp }}
         <br />
         Atk:
         {{ selectedEntity.blueprint.attack }}

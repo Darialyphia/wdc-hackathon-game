@@ -37,15 +37,13 @@ const onSummonPointerdown = (summon: SoldierData) => {
       v-for="skill in activeEntity.blueprint.skills"
       :key="skill"
       :title="`use ${getSkillById(skill)!.name}`"
-      :theme="{ size: 'size-8' }"
       class="skill"
       :class="targetMode === 'skill' && 'active'"
       :data-cost="getSkillById(skill)?.cost"
       :disabled="activeEntity.ap < getSkillById(skill)!.cost"
+      :style="{ backgroundImage: `url(${getSkillById(skill)!.iconUrl})` }"
       @pointerdown="onSkillPointerdown(skill)"
-    >
-      <img :src="getSkillById(skill)!.iconUrl" draggable="false" />
-    </button>
+    />
 
     <button
       v-for="summon in availableSummons"
@@ -79,13 +77,18 @@ const onSummonPointerdown = (summon: SoldierData) => {
   backdrop-filter: blur(5px);
   border-radius: var(--radius-3);
 }
+
+.skill {
+  width: 64px;
+}
 .skill,
 .summon {
   position: relative;
 
   aspect-ratio: 1;
 
-  background-color: black;
+  background-repeat: no-repeat;
+  background-size: cover;
   border: solid 2px var(--primary);
   border-radius: 4px;
   &::after {

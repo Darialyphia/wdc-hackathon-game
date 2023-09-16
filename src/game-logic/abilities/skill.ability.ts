@@ -4,10 +4,10 @@ import type { SkillData } from '../../resources/skills';
 import type { Point } from '../../utils/geometry';
 import { exhaustiveSwitch } from '../../utils/assertions';
 import type { Entity } from '../entity';
-import { getEntityAt } from '../utils/entity.helpers';
+import { getActiveEntity, getEntityAt } from '../utils/entity.helpers';
 import { createAbility } from '../../utils/casl';
 
-type TargetActions = 'target';
+type TargetActions = 'target' | 'highlight';
 
 type Abilities = [TargetActions, 'cell' | Point];
 
@@ -18,30 +18,61 @@ export const createSkillAbility = (
   skill: SkillData,
   caster: Entity
 ): SkillAbility => {
-  return createAbility<SkillAbility>(({ can, cannot }) => {
-    can('target', 'cell', (subject: Point) => {
-      const { targetType } = skill;
-      const entity = getEntityAt(state, subject);
+  const isTargetTypeValid = (subject: Point) => {
+    const { targetType } = skill;
+    const entity = getEntityAt(state, subject);
+    switch (targetType) {
+      case 'GROUND':
+        return true;
+      case 'ALLY':
+        return entity && entity?.owner === caster.owner;
+      case 'ENEMY':
+        return !!(entity && entity?.owner !== caster.owner);
+      case 'SELF':
+        return entity?.id === state.activeEntityId;
+      case 'EMPTY':
+        return entity === undefined;
+      default:
+        exhaustiveSwitch(targetType);
+    }
+  };
 
-      switch (targetType) {
-        case 'ANYTHING':
-          return true;
-        case 'ALLY':
-          return entity && entity?.owner === caster.owner;
-        case 'ENEMY':
-          return !!(entity && entity?.owner !== caster.owner);
-        case 'LINE':
-          return subject.x === caster.position.x || subject.y === caster.position.y;
-        default:
-          exhaustiveSwitch(targetType);
-      }
+  const isTargetZoneValid = (subject: Point) => {
+    const { targetZone } = skill;
+    const activeEntity = getActiveEntity(state);
+
+    switch (targetZone) {
+      case 'RADIUS':
+        return true;
+      case 'LINE':
+        return (
+          activeEntity.position.x === subject.x || activeEntity.position.y === subject.y
+        );
+      default:
+        exhaustiveSwitch(targetZone);
+    }
+  };
+
+  const isInRange = ({ x, y }: Point) => {
+    const isMaxRangeOk =
+      Math.abs(x - caster.position.x) <= skill.range &&
+      Math.abs(y - caster.position.y) <= skill.range;
+    const isMinRangeOk =
+      Math.abs(x - caster.position.x) >= skill.minRange ||
+      Math.abs(y - caster.position.y) >= skill.minRange;
+
+    return isMaxRangeOk && isMinRangeOk;
+  };
+
+  return createAbility<SkillAbility>(({ can }) => {
+    can('target', 'cell', (subject: Point) => {
+      return (
+        isTargetTypeValid(subject) && isTargetZoneValid(subject) && isInRange(subject)
+      );
     });
 
-    cannot('target', 'cell', ({ x, y }: Point) => {
-      return (
-        Math.abs(x - caster.position.x) > skill.range ||
-        Math.abs(y - caster.position.y) > skill.range
-      );
+    can('highlight', 'cell', (subject: Point) => {
+      return isTargetZoneValid(subject) && isInRange(subject);
     });
   });
 };

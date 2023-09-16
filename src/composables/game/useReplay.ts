@@ -67,11 +67,11 @@ export const useReplayProvider = (
       const sequence = sequencer.buildSequence(newEvents);
 
       sequence.play(state, async event => {
-        if (isPlaying.value) {
-          await waitFor(1000);
-        }
         reducer(state.value, event);
-        replayStep.value++;
+        if (isPlaying.value) {
+          await waitFor(800);
+          replayStep.value++;
+        }
       });
     }
   );
