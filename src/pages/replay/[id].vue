@@ -31,31 +31,26 @@ const gameInfo = computed(() => game.value as GameDetail);
 
 <template>
   <main ref="root">
-    <Query v-slot="{ data: me }" :query="api => api.users.me" :args="{}">
-      <div v-if="game === undefined" class="loader">
-        <UiSpinner size="xl" />
-        Loading game...
-      </div>
+    <div v-if="game === undefined" class="loader">
+      <UiSpinner size="xl" />
+      Loading game...
+    </div>
 
-      <div v-else-if="game === null">Game not found</div>
+    <div v-else-if="game === null">Game not found</div>
 
-      <div v-else-if="game.state !== 'ENDED'">
-        you cannot replay a game that is still ongoing
-      </div>
+    <div v-else-if="game.state !== 'ENDED'">
+      you cannot replay a game that is still ongoing
+    </div>
 
-      <GameClient
-        v-if="game && width && height && me"
-        :me="me?._id"
-        :game="gameInfo"
-        :width="width"
-        :height="height"
-        is-replay
-        @surrender="surrender({ gameId: game._id })"
-      />
-      <div v-else>
-        {{ { game, width, height, me } }}
-      </div>
-    </Query>
+    <GameClient
+      v-if="game && width && height"
+      :game="gameInfo"
+      :width="width"
+      :height="height"
+      is-replay
+      @surrender="surrender({ gameId: game._id })"
+    />
+    <div v-else>Could not load replay.</div>
   </main>
 </template>
 

@@ -4,8 +4,7 @@ definePage({
 });
 
 const route = useRoute('Profile');
-
-const dateFormatter = new Intl.DateTimeFormat('en-US');
+const dayjs = useDayjs();
 </script>
 <template>
   <main class="container surface" style="--container-size: var(--size-md)">
@@ -30,13 +29,13 @@ const dateFormatter = new Intl.DateTimeFormat('en-US');
           </div>
           <div v-if="user._creationTime">
             <dt>Member since</dt>
-            <dd>{{ dateFormatter.format(new Date(user._creationTime)) }}</dd>
+            <dd>{{ dayjs(user._creationTime).format('LT') }}</dd>
           </div>
         </dl>
       </section>
 
       <section>
-        <h3>Games history</h3>
+        <h3 class="mb-4">Games history</h3>
 
         <article
           v-for="game in user.games"
@@ -44,25 +43,32 @@ const dateFormatter = new Intl.DateTimeFormat('en-US');
           class="surface"
           :class="game.isWinner ? 'is-win' : 'is-loss'"
         >
-          <h4 class="font-400 text-1">VS {{ game.opponent?.name }}</h4>
+          <time :datetime="dayjs(game._creationTime).format('l')">
+            {{ dayjs(game._creationTime).fromNow() }}
+          </time>
 
-          <div class="game-result">
-            {{ game.isWinner ? 'WIN' : 'LOSS' }}
-          </div>
+          <div>VS {{ game.opponent?.name }}</div>
 
-          <RouterLink
-            v-slot="{ href, navigate }"
-            custom
-            :to="{ name: 'Replay', params: { id: game._id } }"
+          <div
+            class="result"
+            :style="{ '--color': game.isWinner ? 'var(--green-6)' : 'var(--red-7)' }"
           >
-            <UiButton
-              :href="href"
-              left-icon="ic:baseline-remove-red-eye"
-              @click="navigate"
+            {{ game.isWinner ? 'WIN' : 'LOSS' }}
+
+            <RouterLink
+              v-slot="{ href, navigate }"
+              custom
+              :to="{ name: 'Replay', params: { id: game._id } }"
             >
-              Replay
-            </UiButton>
-          </RouterLink>
+              <UiButton
+                :href="href"
+                left-icon="ic:baseline-remove-red-eye"
+                @click="navigate"
+              >
+                Replay
+              </UiButton>
+            </RouterLink>
+          </div>
         </article>
       </section>
     </Query>
@@ -71,13 +77,25 @@ const dateFormatter = new Intl.DateTimeFormat('en-US');
 
 <style scoped lang="postcss">
 article {
-  display: flex;
-  gap: var(--size-3);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--size-4);
   align-items: center;
   justify-content: space-between;
 
-  border: solid var(--border-size-1) var(--primary);
+  border: solid var(--border-size-1) var(--border-dimmed);
   border-radius: var(--radius-2);
+
+  *:nth-child(2) {
+    justify-self: center;
+  }
+  *:nth-child(3) {
+    justify-self: flex-end;
+  }
+
+  & + article {
+    margin-block-start: var(--size-3);
+  }
 
   &.is-win {
     background-color: hsl(var(--green-7-hsl) / 0.15);
@@ -88,16 +106,12 @@ article {
   }
 }
 
-.game-result {
-  margin-inline-start: auto;
+.result {
+  display: flex;
+  gap: var(--size-3);
+  align-items: center;
+
   font-weight: var(--font-weight-5);
-
-  article.is-win & {
-    color: var(--green-6);
-  }
-
-  article.is-loss & {
-    color: var(--red-7);
-  }
+  color: var(--color);
 }
 </style>

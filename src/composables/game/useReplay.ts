@@ -27,7 +27,6 @@ const waitFor = (duration: number) =>
 export const useReplayProvider = (
   game: ComputedRef<GameDetail>,
   sendAction: ActionDispatcher,
-  me: Id<'users'>,
   sequencer: FXSequenceContext,
   replayStep: Ref<number>,
   isPlaying: Ref<boolean>
@@ -128,7 +127,7 @@ export const useReplayProvider = (
     state,
     game,
     pathfinder,
-    me,
+    me: null,
     isMyTurn,
     sendAction,
     activeEntity,

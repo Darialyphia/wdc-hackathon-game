@@ -34,7 +34,7 @@ export type Action =
 export type ActionDispatcher = (arg: Action) => void;
 
 export type Game = {
-  me: Id<'users'>;
+  me: Nullable<Id<'users'>>;
   game: ComputedRef<GameDetail>;
   state: Ref<GameState>;
   sendAction: ActionDispatcher;
@@ -61,7 +61,7 @@ export const GAME_INJECTION_KEY = Symbol('game') as InjectionKey<Game>;
 export const useGameProvider = (
   game: ComputedRef<GameDetail>,
   sendAction: ActionDispatcher,
-  me: Id<'users'>,
+  me: Nullable<Id<'users'>>,
   sequencer: FXSequenceContext
 ) => {
   const gameEvents = computed<GameEvent[]>(() =>

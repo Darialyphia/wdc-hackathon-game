@@ -3,8 +3,6 @@ const { isLoading } = useConvexAuth();
 
 const isReady = ref(false);
 
-const foo = ref({ bar: 0 });
-
 until(isLoading)
   .not.toBe(true)
   .then(() => {
@@ -14,12 +12,7 @@ until(isLoading)
 <template>
   <Suspense>
     <DynamicLayout>
-      <main v-if="!isReady" class="center surface">
-        <p>Authenticating...</p>
-        <UiSpinner size="xl" />
-      </main>
-
-      <RouterView v-else v-slot="{ Component }">
+      <RouterView v-slot="{ Component }">
         <template v-if="Component">
           <Suspense>
             <component :is="Component"></component>

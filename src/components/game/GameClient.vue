@@ -19,7 +19,7 @@ const {
   game: GameDetail;
   width: number;
   height: number;
-  me: Id<'users'>;
+  me?: Id<'users'>;
   isReplay?: boolean;
 }>();
 
@@ -37,7 +37,6 @@ const replayStep = ref(0);
 const isPlaying = ref(false);
 
 watch(isPlaying, newValue => {
-  console.log(newValue);
   if (newValue) replayStep.value++;
 });
 
@@ -45,7 +44,6 @@ const gameState = isReplay
   ? useReplayProvider(
       computed(() => game),
       arg => emit('action', arg),
-      me,
       sequencer,
       replayStep,
       isPlaying
