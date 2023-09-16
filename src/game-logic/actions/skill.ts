@@ -26,7 +26,7 @@ export const createSkillAction = defineAction({
   input: skillActionInput,
   handler: ({ input, state }) => {
     const entity = getActiveEntity(state);
-    const skill = getSkillById(input.skillId as SkillId);
+    const skill = getSkillById(entity, input.skillId as SkillId);
     if (!skill) return;
 
     const playerAbility = createPlayerAbility(state, input.playerId);

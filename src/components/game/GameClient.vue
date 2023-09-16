@@ -6,7 +6,6 @@ import { Application, BaseTexture, SCALE_MODES } from 'pixi.js';
 import { appInjectKey, createApp } from 'vue3-pixi';
 import { WRAP_MODES } from 'pixi.js';
 import PixiRenderer from './PixiRenderer.vue';
-import { getSkillById } from '../../game-logic/utils/skill.helper';
 import { api } from '../../api';
 
 const {
@@ -158,8 +157,8 @@ const onSubmit = async () => {
         <br />
         Skills
         <ul>
-          <li v-for="skill in selectedEntity.blueprint.skills" :key="skill">
-            {{ getSkillById(skill)!.name }}
+          <li v-for="skill in selectedEntity.blueprint.skills" :key="skill.id">
+            {{ skill.name }}
           </li>
         </ul>
       </div>

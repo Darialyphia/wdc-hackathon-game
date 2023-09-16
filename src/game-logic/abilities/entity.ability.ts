@@ -5,6 +5,7 @@ import type { GameMapCell } from '../map';
 import { isCellWalkable } from '../utils/map.helpers';
 import type { SkillData } from '../../resources/skills';
 import { createAbility } from '../../utils/casl';
+import { getSkillById } from '../utils/skill.helper';
 
 type MapActions = 'move';
 type SkillActions = 'cast';
@@ -20,7 +21,9 @@ export const createEntityAbility = (state: GameState, entity: Entity): EntityAbi
     });
 
     can('cast', 'skill', (subject: SkillData) => {
-      return entity.blueprint.skills.includes(subject.id) && entity.ap >= subject.cost;
+      const skill = getSkillById(entity, subject.id);
+
+      return skill && entity.ap >= subject.cost;
     });
   });
 };

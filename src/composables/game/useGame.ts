@@ -135,9 +135,9 @@ export const useGameProvider = (
     );
   };
 
-  const canSummonAt = (cell: GameMapCell) => {
+  const canSummonAt = ({ x, y }: GameMapCell) => {
     const ability = createPlayerAbility(state.value, activeEntity.value.owner);
-    return ability.can('summon_at', subject('position', cell));
+    return ability.can('summon_at', subject('position', { x, y }));
   };
 
   const canMoveTo = (cell: GameMapCell) => {

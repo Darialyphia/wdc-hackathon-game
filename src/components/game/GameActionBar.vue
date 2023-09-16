@@ -3,8 +3,7 @@ import { subject } from '@casl/ability';
 import { createPlayerAbility } from '../../game-logic/abilities/player.ability';
 import { getSummonBlueprints } from '../../game-logic/utils/entity.helpers';
 import type { SoldierData } from '../../resources/soldiers';
-import { getSkillById } from '../../game-logic/utils/skill.helper';
-import type { SkillId } from '../../resources/skills';
+import type { SkillData } from '../../resources/entity';
 
 const { activeEntity, selectedSummon, selectedSkill, endTurn, state, me, targetMode } =
   useGame();
@@ -20,8 +19,8 @@ const canSummon = (blueprint: SoldierData) => {
   return ability.can('summon', subject('soldier', blueprint));
 };
 
-const onSkillPointerdown = (skill: SkillId) => {
-  selectedSkill.value = getSkillById(skill);
+const onSkillPointerdown = (skill: SkillData) => {
+  selectedSkill.value = skill;
   targetMode.value = 'skill';
 };
 
@@ -35,13 +34,13 @@ const onSummonPointerdown = (summon: SoldierData) => {
   <div v-if="activeEntity.owner === me" class="flex items-center gap-4 action-bar">
     <button
       v-for="skill in activeEntity.blueprint.skills"
-      :key="skill"
-      :title="`use ${getSkillById(skill)!.name}`"
+      :key="skill.id"
+      :title="`use ${skill.name}`"
       class="skill"
       :class="targetMode === 'skill' && 'active'"
-      :data-cost="getSkillById(skill)?.cost"
-      :disabled="activeEntity.ap < getSkillById(skill)!.cost"
-      :style="{ backgroundImage: `url(${getSkillById(skill)!.iconUrl})` }"
+      :data-cost="skill.cost"
+      :disabled="activeEntity.ap < skill.cost"
+      :style="{ backgroundImage: `url(${skill.iconUrl})` }"
       @pointerdown="onSkillPointerdown(skill)"
     />
 
