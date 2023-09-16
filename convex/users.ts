@@ -47,24 +47,26 @@ export const getProfile = query({
 
     const games = (
       await Promise.all(
-        gamePlayers.map(async gp => {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { history, ...game } = (await db.get(gp.gameId))!;
-          if (game.state !== 'ENDED') return null;
+        gamePlayers
+          .sort((a, b) => b._creationTime - a._creationTime)
+          .map(async gp => {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { history, ...game } = (await db.get(gp.gameId))!;
+            if (game.state !== 'ENDED') return null;
 
-          const players = await db
-            .query('gamePlayers')
-            .withIndex('by_game_id', q => q.eq('gameId', game._id))
-            .collect();
+            const players = await db
+              .query('gamePlayers')
+              .withIndex('by_game_id', q => q.eq('gameId', game._id))
+              .collect();
 
-          const opponent = await db.get(players.find(p => p.userId !== userId)!.userId);
+            const opponent = await db.get(players.find(p => p.userId !== userId)!.userId);
 
-          return {
-            ...game,
-            opponent,
-            isWinner: game.winnerId === userId
-          };
-        })
+            return {
+              ...game,
+              opponent,
+              isWinner: game.winnerId === userId
+            };
+          })
       )
     ).filter(isDefined);
 

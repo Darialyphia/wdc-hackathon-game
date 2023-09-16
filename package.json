@@ -15,9 +15,10 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@ark-ui/vue": "^0.7.0",
+    "@ark-ui/vue": "^0.8.0",
     "@auth0/auth0-vue": "^2.3.1",
     "@casl/ability": "^6.5.0",
+    "@floating-ui/vue": "^1.0.2",
     "@formkit/auto-animate": "^0.7.0",
     "@iconify/json": "^2.2.110",
     "@iconify/vue": "^4.1.1",

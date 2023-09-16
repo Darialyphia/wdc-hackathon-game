@@ -5,7 +5,7 @@ import type { ButtonBaseThemeKeys, ButtonProps } from './UiButtonBase.vue';
 type ButtonExtraKeys = 'bg' | 'colorHsl';
 export type ButtonGhostThemeKeys = ButtonBaseThemeKeys | ButtonExtraKeys;
 
-const { theme, ...props } = defineProps<ButtonProps & ThemeProps<ButtonGhostThemeKeys>>();
+const props = defineProps<ButtonProps & ThemeProps<ButtonGhostThemeKeys>>();
 
 const styles = useStyles<ButtonExtraKeys>(
   {
@@ -15,22 +15,28 @@ const styles = useStyles<ButtonExtraKeys>(
     },
     prefix: 'ui-ghost-button'
   },
-  () => theme
+  () => props.theme
 );
 
 const passthroughTheme = computed(() => {
-  if (!theme) return theme;
+  if (!props.theme) return props.theme;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { colorHsl, bg, ...rest } = theme;
+  const { colorHsl, bg, ...rest } = props.theme;
 
+  return rest;
+});
+
+const passthroughProps = computed(() => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { theme, ...rest } = props;
   return rest;
 });
 </script>
 
 <template>
   <UiButtonBase
-    v-bind="props"
+    v-bind="passthroughProps"
     :theme="passthroughTheme"
     class="ui-button-ghost"
     :style="styles"

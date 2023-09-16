@@ -12,7 +12,11 @@ until(isLoading)
 <template>
   <Suspense>
     <DynamicLayout>
-      <RouterView v-slot="{ Component }">
+      <main v-if="!isReady">
+        <UiSpinner size="xl" />
+      </main>
+
+      <RouterView v-slot="{ Component }" v-else>
         <template v-if="Component">
           <Suspense>
             <component :is="Component"></component>

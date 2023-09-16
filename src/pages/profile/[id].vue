@@ -7,7 +7,7 @@ const route = useRoute('Profile');
 const dayjs = useDayjs();
 </script>
 <template>
-  <main class="container surface" style="--container-size: var(--size-md)">
+  <main class="container" style="--container-size: var(--size-md)">
     <Query
       v-slot="{ data: user }"
       :query="api => api.users.getProfile"
@@ -15,7 +15,7 @@ const dayjs = useDayjs();
     >
       <h2 class="mb-5 text-center">{{ user.name }}</h2>
 
-      <section class="flex gap-10 mb-5">
+      <section class="flex gap-10 mb-5 surface">
         <div class="flex flex-col gap-3">
           <div class="flex-1 grid place-content-center">
             <UiDonutChart :value="user.winrate" label="Win rate" />
@@ -29,7 +29,7 @@ const dayjs = useDayjs();
           </div>
           <div v-if="user._creationTime">
             <dt>Member since</dt>
-            <dd>{{ dayjs(user._creationTime).format('LT') }}</dd>
+            <dd>{{ dayjs(user._creationTime).fromNow() }}</dd>
           </div>
         </dl>
       </section>
@@ -60,14 +60,16 @@ const dayjs = useDayjs();
               custom
               :to="{ name: 'Replay', params: { id: game._id } }"
             >
-              <UiButton
+              <UiGhostButton
                 :href="href"
                 left-icon="ic:baseline-remove-red-eye"
                 @click="navigate"
               >
                 Replay
-              </UiButton>
+              </UiGhostButton>
             </RouterLink>
+
+            <ReplayShareButton :game-id="game._id" />
           </div>
         </article>
       </section>
@@ -83,8 +85,9 @@ article {
   align-items: center;
   justify-content: space-between;
 
+  padding: var(--size-2);
+
   border: solid var(--border-size-1) var(--border-dimmed);
-  border-radius: var(--radius-2);
 
   *:nth-child(2) {
     justify-self: center;
@@ -93,22 +96,18 @@ article {
     justify-self: flex-end;
   }
 
-  & + article {
-    margin-block-start: var(--size-3);
-  }
-
   &.is-win {
-    background-color: hsl(var(--green-7-hsl) / 0.15);
+    background-color: hsl(var(--green-7-hsl) / 0.05);
   }
 
   &.is-loss {
-    background-color: hsl(var(--red-7-hsl) / 0.15);
+    background-color: hsl(var(--red-7-hsl) / 0.05);
   }
 }
 
 .result {
   display: flex;
-  gap: var(--size-3);
+  gap: var(--size-2);
   align-items: center;
 
   font-weight: var(--font-weight-5);
