@@ -1,7 +1,4 @@
 import type { SoldierData } from '.';
-import { dealDamageEvent } from '../events/dealDamage.event';
-import { entityDiedEvent } from '../events/entityDied.event';
-import { getEntityAt } from '../utils/entity.helpers';
 import { dealSingleTargetDamage } from '../utils/skill.helpers';
 import { TARGET_TYPES, TARGET_ZONES } from '../utils/entityData';
 import { FACTIONS_IDS } from '../enums';
@@ -14,10 +11,11 @@ export const havenSoldiers: SoldierData[] = [
     factionId: FACTIONS_IDS.HAVEN,
     name: 'Swordsman',
     cost: 2,
-    initiative: 5,
+    initiative: 7,
     maxHp: 6,
     attack: 2,
     defense: 1,
+    triggers: [],
     skills: [
       {
         id: 'melee_attack',
@@ -41,10 +39,11 @@ export const havenSoldiers: SoldierData[] = [
     factionId: FACTIONS_IDS.HAVEN,
     name: 'Swordsman',
     cost: 2,
-    initiative: 5,
+    initiative: 6,
     maxHp: 4,
     attack: 2,
     defense: 1,
+    triggers: [],
     skills: [
       {
         id: 'ranged_attack',

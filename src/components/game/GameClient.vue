@@ -218,6 +218,8 @@ const onSubmit = async () => {
 .game-client-container {
   --link: var(--primary);
 
+  user-select: none;
+
   position: relative;
 
   width: v-bind(width);

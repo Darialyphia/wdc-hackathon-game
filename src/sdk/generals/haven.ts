@@ -9,10 +9,11 @@ export const havenGeneral: GeneralData = {
   iconUrl: '/icons/haven_general_01.gif',
   factionId: FACTIONS_IDS.HAVEN,
   name: 'Paladin',
-  initiative: 6,
+  initiative: 10,
   maxHp: 20,
   attack: 3,
   defense: 1,
+  triggers: [],
   skills: [
     {
       id: 'melee_attack',

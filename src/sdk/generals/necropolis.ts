@@ -1,10 +1,10 @@
 import type { GeneralData } from '.';
-import { dealDamageEvent } from '../events/dealDamage.event';
-import { entityDiedEvent } from '../events/entityDied.event';
-import { getEntityAt } from '../utils/entity.helpers';
 import { dealSingleTargetDamage } from '../utils/skill.helpers';
 import { TARGET_TYPES, TARGET_ZONES } from '../utils/entityData';
 import { FACTIONS_IDS } from '../enums';
+import { TRIGGERS } from '../trigger';
+import { dealDamageEvent } from '../events/dealDamage.event';
+import { getEnemyGeneral } from '../utils/entity.helpers';
 
 export const necroGeneral: GeneralData = {
   characterId: 'necro_general_01',
@@ -12,10 +12,22 @@ export const necroGeneral: GeneralData = {
   iconUrl: '/icons/necro_general_01.gif',
   factionId: FACTIONS_IDS.NECRO,
   name: 'Necromancer',
-  initiative: 6,
+  initiative: 10,
   maxHp: 20,
   attack: 3,
   defense: 1,
+  triggers: [
+    // {
+    //   on: TRIGGERS.NEW_TURN,
+    //   execute({ state, reducer, from }) {
+    //     console.log('necromancer new turn tirgger');
+    //     reducer(
+    //       state,
+    //       dealDamageEvent.create(from.id, getEnemyGeneral(state, from.owner).id, 1)
+    //     );
+    //   }
+    // }
+  ],
   skills: [
     {
       id: 'melee_attack',

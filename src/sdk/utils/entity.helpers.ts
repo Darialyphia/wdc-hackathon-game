@@ -38,6 +38,9 @@ export const endTurn = (state: GameState) => {
 export const getGeneral = (state: GameState, player: PlayerId) =>
   state.entities.find(e => e.owner === player && e.kind === 'general')! as General;
 
+export const getEnemyGeneral = (state: GameState, player: PlayerId) =>
+  state.entities.find(e => e.owner !== player && e.kind === 'general')! as General;
+
 export const resetEntity = (entity: Entity) => {
   const { kind } = entity;
   switch (kind) {

@@ -26,6 +26,8 @@ export type GameState = {
   map: GameMap;
   entities: Entity[];
   history: GameEvent[];
+  globalAtb: number;
+  turn: number;
 };
 
 type CreateGamOptionsPlayer = {
@@ -50,7 +52,9 @@ export const createGameState = ({
     activeEntityId: 0,
     map: createGameMap(MAP_WIDTH, MAP_HEIGHT),
     entities: [],
-    history: []
+    history: [],
+    globalAtb: 0,
+    turn: 1
   };
 
   players.forEach((player, i) => {

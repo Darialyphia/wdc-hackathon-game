@@ -11,10 +11,11 @@ export const necroSoldiers: SoldierData[] = [
     factionId: FACTIONS_IDS.NECRO,
     name: 'Skeleton',
     cost: 2,
-    initiative: 5,
+    initiative: 7,
     maxHp: 6,
     attack: 2,
     defense: 1,
+    triggers: [],
     skills: [
       {
         id: 'melee_attack',

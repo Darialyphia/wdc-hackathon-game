@@ -48,7 +48,7 @@ until(viewport)
         mouseButtons: 'right'
       })
       .pinch()
-      .wheel()
+      .wheel({ smooth: 3, percent: 0.05 })
       .zoomPercent(0.01, false)
       .moveCenter(
         (state.value.map.width * CELL_SIZE + PADDING) / 2,

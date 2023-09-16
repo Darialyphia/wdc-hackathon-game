@@ -1,9 +1,10 @@
 import type { GameState } from '.';
 import type { Point } from '../utils/geometry';
-import { DEFAULT_GENERAL_AP, DEFAULT_SOLDIER_AP } from './constants';
+import { DEFAULT_GENERAL_AP, DEFAULT_SOLDIER_AP, MAX_ATB } from './constants';
 import type { SoldierData } from './soldiers';
 import type { GeneralData } from './generals';
 import type { Values } from '../utils/types';
+import type { Trigger } from './trigger';
 
 export type EntityId = number;
 export type GameId = string;
@@ -29,6 +30,7 @@ export type EntityBase = {
   atb: number;
   initiative: number;
   hp: number;
+  triggers: Trigger[];
 };
 
 export type Soldier = EntityBase & {
@@ -56,11 +58,12 @@ export const addGeneral = (
     id: ++state.nextEntityId,
     hasSummonned: false,
     atbSeed: entity.atbSeed,
-    atb: entity.atbSeed,
+    atb: MAX_ATB + entity.atbSeed,
     maxAp: DEFAULT_GENERAL_AP,
     ap: DEFAULT_GENERAL_AP,
     initiative: blueprint.initiative,
-    hp: blueprint.maxHp
+    hp: blueprint.maxHp,
+    triggers: [...blueprint.triggers]
   });
 };
 
@@ -80,6 +83,7 @@ export const addSoldier = (
     maxAp: DEFAULT_SOLDIER_AP,
     ap: DEFAULT_SOLDIER_AP,
     initiative: blueprint.initiative,
-    hp: blueprint.maxHp
+    hp: blueprint.maxHp,
+    triggers: [...blueprint.triggers]
   });
 };

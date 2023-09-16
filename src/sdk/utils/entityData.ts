@@ -4,6 +4,7 @@ import type { GameEvent } from '../events/reducer';
 import type { Point } from '../../utils/geometry';
 import type { Values } from '../../utils/types';
 import type { FactionId } from '../enums';
+import type { Trigger } from '../trigger';
 
 export const TARGET_TYPES = {
   SELF: 'SELF',
@@ -54,4 +55,5 @@ export type EntityData = {
   defense: number;
   initiative: number;
   spriteId: string;
+  triggers: Trigger[];
 };
