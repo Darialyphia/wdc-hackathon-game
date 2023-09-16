@@ -1,4 +1,4 @@
-import type { SkillExecutionContext, SkillId } from '../../resources/entity';
+import type { SkillExecutionContext, SkillId } from './entityData';
 import type { Entity } from '../entity';
 import { dealDamageEvent } from '../events/dealDamage.event';
 import { entityDiedEvent } from '../events/entityDied.event';

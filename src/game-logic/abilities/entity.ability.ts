@@ -5,7 +5,7 @@ import type { GameMapCell } from '../map';
 import { isCellWalkable } from '../utils/map.helpers';
 import { createAbility } from '../../utils/casl';
 import { getSkillById } from '../utils/skill.helpers';
-import type { SkillData } from '../../resources/entity';
+import type { SkillData } from '../utils/entityData';
 
 type MapActions = 'move';
 type SkillActions = 'cast';

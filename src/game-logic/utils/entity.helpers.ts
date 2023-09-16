@@ -10,9 +10,9 @@ import type {
   Soldier
 } from '../entity';
 import { tickUntilActiveEntity } from '../atb';
-import { soldiers, soldiersByFaction } from '../../resources/soldiers';
+import { soldiers, soldiersByFaction } from '../soldiers';
 import type { Point } from '../../utils/geometry';
-import { generals } from '../../resources/generals';
+import { generals } from '../generals';
 
 export const getEntityById = (state: GameState, id: EntityId) =>
   state.entities.find(e => e.id === id);

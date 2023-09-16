@@ -130,3 +130,4 @@ const onSummonPointerdown = (summon: SoldierData) => {
   margin-left: auto;
 }
 </style>
+../../game-logic/soldiers ../../resources/entityData

@@ -1,6 +1,6 @@
 import type { SoldierData } from '.';
-import { dealSingleTargetDamage } from '../../game-logic/utils/skill.helpers';
-import { TARGET_TYPES, TARGET_ZONES } from '../entity';
+import { dealSingleTargetDamage } from '../utils/skill.helpers';
+import { TARGET_TYPES, TARGET_ZONES } from '../utils/entityData';
 import { FACTIONS_IDS } from '../enums';
 
 export const necroSoldiers: SoldierData[] = [

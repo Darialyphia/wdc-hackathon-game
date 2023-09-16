@@ -6,7 +6,7 @@ import type { EndTurnActionInput } from '../../game-logic/actions/endTurn';
 import type { MoveActionInput } from '../../game-logic/actions/move';
 import type { SkillActionInput } from '../../game-logic/actions/skill';
 import type { SummonActionInput } from '../../game-logic/actions/summon';
-import type { SoldierData } from '../../resources/soldiers';
+import type { SoldierData } from '../../game-logic/soldiers';
 import type { Nullable } from '../../utils/types';
 import type { Entity } from '../../game-logic/entity';
 import { getActiveEntity } from '../../game-logic/utils/entity.helpers';
@@ -19,7 +19,7 @@ import { createSkillAbility } from '../../game-logic/abilities/skill.ability';
 import { endTurnEvent } from '../../game-logic/events/endTurn.event';
 import { type FXSequenceContext } from './useFXSequencer';
 import { parse } from 'zipson';
-import type { SkillData } from '../../resources/entity';
+import type { SkillData } from '../../game-logic/utils/entityData';
 
 export type GameDetail = Omit<Doc<'games'>, 'creator'> & {
   players: (Doc<'gamePlayers'> & { user: Doc<'users'> })[];

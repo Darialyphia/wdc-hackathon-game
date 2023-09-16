@@ -1,4 +1,4 @@
-import { generalIds } from '../resources/generals';
+import { generalIds } from '../game-logic/generals';
 import { z } from 'zod';
 
 export const createGameInput = {

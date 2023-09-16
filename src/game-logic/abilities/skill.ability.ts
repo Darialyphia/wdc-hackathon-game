@@ -5,7 +5,7 @@ import { exhaustiveSwitch } from '../../utils/assertions';
 import type { Entity } from '../entity';
 import { getActiveEntity, getEntityAt } from '../utils/entity.helpers';
 import { createAbility } from '../../utils/casl';
-import type { SkillData } from '../../resources/entity';
+import type { SkillData } from '../utils/entityData';
 
 type TargetActions = 'target' | 'highlight';
 

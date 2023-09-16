@@ -2,7 +2,7 @@ import type { ComputedRef } from 'vue';
 import type { Id } from '../../../convex/_generated/dataModel';
 import { createGameState } from '../../game-logic';
 import { reducer, type GameEvent } from '../../game-logic/events/reducer';
-import type { SoldierData } from '../../resources/soldiers';
+import type { SoldierData } from '../../game-logic/soldiers';
 import type { Nullable } from '../../utils/types';
 import type { Entity } from '../../game-logic/entity';
 import { getActiveEntity } from '../../game-logic/utils/entity.helpers';
@@ -11,7 +11,7 @@ import { endTurnEvent } from '../../game-logic/events/endTurn.event';
 import { type FXSequenceContext } from './useFXSequencer';
 import { parse } from 'zipson';
 import type { ActionDispatcher, Game, GameDetail } from './useGame';
-import type { SkillData } from '../../resources/entity';
+import type { SkillData } from '../../game-logic/utils/entityData';
 
 const noop = () => {
   return;

@@ -68,3 +68,4 @@ label {
   }
 }
 </style>
+../game-logic/generals

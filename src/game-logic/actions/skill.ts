@@ -9,7 +9,7 @@ import { getSkillById } from '../utils/skill.helpers';
 import { createEntityAbility } from '../abilities/entity.ability';
 import { createSkillAbility } from '../abilities/skill.ability';
 import { skillUsedEvent } from '../events/skillUsed.event';
-import type { SkillId } from '../../resources/entity';
+import type { SkillId } from '../utils/entityData';
 
 export const skillActionInput = z.object({
   playerId: z.string(),

@@ -1,9 +1,9 @@
 import type { SoldierData } from '.';
-import { dealDamageEvent } from '../../game-logic/events/dealDamage.event';
-import { entityDiedEvent } from '../../game-logic/events/entityDied.event';
-import { getEntityAt } from '../../game-logic/utils/entity.helpers';
-import { dealSingleTargetDamage } from '../../game-logic/utils/skill.helpers';
-import { TARGET_TYPES, TARGET_ZONES } from '../entity';
+import { dealDamageEvent } from '../events/dealDamage.event';
+import { entityDiedEvent } from '../events/entityDied.event';
+import { getEntityAt } from '../utils/entity.helpers';
+import { dealSingleTargetDamage } from '../utils/skill.helpers';
+import { TARGET_TYPES, TARGET_ZONES } from '../utils/entityData';
 import { FACTIONS_IDS } from '../enums';
 
 export const havenSoldiers: SoldierData[] = [

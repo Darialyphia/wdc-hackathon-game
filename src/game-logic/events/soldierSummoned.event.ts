@@ -7,7 +7,7 @@ import {
   getGeneral,
   isGeneral
 } from '../utils/entity.helpers';
-import { getSoldierById } from '../../resources/soldiers';
+import { getSoldierById } from '../soldiers';
 import { AnimatedSprite } from 'pixi.js';
 import { CELL_SIZE } from '../constants';
 import { createSpritesheetFrameObject } from '../../utils/sprite-utils';

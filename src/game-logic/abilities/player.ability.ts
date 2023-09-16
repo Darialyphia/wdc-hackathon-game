@@ -10,7 +10,7 @@ import {
 } from '../utils/entity.helpers';
 import type { Point } from '../../utils/geometry';
 import { getCellAt, getSurroundingCells, isCellWalkable } from '../utils/map.helpers';
-import type { SoldierData } from '../../resources/soldiers';
+import type { SoldierData } from '../soldiers';
 import { createAbility } from '../../utils/casl';
 
 type EntityActions = 'move' | 'use_skill';

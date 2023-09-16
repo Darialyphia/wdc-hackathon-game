@@ -1,9 +1,9 @@
-import type { GameState } from '../game-logic';
-import type { CharacterId, Entity } from '../game-logic/entity';
-import type { GameEvent } from '../game-logic/events/reducer';
-import type { Point } from '../utils/geometry';
-import type { Values } from '../utils/types';
-import type { FactionId } from './enums';
+import type { GameState } from '..';
+import type { CharacterId, Entity } from '../entity';
+import type { GameEvent } from '../events/reducer';
+import type { Point } from '../../utils/geometry';
+import type { Values } from '../../utils/types';
+import type { FactionId } from '../enums';
 
 export const TARGET_TYPES = {
   SELF: 'SELF',

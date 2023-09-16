@@ -1,8 +1,8 @@
-import type { CharacterId } from '../../game-logic/entity';
+import type { CharacterId } from '../entity';
 import { FACTIONS_IDS, type FactionId } from '../enums';
 import { havenSoldiers } from './haven';
 import { necroSoldiers } from './necro';
-import type { EntityData } from '../entity';
+import type { EntityData } from '../utils/entityData';
 
 export type SoldierData = EntityData & {
   cost: number;

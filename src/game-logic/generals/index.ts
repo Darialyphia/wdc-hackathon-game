@@ -1,7 +1,7 @@
 import { necroGeneral } from './necropolis';
 import { havenGeneral } from './haven';
-import type { EntityData } from '../entity';
-import type { CharacterId } from '../../game-logic/entity';
+import type { EntityData } from '../utils/entityData';
+import type { CharacterId } from '../entity';
 
 export type GeneralData = EntityData;
 

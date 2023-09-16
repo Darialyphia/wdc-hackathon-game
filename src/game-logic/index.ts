@@ -15,7 +15,7 @@ import {
 } from './constants';
 import { reducer, type GameEvent } from './events/reducer';
 import type { Nullable } from '../utils/types';
-import { getGeneralById } from '../resources/generals';
+import { getGeneralById } from './generals';
 
 export type GameState = {
   lifecycleState: GameLifecycleState;
