@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { CELL_SIZE } from '../../game-logic/constants';
+import { CELL_SIZE } from '../../sdk/constants';
 import { AdjustmentFilter } from '@pixi/filter-adjustment';
 import { ColorGradientFilter } from '@pixi/filter-color-gradient';
 import { ColorOverlayFilter } from '@pixi/filter-color-overlay';
 import type { Texture } from 'pixi.js';
 import { subject } from '@casl/ability';
-import { createPlayerAbility } from '../../game-logic/abilities/player.ability';
-import { getCellAt } from '../../game-logic/utils/map.helpers';
-import { getBitMask } from '../../game-logic/utils/bit-maksing';
-import type { GameMapCell } from '../../game-logic/map';
-import { createSkillAbility } from '../../game-logic/abilities/skill.ability';
+import { createPlayerAbility } from '../../sdk/abilities/player.ability';
+import { getCellAt } from '../../sdk/utils/map.helpers';
+import { getBitMask } from '../../sdk/utils/bit-maksing';
+import type { GameMapCell } from '../../sdk/map';
+import { createSkillAbility } from '../../sdk/abilities/skill.ability';
 
 const { x, y, texture } = defineProps<{
   texture: Texture;

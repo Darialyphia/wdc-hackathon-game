@@ -2,9 +2,9 @@
 import { Viewport } from 'pixi-viewport';
 import { useApplication } from 'vue3-pixi';
 import { AdjustmentFilter } from '@pixi/filter-adjustment';
-import { CELL_SIZE } from '../../game-logic/constants';
-import type { GameMapCell } from '../../game-logic/map';
-import { createPlayerAbility } from '../../game-logic/abilities/player.ability';
+import { CELL_SIZE } from '../../sdk/constants';
+import type { GameMapCell } from '../../sdk/map';
+import { createPlayerAbility } from '../../sdk/abilities/player.ability';
 import { subject } from '@casl/ability';
 import type { Texture } from 'pixi.js';
 

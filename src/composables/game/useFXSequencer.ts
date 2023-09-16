@@ -1,23 +1,20 @@
 import { type Ref } from 'vue';
-import type { GameState } from '../../game-logic';
-import { DEAL_DAMAGE, dealDamageEvent } from '../../game-logic/events/dealDamage.event';
-import { END_TURN, endTurnEvent } from '../../game-logic/events/endTurn.event';
-import { ENTITY_DIED, entityDiedEvent } from '../../game-logic/events/entityDied.event';
-import {
-  ENTITY_MOVED,
-  entityMovedEvent
-} from '../../game-logic/events/entityMoved.event';
-import { type GameEvent } from '../../game-logic/events/reducer';
-import { SKILL_USED, skillUsedEvent } from '../../game-logic/events/skillUsed.event';
+import type { GameState } from '../../sdk';
+import { DEAL_DAMAGE, dealDamageEvent } from '../../sdk/events/dealDamage.event';
+import { END_TURN, endTurnEvent } from '../../sdk/events/endTurn.event';
+import { ENTITY_DIED, entityDiedEvent } from '../../sdk/events/entityDied.event';
+import { ENTITY_MOVED, entityMovedEvent } from '../../sdk/events/entityMoved.event';
+import { type GameEvent } from '../../sdk/events/reducer';
+import { SKILL_USED, skillUsedEvent } from '../../sdk/events/skillUsed.event';
 import {
   SOLDIER_SUMMONED,
   soldierSummonedEvent
-} from '../../game-logic/events/soldierSummoned.event';
+} from '../../sdk/events/soldierSummoned.event';
 import { Container, AnimatedSprite } from 'pixi.js';
-import type { EntityId } from '../../game-logic/entity';
+import type { EntityId } from '../../sdk/entity';
 import type { MaybeRefOrGetter } from '@vueuse/core';
 import type { AssetsContext } from './useAssets';
-import type { EventSequence } from '../../game-logic/events';
+import type { EventSequence } from '../../sdk/events';
 
 export type FXSequenceStep<T extends { type: string; payload: any }> = {
   event: T;

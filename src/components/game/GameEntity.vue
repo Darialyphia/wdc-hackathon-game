@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { PTransition } from 'vue3-pixi';
 
-import type { Entity } from '../../game-logic/entity';
-import { CELL_SIZE } from '../../game-logic/constants';
-import { getCellAt } from '../../game-logic/utils/map.helpers';
+import type { Entity } from '../../sdk/entity';
+import { CELL_SIZE } from '../../sdk/constants';
+import { getCellAt } from '../../sdk/utils/map.helpers';
 import { OutlineFilter } from '@pixi/filter-outline';
 import { ColorOverlayFilter } from '@pixi/filter-color-overlay';
 import type { Texture } from 'pixi.js';

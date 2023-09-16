@@ -1,17 +1,18 @@
 <script setup lang="ts">
 import { subject } from '@casl/ability';
-import { createPlayerAbility } from '../../game-logic/abilities/player.ability';
-import { getSummonBlueprints } from '../../game-logic/utils/entity.helpers';
-import type { SoldierData } from '../../resources/soldiers';
-import type { SkillData } from '../../resources/entity';
+import { createPlayerAbility } from '../../sdk/abilities/player.ability';
+import { getSummonBlueprints } from '../../sdk/utils/entity.helpers';
+import type { SoldierData } from '../../sdk/soldiers';
+import type { SkillData } from '../../sdk/utils/entityData';
 
 const { activeEntity, selectedSummon, selectedSkill, endTurn, state, me, targetMode } =
   useGame();
 
 const availableSummons = computed(() => {
   if (activeEntity.value.kind !== 'general') return [];
+  const blueprints = getSummonBlueprints(activeEntity.value);
 
-  return Object.values(getSummonBlueprints(activeEntity.value));
+  return Object.values(blueprints);
 });
 
 const canSummon = (blueprint: SoldierData) => {
@@ -130,4 +131,4 @@ const onSummonPointerdown = (summon: SoldierData) => {
   margin-left: auto;
 }
 </style>
-../../game-logic/soldiers ../../resources/entityData
+../../sdk/soldiers ../../resources/entityData

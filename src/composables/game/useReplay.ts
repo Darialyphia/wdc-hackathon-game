@@ -1,17 +1,17 @@
 import type { ComputedRef } from 'vue';
 import type { Id } from '../../../convex/_generated/dataModel';
-import { createGameState } from '../../game-logic';
-import { reducer, type GameEvent } from '../../game-logic/events/reducer';
-import type { SoldierData } from '../../game-logic/soldiers';
+import { createGameState } from '../../sdk';
+import { reducer, type GameEvent } from '../../sdk/events/reducer';
+import type { SoldierData } from '../../sdk/soldiers';
 import type { Nullable } from '../../utils/types';
-import type { Entity } from '../../game-logic/entity';
-import { getActiveEntity } from '../../game-logic/utils/entity.helpers';
-import { createPathFinder } from '../../game-logic/utils/pathfinding.helpers';
-import { endTurnEvent } from '../../game-logic/events/endTurn.event';
+import type { Entity } from '../../sdk/entity';
+import { getActiveEntity } from '../../sdk/utils/entity.helpers';
+import { createPathFinder } from '../../sdk/utils/pathfinding.helpers';
+import { endTurnEvent } from '../../sdk/events/endTurn.event';
 import { type FXSequenceContext } from './useFXSequencer';
 import { parse } from 'zipson';
 import type { ActionDispatcher, Game, GameDetail } from './useGame';
-import type { SkillData } from '../../game-logic/utils/entityData';
+import type { SkillData } from '../../sdk/utils/entityData';
 
 const noop = () => {
   return;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CELL_SIZE } from '../../game-logic/constants';
+import { CELL_SIZE } from '../../sdk/constants';
 import { fill } from 'lodash-es';
 import type { ColorSource } from 'pixi.js';
 

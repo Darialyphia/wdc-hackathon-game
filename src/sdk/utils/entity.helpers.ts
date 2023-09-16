@@ -1,18 +1,10 @@
 import { isObject } from '../../utils/assertions';
 import { exhaustiveSwitch } from '../../utils/assertions';
 import type { GameState } from '..';
-import type {
-  CharacterId,
-  Entity,
-  EntityId,
-  General,
-  PlayerId,
-  Soldier
-} from '../entity';
+import type { Entity, EntityId, General, PlayerId, Soldier } from '../entity';
 import { tickUntilActiveEntity } from '../atb';
-import { soldiers, soldiersByFaction } from '../soldiers';
+import { soldiersByFaction } from '../soldiers';
 import type { Point } from '../../utils/geometry';
-import { generals } from '../generals';
 
 export const getEntityById = (state: GameState, id: EntityId) =>
   state.entities.find(e => e.id === id);

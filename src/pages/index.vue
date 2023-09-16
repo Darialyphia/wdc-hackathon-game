@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { api } from '../../convex/_generated/api';
 import type { Doc, Id } from '../../convex/_generated/dataModel';
-import type { CharacterId } from '../game-logic/entity';
+import type { CharacterId } from '../sdk/entity';
 import type { Nullable } from '../utils/types';
 
 definePage({

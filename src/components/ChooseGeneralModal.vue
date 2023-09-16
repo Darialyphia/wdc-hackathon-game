@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { CharacterId } from '../game-logic/entity';
-import { generals } from '../resources/generals';
+import type { CharacterId } from '../sdk/entity';
+import { generals } from '../sdk/generals';
 
 const { isLoading } = defineProps<{ isLoading: boolean }>();
 const isOpened = defineModel('isOpened', { required: true });
@@ -68,4 +68,4 @@ label {
   }
 }
 </style>
-../game-logic/generals
+../sdk/generals

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { GameMapCell } from '../../game-logic/map';
+import type { GameMapCell } from '../../sdk/map';
 import hardcodedmap from '../../assets/maps/map_01/map_01.json';
 import { createTiledMap } from '../../utils/tiled';
 import type { ITiledMap } from '@workadventure/tiled-map-type-guard';
 import type { Point } from '../../utils/geometry';
-import { getCellAt } from '../../game-logic/utils/map.helpers';
+import { getCellAt } from '../../sdk/utils/map.helpers';
 
 const { resolveTileset } = useAssets();
 const textures = computed(() => Object.values(resolveTileset('map_01').textures));
