@@ -153,12 +153,40 @@ const onSubmit = async () => {
         <img :src="selectedEntity.blueprint.iconUrl" />
         {{ selectedEntity.blueprint.name }}
         <br />
-        Hp: {{ selectedEntity.hp }}
+        Hp: {{ selectedEntity.hp }} / {{ selectedEntity.blueprint.maxHp }}
         <br />
         Atk:
-        {{ selectedEntity.blueprint.attack }}
+        <span
+          class="stat"
+          :class="{
+            'is-buffed': selectedEntity.attack > selectedEntity.blueprint.attack,
+            'is-debuffed': selectedEntity.attack < selectedEntity.blueprint.attack
+          }"
+        >
+          {{ selectedEntity.attack }}
+        </span>
         <br />
-        Def: {{ selectedEntity.blueprint.defense }}
+        Def:
+        <span
+          class="stat"
+          :class="{
+            'is-buffed': selectedEntity.defense > selectedEntity.blueprint.defense,
+            'is-debuffed': selectedEntity.defense < selectedEntity.blueprint.defense
+          }"
+        >
+          {{ selectedEntity.defense }}
+        </span>
+        <br />
+        Initiative:
+        <span
+          class="stat"
+          :class="{
+            'is-buffed': selectedEntity.initiative > selectedEntity.blueprint.initiative,
+            'is-debuffed': selectedEntity.initiative < selectedEntity.blueprint.initiative
+          }"
+        >
+          {{ selectedEntity.initiative }}
+        </span>
         <br />
         AP: {{ selectedEntity.ap }} / {{ selectedEntity.maxAp }}
         <br />
@@ -171,7 +199,6 @@ const onSubmit = async () => {
             <dd>{{ skill.description }}</dd>
           </template>
         </dl>
-        <br />
         Passives
         <p v-if="!selectedEntity.triggers.length">No ongoing passives</p>
         <dl>
@@ -180,6 +207,16 @@ const onSubmit = async () => {
               {{ trigger.name }}
             </dt>
             <dd>{{ trigger.description }}</dd>
+          </template>
+        </dl>
+        Auras
+        <p v-if="!selectedEntity.auras.length">No ongoing aura</p>
+        <dl>
+          <template v-for="aura in selectedEntity.auras" :key="aura.id">
+            <dt>
+              {{ aura.name }}
+            </dt>
+            <dd>{{ aura.description }}</dd>
           </template>
         </dl>
       </div>
@@ -393,6 +430,7 @@ const onSubmit = async () => {
   right: var(--size-3);
 
   display: grid;
+  display: none;
   grid-template-rows: 1fr auto;
 
   width: var(--size-14);
@@ -437,5 +475,17 @@ const onSubmit = async () => {
   background-color: hsl(0 0% 0% / 0.6);
   backdrop-filter: blur(5px);
   border-radius: var(--radius-3);
+}
+
+.stat.is-buffed {
+  color: var(--green-6);
+}
+.stat.is-debuffed {
+  color: var(--red-6);
+}
+
+dd,
+dt {
+  color: inherit;
 }
 </style>

@@ -5,6 +5,8 @@ import type { SoldierData } from './soldiers';
 import type { GeneralData } from './generals';
 import type { Values } from '../utils/types';
 import type { Trigger } from './trigger';
+import { applyModifier, type Modifier } from './modifier';
+import type { Aura } from './aura';
 
 export type EntityId = number;
 export type GameId = string;
@@ -19,18 +21,22 @@ export const ENTITY_STATES = {
 export type EntityState = Values<typeof ENTITY_STATES>;
 
 export type EntityBase = {
-  characterId: CharacterId;
   readonly id: EntityId;
+  readonly atbSeed: number;
+  characterId: CharacterId;
   owner: PlayerId;
   state: EntityState;
   position: Point;
-  readonly maxAp: number;
+  maxAp: number;
   ap: number;
-  readonly atbSeed: number;
   atb: number;
-  initiative: number;
+  readonly attack: number;
+  readonly defense: number;
+  readonly initiative: number;
   hp: number;
   triggers: Trigger[];
+  modifiers: Modifier[];
+  auras: Aura[];
 };
 
 export type Soldier = EntityBase & {
@@ -48,42 +54,64 @@ export type Entity = Soldier | General;
 export const addGeneral = (
   state: GameState,
   blueprint: GeneralData,
-  entity: Pick<General, 'owner' | 'characterId' | 'position' | 'atbSeed'>
+  options: Pick<General, 'owner' | 'characterId' | 'position' | 'atbSeed'>
 ) => {
-  state.entities.push({
-    ...entity,
+  const entity: General = {
+    ...options,
     state: ENTITY_STATES.ALIVE,
     blueprint,
     kind: 'general',
     id: ++state.nextEntityId,
     hasSummonned: false,
-    atbSeed: entity.atbSeed,
-    atb: MAX_ATB + entity.atbSeed,
+    atbSeed: options.atbSeed,
+    atb: MAX_ATB + options.atbSeed,
     maxAp: DEFAULT_GENERAL_AP,
     ap: DEFAULT_GENERAL_AP,
-    initiative: blueprint.initiative,
     hp: blueprint.maxHp,
-    triggers: [...blueprint.triggers]
-  });
+    triggers: [...blueprint.triggers],
+    modifiers: [],
+    auras: blueprint.auras,
+    get initiative() {
+      return applyModifier(entity, 'initiative');
+    },
+    get attack() {
+      return applyModifier(entity, 'attack');
+    },
+    get defense() {
+      return applyModifier(entity, 'defense');
+    }
+  };
+  state.entities.push(entity);
 };
 
 export const addSoldier = (
   state: GameState,
   blueprint: SoldierData,
-  entity: Pick<Soldier, 'owner' | 'characterId' | 'position' | 'atbSeed'>
+  options: Pick<Soldier, 'owner' | 'characterId' | 'position' | 'atbSeed'>
 ) => {
-  state.entities.push({
-    ...entity,
+  const entity: Soldier = {
+    ...options,
     state: ENTITY_STATES.ALIVE,
     blueprint,
     kind: 'soldier',
     id: ++state.nextEntityId,
-    atbSeed: entity.atbSeed,
-    atb: entity.atbSeed,
+    atbSeed: options.atbSeed,
+    atb: options.atbSeed,
     maxAp: DEFAULT_SOLDIER_AP,
     ap: DEFAULT_SOLDIER_AP,
-    initiative: blueprint.initiative,
     hp: blueprint.maxHp,
-    triggers: [...blueprint.triggers]
-  });
+    triggers: [...blueprint.triggers],
+    modifiers: [],
+    auras: blueprint.auras,
+    get initiative() {
+      return applyModifier(entity, 'initiative');
+    },
+    get attack() {
+      return applyModifier(entity, 'attack');
+    },
+    get defense() {
+      return applyModifier(entity, 'defense');
+    }
+  };
+  state.entities.push(entity);
 };

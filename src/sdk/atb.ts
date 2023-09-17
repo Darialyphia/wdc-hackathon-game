@@ -23,7 +23,14 @@ const tickGlobalAtb = (state: GameState) => {
       e.triggers = e.triggers
         .map(trigger => ({
           ...trigger,
-          duration: trigger.duration ? trigger.duration - 1 : undefined
+          duration: trigger.duration - 1
+        }))
+        .filter(trigger => trigger.duration !== 0);
+
+      e.modifiers = e.modifiers
+        .map(modifier => ({
+          ...modifier,
+          duration: modifier.duration - 1
         }))
         .filter(trigger => trigger.duration !== 0);
     });

@@ -5,6 +5,7 @@ import type { Point } from '../../utils/geometry';
 import type { Values } from '../../utils/types';
 import type { FactionId } from '../enums';
 import type { Trigger } from '../trigger';
+import type { Aura } from '../aura';
 
 export const TARGET_TYPES = {
   SELF: 'SELF',
@@ -56,4 +57,5 @@ export type EntityData = {
   initiative: number;
   spriteId: string;
   triggers: Trigger[];
+  auras: Aura[];
 };

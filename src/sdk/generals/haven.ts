@@ -3,6 +3,7 @@ import { dealSingleTargetDamage } from '../utils/skill.helpers';
 import { TARGET_TYPES, TARGET_ZONES } from '../utils/entityData';
 import { FACTIONS_IDS } from '../enums';
 import { getEntityAt } from '../utils/entity.helpers';
+import { AURA_TARGET_TYPES } from '../aura';
 
 export const havenGeneral: GeneralData = {
   characterId: 'haven_general_01',
@@ -33,6 +34,18 @@ export const havenGeneral: GeneralData = {
           basePower: 1
         });
       }
+    }
+  ],
+  auras: [
+    {
+      id: 'divine_inspiration',
+      stat: 'attack',
+      value: 1,
+      range: 1,
+      name: 'Divine Inspiration',
+      description: 'Friendly units around this one get +1 attack',
+      applyToSelf: false,
+      targetType: AURA_TARGET_TYPES.ALLY
     }
   ]
 };

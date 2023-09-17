@@ -20,6 +20,7 @@ export const necroGeneral: GeneralData = {
       on: ENTITY_DIED,
       name: 'Soul feast',
       description: 'Whenever a unit dies, recover 1 P',
+      duration: Infinity,
       execute({ state, reducer, from }) {
         healSingleTarget(state, reducer, { from: from.id, to: from.id, baseAmount: 1 });
       }
@@ -44,5 +45,6 @@ export const necroGeneral: GeneralData = {
         });
       }
     }
-  ]
+  ],
+  auras: []
 };

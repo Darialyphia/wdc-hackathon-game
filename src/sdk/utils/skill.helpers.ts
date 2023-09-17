@@ -26,10 +26,7 @@ export const dealSingleTargetDamage = (
 
   if (!target || !caster) return;
 
-  const amount = Math.max(
-    1,
-    basePower + caster.blueprint.attack - target.blueprint.defense
-  );
+  const amount = Math.max(1, basePower + caster.attack - target.defense);
   reducer(state, dealDamageEvent.create(state.activeEntityId, target.id, amount));
 
   if (lifeDrainRatio) {

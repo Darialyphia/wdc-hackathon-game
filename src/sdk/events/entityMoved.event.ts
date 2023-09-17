@@ -2,6 +2,7 @@ import type { Point } from '../../utils/geometry';
 import type { EntityId } from '../entity';
 import { defineEvent } from '.';
 import { getEntityById } from '../utils/entity.helpers';
+import { applyAuras } from '../aura';
 
 export const ENTITY_MOVED = 'entity_moved';
 
@@ -24,6 +25,8 @@ export const entityMovedEvent = defineEvent({
 
     entity.position = event.to.at(-1)!;
     entity.ap -= event.to.length;
+
+    applyAuras(state);
 
     return state;
   },

@@ -17,6 +17,7 @@ export const havenSoldiers: SoldierData[] = [
     attack: 2,
     defense: 1,
     triggers: [],
+    auras: [],
     skills: [
       {
         id: 'melee_attack',
@@ -50,6 +51,7 @@ export const havenSoldiers: SoldierData[] = [
     attack: 2,
     defense: 0,
     triggers: [],
+    auras: [],
     skills: [
       {
         id: 'ranged_attack',

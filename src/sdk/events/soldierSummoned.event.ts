@@ -11,6 +11,7 @@ import { getSoldierById } from '../soldiers';
 import { AnimatedSprite } from 'pixi.js';
 import { CELL_SIZE } from '../constants';
 import { createSpritesheetFrameObject } from '../../utils/sprite-utils';
+import { applyAuras } from '../aura';
 
 export const SOLDIER_SUMMONED = 'soldier_summoned';
 
@@ -53,6 +54,8 @@ export const soldierSummonedEvent = defineEvent({
     });
 
     activeEntity.hasSummonned = true;
+
+    applyAuras(state);
 
     return state;
   },

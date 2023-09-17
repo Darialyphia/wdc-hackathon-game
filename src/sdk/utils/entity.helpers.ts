@@ -61,3 +61,10 @@ export const getSummonBlueprints = (entity: General) =>
 
 export const getEntityAt = (state: GameState, { x, y }: Point) =>
   state.entities.find(e => e.position.x === x && e.position.y === y);
+
+export const getEntityDistance = (entity1: Entity, entity2: Entity) => {
+  return {
+    x: Math.abs(entity1.position.x - entity2.position.x),
+    y: Math.abs(entity1.position.y - entity2.position.y)
+  };
+};

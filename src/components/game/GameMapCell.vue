@@ -21,9 +21,9 @@ const {
   state,
   activeEntity,
   isMyTurn,
-  canCastAt,
   canSummonAt,
   selectedSkill,
+  selectedEntity,
   pathfinder,
   targetMode,
   hoveredCell
@@ -128,5 +128,6 @@ const filters = computed(() => {
     :filters="filters"
     @pointerenter="hoveredCell = cell"
     @pointerleave="hoveredCell = null"
+    @click="selectedEntity = null"
   />
 </template>

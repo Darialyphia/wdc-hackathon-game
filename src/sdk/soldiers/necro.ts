@@ -17,6 +17,7 @@ export const necroSoldiers: SoldierData[] = [
     attack: 2,
     defense: 0,
     triggers: [],
+    auras: [],
     skills: [
       {
         id: 'melee_attack',
@@ -39,17 +40,18 @@ export const necroSoldiers: SoldierData[] = [
     ]
   },
   {
-    characterId: 'vapirem',
+    characterId: 'vapire',
     spriteId: 'necroVampire',
     iconUrl: '/icons/necro_vampire.gif',
     factionId: FACTIONS_IDS.NECRO,
     name: 'Vampire',
     cost: 3,
     initiative: 8,
-    maxHp: 8,
+    maxHp: 9,
     attack: 2,
     defense: 0,
     triggers: [],
+    auras: [],
     skills: [
       {
         id: 'melee_attack',

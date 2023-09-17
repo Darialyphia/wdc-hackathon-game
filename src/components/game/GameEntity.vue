@@ -47,13 +47,15 @@ const onPointerdown = () => {
   }
 };
 
-const onPointerenter = () => {
+const onClick = () => {
   selectedEntity.value = entity;
+};
+
+const onPointerenter = () => {
   hoveredCell.value = getCellAt(state.value, entity.position);
 };
 
 const onPointerleave = () => {
-  selectedEntity.value = null;
   hoveredCell.value = null;
 };
 const { linkSprite } = useFXSequencer();
@@ -134,6 +136,7 @@ const onEnter = (el: AnimatedSprite, done: () => void) => {
     :x="entity.position.x * CELL_SIZE + CELL_SIZE / 2"
     :y="entity.position.y * CELL_SIZE + CELL_SIZE / 2"
     :sortable-children="true"
+    @click="onClick"
     @pointerenter="onPointerenter"
     @pointerleave="onPointerleave"
     @pointerdown="onPointerdown"

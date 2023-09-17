@@ -23,6 +23,7 @@ export const dealDamageEvent = defineEvent({
     const entity = getEntityById(state, targetId);
     if (!entity) return state;
 
+    console.log(amount);
     entity.hp = Math.max(0, entity.hp - amount);
 
     return state;
