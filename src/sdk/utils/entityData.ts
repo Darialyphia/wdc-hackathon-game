@@ -34,6 +34,7 @@ export type SkillExecutionContext = {
 export type SkillData = {
   id: SkillId;
   name: string;
+  description: string;
   cost: number;
   range: number;
   minRange: number;

@@ -29,6 +29,7 @@ const generalId = ref<CharacterId>();
               :value="general.characterId"
               class="sr-only"
             />
+            <img :src="general.iconUrl" />
             {{ general.name }}
           </label>
         </fieldset>
@@ -54,9 +55,11 @@ label {
 
   aspect-ratio: 1;
   width: var(--size-12);
+
+  text-align: center;
   &:hover,
   &:focus-within {
-    outline-color: var(--link);
+    outline-color: var(--primary);
     outline-style: solid;
     outline-offset: 2px;
     transition: outline-offset 145ms var(--ease-2);

@@ -40,6 +40,8 @@ export const getProfile = query({
   },
   handler: async ({ db }, { userId }) => {
     const user = await db.get(userId);
+    if (!user) throw new Error('not found');
+
     const gamePlayers = await db
       .query('gamePlayers')
       .withIndex('by_user_id', q => q.eq('userId', userId))
@@ -59,11 +61,15 @@ export const getProfile = query({
               .withIndex('by_game_id', q => q.eq('gameId', game._id))
               .collect();
 
-            const opponent = await db.get(players.find(p => p.userId !== userId)!.userId);
+            const opponentPlayer = players.find(p => p.userId !== userId);
+            const myPlayer = players.find(p => p.userId === userId);
+            const opponent = await db.get(opponentPlayer!.userId);
 
             return {
               ...game,
-              opponent,
+              opponent: toUserDto(opponent!),
+              opponentGeralId: opponentPlayer!.generalId,
+              myGeneralId: myPlayer!.generalId,
               isWinner: game.winnerId === userId
             };
           })
@@ -71,7 +77,7 @@ export const getProfile = query({
     ).filter(isDefined);
 
     return {
-      ...user,
+      ...toUserDto(user),
       games,
       winrate: (games.filter(g => g.isWinner).length / games.length) * 100
     };

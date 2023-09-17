@@ -134,6 +134,13 @@ const onSubmit = async () => {
     </div>
 
     <div class="timeline">
+      <div>
+        <div
+          class="global-atb"
+          :style="{ '--percent': gameState.state.value.globalAtb }"
+        />
+        Turn&nbsp;{{ gameState.state.value.turn }}
+      </div>
       <img
         v-for="(entity, index) in gameState.atbTimeline.value"
         :key="index"
@@ -156,11 +163,27 @@ const onSubmit = async () => {
         AP: {{ selectedEntity.ap }} / {{ selectedEntity.maxAp }}
         <br />
         Skills
-        <ul>
-          <li v-for="skill in selectedEntity.blueprint.skills" :key="skill.id">
-            {{ skill.name }}
-          </li>
-        </ul>
+        <dl>
+          <template v-for="skill in selectedEntity.blueprint.skills" :key="skill.id">
+            <dt>
+              {{ skill.name }}
+            </dt>
+            <dd>{{ skill.description }}</dd>
+          </template>
+        </dl>
+        <br />
+        Passives
+        <dl>
+          <template
+            v-for="trigger in selectedEntity.blueprint.triggers"
+            :key="trigger.name"
+          >
+            <dt>
+              {{ trigger.name }}
+            </dt>
+            <dd>{{ trigger.description }}</dd>
+          </template>
+        </dl>
       </div>
     </Transition>
 
@@ -352,6 +375,20 @@ const onSubmit = async () => {
   }
 }
 
+.global-atb {
+  aspect-ratio: 1;
+  width: var(--size-7);
+  margin-inline: auto;
+
+  background: conic-gradient(
+    var(--blue-7) 0deg,
+    var(--blue-7) calc(1deg * var(--percent)),
+    black calc(1deg * var(--percent))
+  );
+  background-repeat: no-repeat;
+  border: solid var(--border-size-1) var(--primary);
+  border-radius: var(--radius-round);
+}
 .chat {
   position: absolute;
   top: var(--size-15);

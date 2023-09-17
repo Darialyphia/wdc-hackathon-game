@@ -1,7 +1,7 @@
 import type { GameState } from '.';
 import { MAX_ATB } from './constants';
 import { ENTITY_STATES } from './entity';
-import { TRIGGERS, executeTrigger } from './trigger';
+import { executeTrigger } from './trigger';
 
 const GLOBAL_ATB_INITIATIVE = 8;
 
@@ -17,7 +17,7 @@ const tickGlobalAtb = (state: GameState) => {
   state.globalAtb += GLOBAL_ATB_INITIATIVE;
 
   if (state.globalAtb >= MAX_ATB) {
-    executeTrigger(state, TRIGGERS.NEW_TURN);
+    executeTrigger(state, { type: 'new_turn', payload: {} });
     state.globalAtb = 0;
     state.turn++;
   }

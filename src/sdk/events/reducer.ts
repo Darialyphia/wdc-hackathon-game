@@ -15,6 +15,7 @@ import {
 } from './soldierSummoned.event';
 import { HEAL, type HealEvent, healEvent } from './healEvent';
 import { exhaustiveSwitch } from '../../utils/assertions';
+import { executeTrigger } from '../trigger';
 
 export type GameEvent =
   | EntityMovedEvent
@@ -57,6 +58,7 @@ export const createReducer =
         exhaustiveSwitch(type);
     }
 
+    executeTrigger(state, event);
     if (persist) {
       state.history.push(event);
     }

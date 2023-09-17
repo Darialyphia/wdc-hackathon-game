@@ -1,5 +1,6 @@
 import { defineEvent } from '.';
 import type { EntityId } from '../entity';
+import { executeTrigger } from '../trigger';
 import { getEntityById } from '../utils/entity.helpers';
 
 export const DEAL_DAMAGE = 'deal_damage';

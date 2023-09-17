@@ -1,13 +1,8 @@
 import type { GameState } from '.';
-import type { Values } from '../utils/types';
 import type { Entity } from './entity';
-import { type GameEvent, createReducer, type GameReducer } from './events/reducer';
+import { createReducer, type GameEvent, type GameReducer } from './events/reducer';
 
-export const TRIGGERS = {
-  NEW_TURN: 'new_turn'
-} as const;
-
-export type TriggerId = Values<typeof TRIGGERS>;
+export type TriggerEvent = GameEvent | { type: 'new_turn'; payload: {} };
 
 export type TriggerContext = {
   state: GameState;
@@ -16,16 +11,18 @@ export type TriggerContext = {
 };
 
 export type Trigger = {
-  on: TriggerId;
+  on: TriggerEvent['type'];
+  name: string;
+  description: string;
   execute: (ctx: TriggerContext) => void;
 };
 
-export const executeTrigger = (state: GameState, id: TriggerId) => {
+export const executeTrigger = (state: GameState, event: TriggerEvent) => {
   state.entities.forEach(entity => {
     if (entity.state === 'DEAD') return;
 
     entity.triggers.forEach(trigger => {
-      if (trigger.on === id) {
+      if (trigger.on === event.type) {
         trigger.execute({
           reducer: createReducer({ persist: false }),
           state,

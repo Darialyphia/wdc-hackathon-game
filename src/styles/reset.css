@@ -57,7 +57,7 @@ body {
 }
 
 :is(button, a):focus-visible {
-  outline: var(--link) solid 3px;
+  outline: var(--primary) solid 3px;
   transition: outline-offset 145ms var(--ease-2);
 }
 

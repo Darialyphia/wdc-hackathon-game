@@ -4,51 +4,59 @@ import { dealDamageEvent } from '../events/dealDamage.event';
 import { entityDiedEvent } from '../events/entityDied.event';
 import { getEntityAt, getEntityById } from './entity.helpers';
 import { healEvent } from '../events/healEvent';
+import type { GameState } from '..';
+import type { GameReducer } from '../events/reducer';
 
 export const getSkillById = (entity: Entity, skillId: SkillId) => {
   return entity.blueprint.skills.find(skill => skill.id === skillId);
 };
 
 export const dealSingleTargetDamage = (
-  ctx: SkillExecutionContext,
+  state: GameState,
+  reducer: GameReducer,
   {
     basePower,
     lifeDrainRatio,
+    from,
     to
-  }: { basePower: number; lifeDrainRatio?: number; to: EntityId }
+  }: { basePower: number; lifeDrainRatio?: number; to: EntityId; from: EntityId }
 ) => {
-  const { state, caster } = ctx;
-  const entity = getEntityById(state, to);
-  if (!entity) return;
+  const target = getEntityById(state, to);
+  const caster = getEntityById(state, from);
+
+  if (!target || !caster) return;
 
   const amount = Math.max(
     1,
-    basePower + caster.blueprint.attack - entity.blueprint.defense
+    basePower + caster.blueprint.attack - target.blueprint.defense
   );
-  state.reducer(state, dealDamageEvent.create(state.activeEntityId, entity.id, amount));
+  reducer(state, dealDamageEvent.create(state.activeEntityId, target.id, amount));
 
   if (lifeDrainRatio) {
-    healSingleTarget(ctx, {
+    healSingleTarget(state, reducer, {
       baseAmount: Math.round(amount * lifeDrainRatio),
+      from: caster.id,
       to: caster.id
     });
   }
 
-  if (entity.hp <= 0) {
-    state.reducer(state, entityDiedEvent.create(caster.id, entity.id));
+  if (target.hp <= 0) {
+    reducer(state, entityDiedEvent.create(caster.id, target.id));
   }
 };
 
 export const healSingleTarget = (
-  { state, caster }: SkillExecutionContext,
-  { to, baseAmount }: { baseAmount: number; to: EntityId }
+  state: GameState,
+  reducer: GameReducer,
+
+  { from, to, baseAmount }: { baseAmount: number; from: EntityId; to: EntityId }
 ) => {
   const entity = getEntityById(state, to);
   if (!entity) return;
 
-  state.reducer(state, healEvent.create(state.activeEntityId, entity.id, baseAmount));
+  reducer(state, healEvent.create(state.activeEntityId, entity.id, baseAmount));
 
   if (entity.hp <= 0) {
-    state.reducer(state, entityDiedEvent.create(caster.id, entity.id));
+    reducer(state, entityDiedEvent.create(from, entity.id));
   }
 };

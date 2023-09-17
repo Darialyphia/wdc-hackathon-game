@@ -22,14 +22,16 @@ export const havenSoldiers: SoldierData[] = [
         id: 'melee_attack',
         iconUrl: '/icons/melee_attack.png',
         name: 'Melee attack',
+        description: 'Deals damage to a close enemy',
         cost: 2,
         minRange: 0,
         range: 1,
         targetZone: TARGET_ZONES.RADIUS,
         targetType: TARGET_TYPES.ENEMY,
-        execute(ctx) {
-          dealSingleTargetDamage(ctx, {
-            to: getEntityAt(ctx.state, ctx.target)!.id,
+        execute({ state, caster, target }) {
+          dealSingleTargetDamage(state, state.reducer, {
+            from: caster.id,
+            to: getEntityAt(state, target)!.id,
             basePower: 1
           });
         }
@@ -44,7 +46,7 @@ export const havenSoldiers: SoldierData[] = [
     name: 'Swordsman',
     cost: 2,
     initiative: 6,
-    maxHp: 4,
+    maxHp: 5,
     attack: 2,
     defense: 0,
     triggers: [],
@@ -53,14 +55,16 @@ export const havenSoldiers: SoldierData[] = [
         id: 'ranged_attack',
         iconUrl: '/icons/ranged_attack.png',
         name: 'Ranged attack',
+        description: 'Deals damage to a close enemy',
         cost: 2,
         range: 5,
         minRange: 2,
         targetZone: TARGET_ZONES.LINE,
         targetType: TARGET_TYPES.ENEMY,
-        execute(ctx) {
-          dealSingleTargetDamage(ctx, {
-            to: getEntityAt(ctx.state, ctx.target)!.id,
+        execute({ state, caster, target }) {
+          dealSingleTargetDamage(state, state.reducer, {
+            from: caster.id,
+            to: getEntityAt(state, target)!.id,
             basePower: 1
           });
         }

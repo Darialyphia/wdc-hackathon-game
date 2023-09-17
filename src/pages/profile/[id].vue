@@ -1,10 +1,15 @@
 <script setup lang="ts">
+import { generals } from '../../sdk/generals';
+
 definePage({
   name: 'Profile'
 });
 
 const route = useRoute('Profile');
 const dayjs = useDayjs();
+
+const getGeneralIcon = (id: string) =>
+  Object.values(generals).find(g => g.characterId === id)!.iconUrl;
 </script>
 <template>
   <main class="container" style="--container-size: var(--size-md)">
@@ -43,11 +48,20 @@ const dayjs = useDayjs();
           class="surface"
           :class="game.isWinner ? 'is-win' : 'is-loss'"
         >
+          <div class="game-players">
+            <div>
+              <img :src="getGeneralIcon(game.myGeneralId)" draggable="false" />
+              {{ user.fullName }}
+            </div>
+            VS
+            <div>
+              <img :src="getGeneralIcon(game.opponentGeralId)" draggable="false" />
+              {{ game.opponent.fullName }}
+            </div>
+          </div>
           <time :datetime="dayjs(game._creationTime).format('l')">
             {{ dayjs(game._creationTime).fromNow() }}
           </time>
-
-          <div>VS {{ game.opponent?.name }}</div>
 
           <div
             class="result"
@@ -112,5 +126,22 @@ article {
 
   font-weight: var(--font-weight-5);
   color: var(--color);
+}
+
+.game-players {
+  display: flex;
+  gap: var(--size-2);
+  align-items: center;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+  }
+  img {
+    align-self: center;
+    aspect-ratio: 1;
+    width: var(--size-9);
+    image-rendering: pixelated;
+  }
 }
 </style>

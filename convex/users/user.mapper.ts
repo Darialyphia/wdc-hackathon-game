@@ -3,6 +3,7 @@ import type { User } from './user.entity';
 
 export type UserDto = {
   _id: Id<'users'>;
+  _creationTime: number;
   name: string;
   fullName: string;
   discriminator: string;
@@ -11,6 +12,7 @@ export type UserDto = {
 export const toUserDto = (user: User): UserDto => {
   return {
     _id: user._id,
+    _creationTime: user._creationTime,
     name: user.name,
     discriminator: user.discriminator,
     fullName: `${user.name}#${user.discriminator}`

@@ -31,10 +31,17 @@ export const createMoveAction = defineAction({
       entity.position,
       input.target
     );
-    if (path.length > entity.ap) return;
+    console.log(path.length, path);
+    if (path.length > entity.ap) {
+      return;
+    }
 
-    path.forEach(([x, y]) =>
-      state.reducer(state, entityMovedEvent.create(entity.id, { x, y }))
+    state.reducer(
+      state,
+      entityMovedEvent.create(
+        entity.id,
+        path.map(([x, y]) => ({ x, y }))
+      )
     );
 
     if (entity.ap === 0) {

@@ -221,20 +221,6 @@ export const actOn = mutation({
       history: stringify(state.history)
     });
 
-    // const diff = state.history.length - gameEvents.length;
-    // if (diff <= 0) return;
-    // const newEvents = state.history.slice(-1 * diff);
-
-    // await Promise.all(
-    //   newEvents.map(event =>
-    //     db.insert('gameEvents', {
-    //       gameId,
-    //       type: event.type,
-    //       payload: event.payload
-    //     })
-    //   )
-    // );
-
     if (state.lifecycleState === 'FINISHED') {
       await db.patch(game._id, {
         state: GAME_STATES.ENDED,
