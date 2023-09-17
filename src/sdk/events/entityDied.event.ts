@@ -1,6 +1,6 @@
 import { defineEvent } from '.';
 import { applyAuras } from '../aura';
-import { GAME_LIFECYCLE_STATES } from '../constants';
+import { CELL_SIZE, GAME_LIFECYCLE_STATES } from '../constants';
 import { ENTITY_STATES, type EntityId } from '../entity';
 import { getEntityById, isGeneral } from '../utils/entity.helpers';
 
@@ -33,5 +33,21 @@ export const entityDiedEvent = defineEvent({
     }
     return state;
   },
-  sequence: () => Promise.resolve()
+
+  sequence: (state, { payload }, { sprites }) => {
+    return new Promise(resolve => {
+      const targetSprite = sprites.resolve(payload.targetId);
+      if (!targetSprite) return;
+
+      gsap.to(targetSprite, {
+        duration: 0.5,
+        ease: Power3.easeOut,
+        onComplete: resolve,
+        pixi: {
+          y: targetSprite.position.x + CELL_SIZE / 3,
+          alpha: 0
+        }
+      });
+    });
+  }
 });

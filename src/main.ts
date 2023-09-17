@@ -6,6 +6,7 @@ import { createConvex } from './plugins/convex';
 import { autoAnimatePlugin } from '@formkit/auto-animate/vue';
 import App from './App.vue';
 import gsap from 'gsap';
+import PixiPlugin from 'gsap/PixiPlugin';
 
 declare module 'vue-router/auto' {
   interface RouteMeta {
@@ -20,6 +21,7 @@ declare module 'vue-router' {
 }
 
 const app = createApp(App);
+gsap.registerPlugin(PixiPlugin);
 gsap.install(window);
 
 app.use(

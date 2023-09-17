@@ -1,6 +1,8 @@
+import { AnimatedSprite } from 'pixi.js';
 import { defineEvent } from '.';
+import { CELL_SIZE } from '../constants';
 import type { EntityId } from '../entity';
-import { executeTrigger } from '../trigger';
+import { createSpritesheetFrameObject } from '../../utils/sprite-utils';
 import { getEntityById } from '../utils/entity.helpers';
 
 export const DEAL_DAMAGE = 'deal_damage';
@@ -27,20 +29,22 @@ export const dealDamageEvent = defineEvent({
 
     return state;
   },
-  sequence: (state, { payload }) =>
+  sequence: (state, { payload }, { assets, fxContainer, sprites }) =>
     new Promise(resolve => {
-      const entity = getEntityById(state, payload.targetId)!;
-      const hp = entity.hp;
-      gsap.to(entity, {
-        duration: 0.3,
-        ease: Power2.easeOut,
-        onComplete: () => {
-          // set back hp to old value because the game reducer will decrease it as well
-          entity.hp = hp;
-          resolve();
-        },
-        delay: 0,
-        hp: entity.hp - payload.amount
-      });
+      const targetSprite = sprites.resolve(payload.targetId);
+
+      const sheet = assets.resolveFx('blood01');
+      const blood = new AnimatedSprite(createSpritesheetFrameObject('idle', sheet));
+      blood.position.set(0, 0);
+      blood.loop = false;
+
+      blood.onComplete = () => {
+        blood.destroy();
+      };
+      blood.anchor.set(0.5);
+
+      targetSprite?.addChild(blood);
+      blood.play();
+      resolve();
     })
 });

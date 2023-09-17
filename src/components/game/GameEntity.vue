@@ -79,9 +79,11 @@ const filters = computed(() => {
   }
   const cell = getCellAt(state.value, entity.position);
 
+  console.log(targetMode.value === 'skill');
   if (
     targetMode.value === 'skill' &&
-    selectedEntity.value?.id === entity.id &&
+    hoveredCell.value?.x === entity.position.x &&
+    hoveredCell.value?.y === entity.position.y &&
     cell &&
     canCastAt(cell) &&
     isInCastRange(cell)
