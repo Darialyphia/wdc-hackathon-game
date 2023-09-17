@@ -107,6 +107,8 @@ const onSubmit = async () => {
   await postMessage({ gameId: game._id, text: text.value });
   text.value = '';
 };
+
+const isChatDisplayed = ref(false);
 </script>
 
 <template>
@@ -224,13 +226,13 @@ const onSubmit = async () => {
 
     <GameActionBar v-if="!isReplay" class="game-action-bar" />
 
-    <div v-if="!isReplay" class="chat">
+    <div v-if="!isReplay" class="chat" :class="!isChatDisplayed && 'is-collapsed'">
       <Query
         v-slot="{ data: messages }"
         :query="api => api.games.getGameMessages"
         :args="{ gameId: game._id }"
       >
-        <ul>
+        <ul v-if="isChatDisplayed">
           <li v-for="message in messages" :key="message._id">
             <span>{{ message.user.name }}</span>
             : {{ message.text }}
@@ -238,8 +240,14 @@ const onSubmit = async () => {
         </ul>
       </Query>
 
-      <form @submit.prevent="onSubmit">
+      <form @submit.prevent="onSubmit" class="flex gap-3">
+        <UiIconButton
+          icon="game-icons:chat-bubble"
+          title="toggle chat"
+          @click="isChatDisplayed = !isChatDisplayed"
+        />
         <UiTextInput
+          v-if="isChatDisplayed"
           id="game-message-input"
           v-model="text"
           placeholder="Send a message"
@@ -247,6 +255,7 @@ const onSubmit = async () => {
         />
       </form>
     </div>
+
     <UiIconButton
       v-if="!isReplay"
       icon="ic:sharp-emoji-flags"
@@ -429,12 +438,6 @@ const onSubmit = async () => {
   top: var(--size-15);
   right: var(--size-3);
 
-  display: grid;
-  display: none;
-  grid-template-rows: 1fr auto;
-
-  width: var(--size-14);
-  height: var(--size-14);
   padding: var(--size-4);
 
   color: var(--gray-0);
@@ -443,6 +446,13 @@ const onSubmit = async () => {
   backdrop-filter: blur(5px);
   border: solid 1px var(--link);
   border-radius: var(--radius-2);
+
+  &:not(.is-collapsed) {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    width: var(--size-14);
+    height: var(--size-14);
+  }
 
   ul {
     overflow-y: auto;
