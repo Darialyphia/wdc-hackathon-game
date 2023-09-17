@@ -283,6 +283,7 @@ const isChatDisplayed = ref(false);
 
 <style scoped>
 .game-client-container {
+  --ui-ghost-button-color-hsl: var(--color-primary-hsl);
   --link: var(--primary);
 
   user-select: none;

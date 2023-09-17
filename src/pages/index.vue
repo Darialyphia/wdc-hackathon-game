@@ -11,6 +11,7 @@ definePage({
 const { push } = useRouter();
 const me = await useSuspenseQuery(api.users.me, []);
 const games = await useSuspenseQuery(api.games.getList, []);
+const currentGame = useQuery(api.games.currentGame, []);
 
 const isChooseGeneralModalOpened = ref(false);
 const selectedGameId = ref<Nullable<Id<'games'>>>();
@@ -63,16 +64,12 @@ const onTryJoin = (id: Id<'games'>) => {
             Join
           </UiButton>
           <RouterLink
+            v-if="game.state === 'ONGOING' && !currentGame"
             v-slot="{ href, navigate }"
             custom
             :to="{ name: 'Game', params: { id: game._id } }"
           >
-            <UiButton
-              v-if="game.state === 'ONGOING'"
-              :href="href"
-              left-icon="game-icons:angry-eyes"
-              @click="navigate"
-            >
+            <UiButton :href="href" left-icon="game-icons:angry-eyes" @click="navigate">
               Spectate
             </UiButton>
           </RouterLink>
