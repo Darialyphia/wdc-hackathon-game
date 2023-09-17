@@ -173,11 +173,9 @@ const onSubmit = async () => {
         </dl>
         <br />
         Passives
+        <p v-if="!selectedEntity.triggers.length">No ongoing passives</p>
         <dl>
-          <template
-            v-for="trigger in selectedEntity.blueprint.triggers"
-            :key="trigger.name"
-          >
+          <template v-for="trigger in selectedEntity.triggers" :key="trigger.name">
             <dt>
               {{ trigger.name }}
             </dt>
