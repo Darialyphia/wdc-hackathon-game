@@ -19,6 +19,15 @@ const tickGlobalAtb = (state: GameState) => {
   if (state.globalAtb >= MAX_ATB) {
     executeTrigger(state, { type: 'new_turn', payload: {} });
     state.globalAtb = 0;
+    state.entities.forEach(e => {
+      e.triggers = e.triggers
+        .map(trigger => ({
+          ...trigger,
+          duration: trigger.duration ? trigger.duration - 1 : undefined
+        }))
+        .filter(trigger => trigger.duration !== 0);
+    });
+
     state.turn++;
   }
 };

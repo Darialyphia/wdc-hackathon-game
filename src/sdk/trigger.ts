@@ -14,6 +14,7 @@ export type Trigger = {
   on: TriggerEvent['type'];
   name: string;
   description: string;
+  duration?: number;
   execute: (ctx: TriggerContext) => void;
 };
 
