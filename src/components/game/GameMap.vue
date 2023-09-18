@@ -16,11 +16,11 @@ const onPointerup = ({ x, y }: Point) => {
   const cell = getCellAt(state.value, { x, y });
   if (!cell) return;
 
-  if (selectedSummon.value) {
+  if (targetMode.value === 'summon' && selectedSummon.value) {
     summon(cell);
-  } else if (selectedSkill.value) {
+  } else if (targetMode.value === 'skill' && selectedSkill.value) {
     useSkill(cell);
-  } else {
+  } else if (targetMode.value === 'move') {
     move(cell);
   }
   targetMode.value = null;

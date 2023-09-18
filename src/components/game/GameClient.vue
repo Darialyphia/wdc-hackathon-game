@@ -284,7 +284,10 @@ const isChatDisplayed = ref(false);
 
 <style scoped>
 .game-client-container {
+  --primary: var(--yellow-2);
+  --color-primary-hsl: var(--yellow-2-hsl);
   --ui-ghost-button-color-hsl: var(--color-primary-hsl);
+
   --link: var(--primary);
 
   user-select: none;
@@ -295,7 +298,6 @@ const isChatDisplayed = ref(false);
   height: v-bind(height);
 
   font-family: monospace;
-  font-size: monospace;
   color: var(--gray-0);
 }
 

@@ -7,7 +7,8 @@
     "tools/**/*.ts",
     "auto-imports.d.ts",
     "components.d.ts",
-    "typed-router.d.ts"
+    "typed-router.d.ts",
+    "src/assets/**/*.json"
   ],
   "exclude": ["src/**/__tests__/*", "src/assets/**/*.tsx"],
   "compilerOptions": {
