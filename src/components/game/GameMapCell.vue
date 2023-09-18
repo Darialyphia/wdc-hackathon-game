@@ -10,6 +10,7 @@ import { getCellAt } from '../../sdk/utils/map.helpers';
 import { getBitMask } from '../../sdk/utils/bit-maksing';
 import type { GameMapCell } from '../../sdk/map';
 import { createSkillAbility } from '../../sdk/abilities/skill.ability';
+import { getEntityAt } from '../../sdk/utils/entity.helpers';
 
 const { x, y, texture } = defineProps<{
   texture: Texture;
@@ -54,7 +55,7 @@ const isValidSkillTarget = computed(() => {
 const isValidMoveTarget = computed(() => {
   if (!cell.value) return;
 
-  return canMoveTo(cell.value);
+  return canMoveTo(cell.value) && !getEntityAt(state.value, cell.value);
 });
 
 const isHighlighted = computed(() => {
@@ -91,7 +92,9 @@ const filters = computed(() => {
   if (isValidSkillTarget.value) _filters.push(skillTargetableFilter);
   if (hoveredCell.value === cell.value) _filters.push(hoverFilter);
   if (!hoveredCell.value || targetMode.value !== 'move') return _filters;
-  if (isValidMoveTarget.value) {
+  const hasAlly =
+    getEntityAt(state.value, cell.value)?.owner === activeEntity.value.owner;
+  if (isValidMoveTarget.value || hasAlly) {
     const path = pathfinder.value.findPath(
       {
         x: Math.round(activeEntity.value.position.x),
