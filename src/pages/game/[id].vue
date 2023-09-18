@@ -17,6 +17,8 @@ const game = useQuery(api.games.getById, () => [
   { gameId: route.params.id as Id<'games'> }
 ]);
 
+const { mutate: cancel, isLoading: isCancelling } = useMutation(api.games.cancel);
+
 watchEffect(() => {
   if (game.value === null) {
     push({ name: 'Home' });
@@ -50,16 +52,23 @@ const gameInfo = computed(() => game.value as GameDetail);
         Loading game...
       </div>
 
-      <div v-else-if="game?.state === 'WAITING_FOR_CREATOR_CONFIRMATION'" class="loader">
-        <UiSpinner size="xl" />
-
-        Waiting for opponent confirmation...
-      </div>
-
       <div v-else-if="game?.state === 'WAITING_FOR_OPPONENT'" class="loader">
         <UiSpinner size="xl" />
 
         Waiting for opponent...
+        <UiButton
+          :theme="{ bg: 'red-6', hoverBg: 'red-7' }"
+          left-icon="mdi:close"
+          @click="cancel({ gameId: game._id })"
+        >
+          Cancel
+        </UiButton>
+      </div>
+
+      <div v-else-if="game?.state === 'WAITING_FOR_CREATOR_CONFIRMATION'" class="loader">
+        <UiSpinner size="xl" />
+
+        Waiting for opponent confirmation...
       </div>
 
       <div

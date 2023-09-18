@@ -242,6 +242,7 @@ const isChatDisplayed = ref(false);
 
       <form @submit.prevent="onSubmit" class="flex gap-3">
         <UiIconButton
+          type="button"
           icon="game-icons:chat-bubble"
           title="toggle chat"
           @click="isChatDisplayed = !isChatDisplayed"

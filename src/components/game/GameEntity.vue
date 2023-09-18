@@ -1,19 +1,14 @@
 <script setup lang="ts">
 import { PTransition } from 'vue3-pixi';
-
 import type { Entity } from '../../sdk/entity';
 import { CELL_SIZE } from '../../sdk/constants';
 import { getCellAt } from '../../sdk/utils/map.helpers';
 import { OutlineFilter } from '@pixi/filter-outline';
 import { ColorOverlayFilter } from '@pixi/filter-color-overlay';
 import type { Texture } from 'pixi.js';
-import PixiPlugin from 'gsap/PixiPlugin';
 import type { AnimatedSprite } from 'pixi.js';
-import * as PIXI from 'pixi.js';
 import { Power2 } from 'gsap';
-
-gsap.registerPlugin(PixiPlugin);
-PixiPlugin.registerPIXI(PIXI);
+import type { FederatedPointerEvent } from 'pixi.js';
 
 const { entity } = defineProps<{
   entity: Entity;
@@ -41,7 +36,8 @@ const onPointerup = () => {
   targetMode.value = null;
 };
 
-const onPointerdown = () => {
+const onPointerdown = (event: FederatedPointerEvent) => {
+  if (event.button !== 0) return;
   if (isMyTurn.value && entity.id === activeEntity.value.id) {
     targetMode.value = 'move';
   }
@@ -79,7 +75,6 @@ const filters = computed(() => {
   }
   const cell = getCellAt(state.value, entity.position);
 
-  console.log(targetMode.value === 'skill');
   if (
     targetMode.value === 'skill' &&
     hoveredCell.value?.x === entity.position.x &&
@@ -141,7 +136,7 @@ const onEnter = (el: AnimatedSprite, done: () => void) => {
     @click="onClick"
     @pointerenter="onPointerenter"
     @pointerleave="onPointerleave"
-    @pointerdown="onPointerdown"
+    @pointerdown="onPointerdown($event)"
     @pointerup="onPointerup"
   >
     <PTransition appear @before-enter="onBeforeEnter" @enter="onEnter">
