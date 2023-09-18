@@ -149,9 +149,16 @@ export const confirm = mutation({
     const userAbility = await createUserability({ auth, db });
     await ensureAuthorized(userAbility.can('confirm', subject('game', game)));
 
-    await db.patch(game._id, {
-      state: GAME_STATES.ONGOING
-    });
+    await Promise.all([
+      db.patch(game._id, {
+        state: GAME_STATES.ONGOING
+      }),
+
+      db.insert('gameEventHistories', {
+        history: stringify([]),
+        gameId: game._id
+      })
+    ]);
   }
 });
 
@@ -177,7 +184,11 @@ export const actOn = mutation({
       .withIndex('by_game_id', q => q.eq('gameId', gameId))
       .collect();
 
-    const gameEvents: GameLogicEvent[] = game.history ? parse(game.history) : [];
+    const gameHistory = await db
+      .query('gameEventHistories')
+      .withIndex('by_game_id', q => q.eq('gameId', game._id))
+      .first();
+    const gameEvents: GameLogicEvent[] = gameHistory ? parse(gameHistory.history) : [];
 
     // replay game event to get to current state
     const state = createGameState({
@@ -216,10 +227,16 @@ export const actOn = mutation({
         throw new Error(`Unknown action type: ${type}`);
     }
 
-    // collect the new events to save to the database
-    await db.patch(game._id, {
-      history: stringify(state.history)
-    });
+    if (gameHistory) {
+      await db.patch(gameHistory._id, {
+        history: stringify(state.history)
+      });
+    } else {
+      await db.insert('gameEventHistories', {
+        gameId: game._id,
+        history: stringify(state.history)
+      });
+    }
 
     if (state.lifecycleState === 'FINISHED') {
       await db.patch(game._id, {
@@ -267,6 +284,11 @@ export const getById = query({
   handler: async ({ db }, { gameId }) => {
     const game = await db.get(gameId);
     if (!game) return null;
+    const gameHistory = await db
+      .query('gameEventHistories')
+      .withIndex('by_game_id', q => q.eq('gameId', game._id))
+      .first();
+    if (!gameHistory) return null;
 
     const players = await db
       .query('gamePlayers')
@@ -282,6 +304,7 @@ export const getById = query({
 
     return {
       ...game,
+      history: gameHistory.history,
       creator: await db.get(game.creator),
       // events: await db
       //   .query('gameEvents')

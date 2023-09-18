@@ -53,7 +53,7 @@ export const getProfile = query({
           .sort((a, b) => b._creationTime - a._creationTime)
           .map(async gp => {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { history, ...game } = (await db.get(gp.gameId))!;
+            const game = (await db.get(gp.gameId))!;
             if (game.state !== 'ENDED') return null;
 
             const players = await db

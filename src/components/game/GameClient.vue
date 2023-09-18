@@ -2,11 +2,18 @@
 import '../../utils/pixi-custom-elements';
 import type { Id } from '../../../convex/_generated/dataModel';
 import type { Action, GameDetail } from '../../composables/game/useGame';
-import { Application, BaseTexture, SCALE_MODES } from 'pixi.js';
+import { Application, BaseTexture, SCALE_MODES, WRAP_MODES } from 'pixi.js';
 import { appInjectKey, createApp } from 'vue3-pixi';
-import { WRAP_MODES } from 'pixi.js';
+import * as PIXI from 'pixi.js';
 import PixiRenderer from './PixiRenderer.vue';
 import { api } from '../../api';
+import gsap from 'gsap';
+import PixiPlugin from 'gsap/PixiPlugin';
+
+// @ts-ignore  enable PIXI devtools
+window.PIXI = PIXI;
+gsap.install(window);
+window.gsap.registerPlugin(PixiPlugin);
 
 const {
   game,
@@ -70,6 +77,8 @@ onMounted(() => {
     // @ts-ignore  enable PIXI devtools
     window.__PIXI_APP__ = pixiApp;
   }
+  gsap.registerPlugin(PixiPlugin);
+  gsap.install(window);
 
   BaseTexture.defaultOptions.wrapMode = WRAP_MODES.CLAMP;
   BaseTexture.defaultOptions.scaleMode = SCALE_MODES.NEAREST;
@@ -143,11 +152,14 @@ const isChatDisplayed = ref(false);
         />
         Turn&nbsp;{{ gameState.state.value.turn }}
       </div>
-      <img
+      <button
+        style="appearance: none"
         v-for="(entity, index) in gameState.atbTimeline.value"
         :key="index"
-        :src="entity.blueprint.iconUrl"
-      />
+        @click="gameState.selectedEntity.value = entity"
+      >
+        <img :src="entity.blueprint.iconUrl" />
+      </button>
     </div>
 
     <Transition>
