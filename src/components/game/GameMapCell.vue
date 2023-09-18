@@ -86,7 +86,6 @@ const filters = computed(() => {
     return [];
   }
   if (!cell.value) return [];
-
   const _filters = [];
   if (isHighlighted.value) _filters.push(targetableFilter);
   if (isValidSkillTarget.value) _filters.push(skillTargetableFilter);

@@ -11,6 +11,10 @@ definePage({
     <p class="mb-4">Here are our top 50 fiercest warriors !</p>
 
     <Query :query="api => api.users.getLeaderboards" :args="{}" v-slot="{ data: users }">
+      <article>
+        <div>Name</div>
+        <div>ELO</div>
+      </article>
       <article v-for="(user, index) in users" :key="user._id" class="surface">
         <div class="flex gap-2 items-center">
           <div class="i-mdi-trophy trophy" :class="`place-${index}`" v-if="index < 3" />
@@ -43,6 +47,9 @@ article {
 
   border: solid var(--border-size-1) var(--border-dimmed);
 
+  &:nth-of-type(1) {
+    padding-block: var(--size-2);
+  }
   *:nth-child(2) {
     justify-self: center;
   }

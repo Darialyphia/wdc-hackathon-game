@@ -146,7 +146,14 @@ export const useGameProvider = (
   };
 
   const canMoveTo = (cell: GameMapCell) => {
-    const path = pathfinder.value.findPath(activeEntity.value.position, cell);
+    const path = pathfinder.value.findPath(
+      //we round it because the value can be a float when animated by the FX sequencer
+      {
+        x: Math.round(activeEntity.value.position.x),
+        y: Math.round(activeEntity.value.position.y)
+      },
+      cell
+    );
 
     return path.length > 0 && path.length <= activeEntity.value.ap;
   };
