@@ -20,6 +20,7 @@ export const skillUsedEvent = defineEvent({
   execute: (state, { sourceId, skillId }) => {
     // just here for event logging purpose
     const entity = getEntityById(state, sourceId)!;
+    entity.skillsUsed.push(skillId);
     const skill = getSkillById(entity, skillId)!;
     entity.ap -= skill.cost;
 

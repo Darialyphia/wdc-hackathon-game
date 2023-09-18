@@ -19,7 +19,6 @@ export const useSuspenseQuery = <Query extends QueryReference>(
     let unsub: () => void;
 
     const subscribe = () => {
-      console.log('subscribe');
       const { onUpdate, localQueryResult } = convex.watchQuery(
         queryReference,
         ...normalizedArgs.value

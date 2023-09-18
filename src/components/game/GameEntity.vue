@@ -216,7 +216,7 @@ const onEnter = (el: AnimatedSprite, done: () => void) => {
     "
   >
     <text :style="textStyle" :anchor="0.5" :scale-x="0.5" :scale-y="0.5">
-      {{ entity.blueprint.attack }}
+      {{ entity.attack }}
     </text>
   </graphics>
 
@@ -241,7 +241,7 @@ const onEnter = (el: AnimatedSprite, done: () => void) => {
     "
   >
     <text :style="textStyle" :anchor="0.5" :scale-x="0.5" :scale-y="0.5">
-      {{ entity.blueprint.defense }}
+      {{ entity.defense }}
     </text>
   </graphics>
 </template>

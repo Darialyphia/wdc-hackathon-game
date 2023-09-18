@@ -1,4 +1,4 @@
-import { PureAbility } from '@casl/ability';
+import { PureAbility, subject } from '@casl/ability';
 import type { GameState } from '..';
 import type { Entity } from '../entity';
 import type { GameMapCell } from '../map';
@@ -15,7 +15,7 @@ type Abilities = [MapActions, 'cell' | GameMapCell] | [SkillActions, 'skill' | S
 export type EntityAbility = PureAbility<Abilities>;
 
 export const createEntityAbility = (state: GameState, entity: Entity): EntityAbility => {
-  return createAbility<EntityAbility>(({ can }) => {
+  return createAbility<EntityAbility>(({ can, cannot }) => {
     can('move', 'cell', (subject: GameMapCell) => {
       return isCellWalkable(state, subject);
     });
@@ -24,6 +24,10 @@ export const createEntityAbility = (state: GameState, entity: Entity): EntityAbi
       const skill = getSkillById(entity, subject.id);
 
       return skill && entity.ap >= subject.cost;
+    });
+
+    cannot('cast', 'skill', (subject: SkillData) => {
+      return entity.skillsUsed.includes(subject.id);
     });
   });
 };

@@ -7,6 +7,7 @@ import type { Values } from '../utils/types';
 import type { Trigger } from './trigger';
 import { applyModifier, type Modifier } from './modifier';
 import type { Aura } from './aura';
+import type { SkillId } from './utils/entityData';
 
 export type EntityId = number;
 export type GameId = string;
@@ -37,6 +38,7 @@ export type EntityBase = {
   triggers: Trigger[];
   modifiers: Modifier[];
   auras: Aura[];
+  skillsUsed: SkillId[];
 };
 
 export type Soldier = EntityBase & {
@@ -71,6 +73,7 @@ export const addGeneral = (
     triggers: [...blueprint.triggers],
     modifiers: [],
     auras: blueprint.auras,
+    skillsUsed: [],
     get initiative() {
       return applyModifier(entity, 'initiative');
     },
@@ -103,6 +106,7 @@ export const addSoldier = (
     triggers: [...blueprint.triggers],
     modifiers: [],
     auras: blueprint.auras,
+    skillsUsed: [],
     get initiative() {
       return applyModifier(entity, 'initiative');
     },

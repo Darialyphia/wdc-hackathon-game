@@ -20,6 +20,7 @@ import { endTurnEvent } from '../../sdk/events/endTurn.event';
 import { type FXSequenceContext } from './useFXSequencer';
 import { parse } from 'zipson';
 import type { SkillData } from '../../sdk/utils/entityData';
+import { createEntityAbility } from '../../sdk/abilities/entity.ability';
 
 export type GameDetail = Omit<Doc<'games'>, 'creator'> & {
   players: (Doc<'gamePlayers'> & { user: Doc<'users'> })[];
@@ -51,6 +52,7 @@ export type Game = {
   hoveredCell: Ref<Nullable<GameMapCell>>;
   canSummonAt: (cell: GameMapCell) => boolean;
   canCastAt: (cell: GameMapCell) => boolean;
+  canCast: (skill: SkillData) => boolean;
   canMoveTo: (cell: GameMapCell) => boolean;
   isInCastRange: (cell: GameMapCell) => boolean;
   move: (cell: GameMapCell) => void;
@@ -160,6 +162,13 @@ export const useGameProvider = (
     return ability.can('target', subject('cell', { x: cell.x, y: cell.y }));
   };
 
+  const canCast = (skill: SkillData) => {
+    return createEntityAbility(state.value, activeEntity.value).can(
+      'cast',
+      subject('skill', skill)
+    );
+  };
+
   const move = (cell: GameMapCell) => {
     if (!isMyTurn.value) return;
     if (!canMoveTo(cell)) return;
@@ -262,6 +271,7 @@ export const useGameProvider = (
     hoveredCell,
     canSummonAt,
     canCastAt,
+    canCast,
     canMoveTo,
     isInCastRange,
     selectedSummon: computed({

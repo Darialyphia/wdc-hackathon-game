@@ -89,6 +89,7 @@ export const useReplayProvider = (
   const isInCastRange = () => false;
   const canSummonAt = () => false;
   const canCastAt = () => false;
+  const canCast = () => false;
   const canMoveTo = () => false;
   const move = noop;
   const summon = noop;
@@ -144,6 +145,7 @@ export const useReplayProvider = (
     canSummonAt,
     canMoveTo,
     canCastAt,
+    canCast,
     isInCastRange,
     selectedSummon: computed({
       get() {

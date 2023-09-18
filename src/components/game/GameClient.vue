@@ -424,10 +424,17 @@ const isChatDisplayed = ref(false);
   background-color: hsl(0 0% 0% / 0.6);
   backdrop-filter: blur(5px);
   border-radius: var(--radius-3);
-  img {
+  button {
+    all: initial;
+
     aspect-ratio: 1;
     width: 32px;
+    padding: 0;
+
     image-rendering: pixelated;
+    &:hover {
+      filter: brightness(130%);
+    }
 
     &:first-of-type {
       width: 64px;

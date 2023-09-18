@@ -5,8 +5,16 @@ import { getSummonBlueprints } from '../../sdk/utils/entity.helpers';
 import type { SoldierData } from '../../sdk/soldiers';
 import type { SkillData } from '../../sdk/utils/entityData';
 
-const { activeEntity, selectedSummon, selectedSkill, endTurn, state, me, targetMode } =
-  useGame();
+const {
+  activeEntity,
+  selectedSummon,
+  selectedSkill,
+  endTurn,
+  state,
+  me,
+  targetMode,
+  canCast
+} = useGame();
 
 const availableSummons = computed(() => {
   if (activeEntity.value.kind !== 'general') return [];
@@ -40,7 +48,7 @@ const onSummonPointerdown = (summon: SoldierData) => {
       class="skill"
       :class="targetMode === 'skill' && 'active'"
       :data-cost="skill.cost"
-      :disabled="activeEntity.ap < skill.cost"
+      :disabled="!canCast(skill)"
       :style="{ backgroundImage: `url(${skill.iconUrl})` }"
       @pointerdown="onSkillPointerdown(skill)"
     />
