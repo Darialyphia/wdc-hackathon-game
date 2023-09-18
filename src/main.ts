@@ -5,6 +5,7 @@ import { createAuth0 } from '@auth0/auth0-vue';
 import { createConvex } from './plugins/convex';
 import { autoAnimatePlugin } from '@formkit/auto-animate/vue';
 import App from './App.vue';
+import gsap from 'gsap';
 
 declare module 'vue-router/auto' {
   interface RouteMeta {
@@ -17,7 +18,7 @@ declare module 'vue-router' {
     needsAuth?: boolean;
   }
 }
-
+gsap.install(window);
 const app = createApp(App);
 
 app.use(

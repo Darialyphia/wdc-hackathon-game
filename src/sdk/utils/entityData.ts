@@ -52,6 +52,7 @@ export type EntityData = {
   name: string;
   skills: SkillData[];
   maxHp: number;
+  maxAp: number;
   attack: number;
   defense: number;
   initiative: number;

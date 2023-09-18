@@ -6,10 +6,12 @@ export default defineSchema({
   users: defineTable({
     name: v.string(),
     discriminator: v.string(),
-    tokenIdentifier: v.string()
+    tokenIdentifier: v.string(),
+    elo: v.number()
   })
     .index('by_token', ['tokenIdentifier'])
-    .index('by_fullname', ['name', 'discriminator']),
+    .index('by_fullname', ['name', 'discriminator'])
+    .index('by_elo', ['elo']),
 
   games: defineTable({
     creator: v.id('users'),

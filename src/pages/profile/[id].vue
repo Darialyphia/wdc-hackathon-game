@@ -29,6 +29,10 @@ const getGeneralIcon = (id: string) =>
 
         <dl class="flex flex-col justify-center">
           <div>
+            <dt>Elo</dt>
+            <dd>{{ user.elo }}</dd>
+          </div>
+          <div>
             <dt>Games played</dt>
             <dd>{{ user.games.length }}</dd>
           </div>
@@ -56,7 +60,9 @@ const getGeneralIcon = (id: string) =>
             VS
             <div>
               <img :src="getGeneralIcon(game.opponentGeralId)" draggable="false" />
-              {{ game.opponent.fullName }}
+              <RouterLink :to="{ name: 'Profile', params: { id: game.opponent._id } }">
+                {{ game.opponent.fullName }}
+              </RouterLink>
             </div>
           </div>
           <time :datetime="dayjs(game._creationTime).format('l')">
@@ -136,6 +142,10 @@ article {
   > div {
     display: flex;
     flex-direction: column;
+  }
+
+  a {
+    text-decoration: underline;
   }
   img {
     align-self: center;

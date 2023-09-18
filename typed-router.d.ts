@@ -41,6 +41,7 @@ declare module 'vue-router/auto/routes' {
   export interface RouteNamedMap {
     'Home': RouteRecordInfo<'Home', '/', Record<never, never>, Record<never, never>>,
     'Game': RouteRecordInfo<'Game', '/game/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    'Leaderboards': RouteRecordInfo<'Leaderboards', '/leaderboard', Record<never, never>, Record<never, never>>,
     'Profile': RouteRecordInfo<'Profile', '/profile/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'Replay': RouteRecordInfo<'Replay', '/replay/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
   }

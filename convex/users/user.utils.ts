@@ -1,7 +1,29 @@
 import type { QueryCtx } from '../_generated/server';
-import type { Nullable } from '../utils/types';
+import type { Nullable, Values } from '../utils/types';
 import type { User } from './user.entity';
 
+// ELO stuff
+export const DEFAULT_ELO = 1200;
+
+export const ELO_RESULTS = {
+  LOSS: 0,
+  DRAW: 0.5,
+  WIN: 1
+} as const;
+export type EloResult = Values<typeof ELO_RESULTS>;
+
+const K = 32;
+
+const delta = (score: number, opponent: number, status: EloResult) => {
+  const probability = 1 / (1 + Math.pow(10, (opponent - score) / 400));
+  return Math.round(K * (status - probability));
+};
+
+export const computeNewElo = (elo: number, opponent: number, status: EloResult) => {
+  return elo + delta(elo, opponent, status);
+};
+
+// username discriminator stuff
 const MAX_DISCRIMINATOR_VALUE = 9999;
 
 const generateRandomDiscriminator = () => {
@@ -31,6 +53,8 @@ export const generateDiscriminator = async (
 
   return discriminator;
 };
+
+// query helpers
 
 export const findMe = async ({ auth, db }: Pick<QueryCtx, 'auth' | 'db'>) => {
   const identity = await auth.getUserIdentity();

@@ -1,6 +1,6 @@
 import { internalMutation, mutation, query } from './_generated/server';
 import { v } from 'convex/values';
-import { findMe } from './users/user.utils';
+import { ELO_RESULTS, computeNewElo, findMe } from './users/user.utils';
 import { createUserability } from './users/user.ability';
 import { ensureAuthorized } from './utils/ability';
 import { GAME_STATES, type GameAction } from './games/game.entity';
@@ -16,6 +16,7 @@ import { createEndTurnAction } from '../src/sdk/actions/endTurn';
 import { exhaustiveSwitch } from '../src/utils/assertions';
 import { stringify, parse } from 'zipson';
 import { Id } from './_generated/dataModel';
+import { paginationOptsValidator } from 'convex/server';
 
 // Create a new task with the given text
 export const create = mutation({
@@ -170,7 +171,7 @@ export const actOn = mutation({
       payload: v.any()
     })
   },
-  handler: async ({ auth, db }, { gameId, action }) => {
+  handler: async ({ auth, db, scheduler }, { gameId, action }) => {
     const me = await findMe({ auth, db });
     const game = await db.get(gameId);
     if (!game) throw new Error('Game not found');
@@ -243,15 +244,54 @@ export const actOn = mutation({
         state: GAME_STATES.ENDED,
         winnerId: state.winner as Id<'users'>
       });
+      scheduler.runAfter(0, internal.games.handleGameEnd, {
+        gameId: game._id
+      });
     }
   }
 });
 
+export const handleGameEnd = internalMutation({
+  args: {
+    gameId: v.id('games')
+  },
+  handler: async ({ db }, { gameId }) => {
+    const game = await db.get(gameId);
+    if (!game) return;
+    if (!game.winnerId) return;
+
+    const gamePlayers = await db
+      .query('gamePlayers')
+      .withIndex('by_game_id', q => q.eq('gameId', gameId))
+      .collect();
+
+    const [user1, user2] = await Promise.all(
+      gamePlayers.map(player => db.get(player.userId))
+    );
+
+    await Promise.all([
+      db.patch(user1!._id, {
+        elo: computeNewElo(
+          user1!.elo,
+          user2!.elo,
+          game.winnerId === user1!._id ? ELO_RESULTS.WIN : ELO_RESULTS.LOSS
+        )
+      }),
+      db.patch(user2!._id, {
+        elo: computeNewElo(
+          user2!.elo,
+          user1!.elo,
+          game.winnerId === user2!._id ? ELO_RESULTS.WIN : ELO_RESULTS.LOSS
+        )
+      })
+    ]);
+  }
+});
 export const surrender = mutation({
   args: {
     gameId: v.id('games')
   },
-  handler: async ({ auth, db }, { gameId }) => {
+  handler: async ({ auth, db, scheduler }, { gameId }) => {
     const identity = await auth.getUserIdentity();
     if (!identity) return null;
     const me = await findMe({ auth, db });
@@ -273,6 +313,10 @@ export const surrender = mutation({
     await db.patch(game._id, {
       state: GAME_STATES.ENDED,
       winnerId: winner.userId
+    });
+
+    scheduler.runAfter(0, internal.games.handleGameEnd, {
+      gameId: game._id
     });
   }
 });
@@ -401,11 +445,51 @@ export const clearAllGames = internalMutation({
     const games = await db.query('games').collect();
     const players = await db.query('gamePlayers').collect();
     const messages = await db.query('gameMessages').collect();
+    const events = await db.query('gameEventHistories').collect();
 
     await Promise.all([
       ...players.map(p => db.delete(p._id)),
       ...games.map(g => db.delete(g._id)),
-      ...messages.map(m => db.delete(m._id))
+      ...messages.map(m => db.delete(m._id)),
+      ...events.map(e => db.delete(e._id))
     ]);
+  }
+});
+
+export const latestGames = query({
+  args: { paginationOpts: paginationOptsValidator },
+  handler: async ({ db }, args) => {
+    const games = await db
+      .query('games')
+      .withIndex('by_creation_time')
+      .filter(q => q.eq(q.field('state'), 'ENDED'))
+      .order('desc')
+      .paginate(args.paginationOpts);
+
+    return {
+      ...games,
+      page: await Promise.all(
+        games.page.map(async game => {
+          const players = await db
+            .query('gamePlayers')
+            .withIndex('by_game_id', q => q.eq('gameId', game._id))
+            .collect();
+
+          return {
+            ...game,
+            players: await Promise.all(
+              players.map(async player => {
+                const user = await db.get(player.userId);
+
+                return {
+                  ...player,
+                  user: user!
+                };
+              })
+            )
+          };
+        })
+      )
+    };
   }
 });

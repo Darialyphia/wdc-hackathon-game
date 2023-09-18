@@ -7,12 +7,11 @@ import { appInjectKey, createApp } from 'vue3-pixi';
 import * as PIXI from 'pixi.js';
 import PixiRenderer from './PixiRenderer.vue';
 import { api } from '../../api';
-import gsap from 'gsap';
+
 import PixiPlugin from 'gsap/PixiPlugin';
 
 // @ts-ignore  enable PIXI devtools
 window.PIXI = PIXI;
-gsap.install(window);
 window.gsap.registerPlugin(PixiPlugin);
 
 const {

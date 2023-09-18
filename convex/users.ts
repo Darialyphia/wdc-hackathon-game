@@ -2,7 +2,7 @@ import { query } from './_generated/server';
 import { createUserability } from './users/user.ability';
 import { ensureAuthorized } from './utils/ability';
 import { ensureAuthenticated } from './utils/auth';
-import { findMe, generateDiscriminator } from './users/user.utils';
+import { DEFAULT_ELO, findMe, generateDiscriminator } from './users/user.utils';
 import { toUserDto } from './users/user.mapper';
 import { mutationWithZod } from './utils/zod';
 import { signupInput } from '../src/inputs/users';
@@ -19,7 +19,8 @@ export const signUp = mutationWithZod({
     return db.insert('users', {
       name: name,
       discriminator: await generateDiscriminator({ db }, name),
-      tokenIdentifier: identity.tokenIdentifier
+      tokenIdentifier: identity.tokenIdentifier,
+      elo: DEFAULT_ELO
     });
   }
 });
@@ -81,5 +82,13 @@ export const getProfile = query({
       games,
       winrate: (games.filter(g => g.isWinner).length / games.length) * 100
     };
+  }
+});
+
+export const getLeaderboards = query({
+  handler: async ({ db }) => {
+    const users = await db.query('users').withIndex('by_elo').order('desc').take(50);
+
+    return users.map(toUserDto);
   }
 });

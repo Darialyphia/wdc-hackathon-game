@@ -1,6 +1,6 @@
 import type { GameState } from '.';
 import type { Point } from '../utils/geometry';
-import { DEFAULT_GENERAL_AP, DEFAULT_SOLDIER_AP, MAX_ATB } from './constants';
+import { MAX_ATB } from './constants';
 import type { SoldierData } from './soldiers';
 import type { GeneralData } from './generals';
 import type { Values } from '../utils/types';
@@ -67,8 +67,8 @@ export const addGeneral = (
     hasSummonned: false,
     atbSeed: options.atbSeed,
     atb: MAX_ATB + options.atbSeed,
-    maxAp: DEFAULT_GENERAL_AP,
-    ap: DEFAULT_GENERAL_AP,
+    maxAp: blueprint.maxAp,
+    ap: blueprint.maxAp,
     hp: blueprint.maxHp,
     triggers: [...blueprint.triggers],
     modifiers: [],
@@ -100,8 +100,8 @@ export const addSoldier = (
     id: ++state.nextEntityId,
     atbSeed: options.atbSeed,
     atb: options.atbSeed,
-    maxAp: DEFAULT_SOLDIER_AP,
-    ap: DEFAULT_SOLDIER_AP,
+    maxAp: blueprint.maxAp,
+    ap: blueprint.maxAp,
     hp: blueprint.maxHp,
     triggers: [...blueprint.triggers],
     modifiers: [],

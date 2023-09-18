@@ -14,6 +14,7 @@ export const necroSoldiers: SoldierData[] = [
     cost: 2,
     initiative: 7,
     maxHp: 6,
+    maxAp: 3,
     attack: 2,
     defense: 0,
     triggers: [],
@@ -24,7 +25,7 @@ export const necroSoldiers: SoldierData[] = [
         iconUrl: '/icons/melee_attack.png',
         name: 'Melee attack',
         description: 'Deals damage to a close enemy',
-        cost: 2,
+        cost: 1,
         minRange: 0,
         range: 1,
         targetZone: TARGET_ZONES.RADIUS,
@@ -40,7 +41,7 @@ export const necroSoldiers: SoldierData[] = [
     ]
   },
   {
-    characterId: 'vapire',
+    characterId: 'vampire',
     spriteId: 'necroVampire',
     iconUrl: '/icons/necro_vampire.gif',
     factionId: FACTIONS_IDS.NECRO,
@@ -48,6 +49,7 @@ export const necroSoldiers: SoldierData[] = [
     cost: 3,
     initiative: 8,
     maxHp: 9,
+    maxAp: 4,
     attack: 2,
     defense: 0,
     triggers: [],
@@ -59,7 +61,7 @@ export const necroSoldiers: SoldierData[] = [
         name: 'Melee attack',
         description:
           'Deals damage to a close enemy and heals for the amount of damage dealt',
-        cost: 2,
+        cost: 1,
         minRange: 0,
         range: 1,
         targetZone: TARGET_ZONES.RADIUS,

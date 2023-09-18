@@ -21,5 +21,5 @@ const data = await useSuspenseQuery(
 </script>
 
 <template>
-  <slot :data="data" />
+  <slot :data="data" v-if="data" />
 </template>

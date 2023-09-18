@@ -18,8 +18,26 @@ const me = await useSuspenseQuery(api.users.me, []);
 </script>
 
 <template>
-  <UiLinkButton v-if="!isAuthenticated" @click="loginWithRedirect()">Log in</UiLinkButton>
+  <template v-if="!isAuthenticated">
+    <UiLinkButton @click="loginWithRedirect()">Log in</UiLinkButton>
+    <RouterLink
+      v-if="me"
+      v-slot="{ navigate, href }"
+      :to="{ name: 'Leaderboards' }"
+      custom
+    >
+      <UiLinkButton :href="href" @click="navigate">Leaderboards</UiLinkButton>
+    </RouterLink>
+  </template>
   <template v-else>
+    <RouterLink
+      v-if="me"
+      v-slot="{ navigate, href }"
+      :to="{ name: 'Leaderboards' }"
+      custom
+    >
+      <UiLinkButton :href="href" @click="navigate">Leaderboards</UiLinkButton>
+    </RouterLink>
     <RouterLink
       v-if="me"
       v-slot="{ navigate, href }"
