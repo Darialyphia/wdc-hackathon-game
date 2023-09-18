@@ -288,7 +288,6 @@ export const getById = query({
       .query('gameEventHistories')
       .withIndex('by_game_id', q => q.eq('gameId', game._id))
       .first();
-    if (!gameHistory) return null;
 
     const players = await db
       .query('gamePlayers')
@@ -304,7 +303,7 @@ export const getById = query({
 
     return {
       ...game,
-      history: gameHistory.history,
+      history: gameHistory?.history ?? null,
       creator: await db.get(game.creator),
       // events: await db
       //   .query('gameEvents')

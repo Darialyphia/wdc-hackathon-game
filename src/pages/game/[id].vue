@@ -80,7 +80,7 @@ const gameInfo = computed(() => game.value as GameDetail);
 
       <template v-else-if="game?.state === 'ONGOING' || game?.state === 'ENDED'">
         <GameClient
-          v-if="width && height && me"
+          v-if="width && height && me && gameInfo.history"
           :me="me?._id"
           :game="gameInfo"
           :width="width"

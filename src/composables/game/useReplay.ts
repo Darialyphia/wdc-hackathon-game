@@ -89,6 +89,7 @@ export const useReplayProvider = (
   const isInCastRange = () => false;
   const canSummonAt = () => false;
   const canCastAt = () => false;
+  const canMoveTo = () => false;
   const move = noop;
   const summon = noop;
   const useSkill = noop;
@@ -141,6 +142,7 @@ export const useReplayProvider = (
     targetMode,
     hoveredCell,
     canSummonAt,
+    canMoveTo,
     canCastAt,
     isInCastRange,
     selectedSummon: computed({

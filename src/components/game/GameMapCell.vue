@@ -24,6 +24,7 @@ const {
   canSummonAt,
   selectedSkill,
   selectedEntity,
+  canMoveTo,
   pathfinder,
   targetMode,
   hoveredCell
@@ -53,15 +54,7 @@ const isValidSkillTarget = computed(() => {
 const isValidMoveTarget = computed(() => {
   if (!cell.value) return;
 
-  const path = pathfinder.value.findPath(
-    {
-      x: Math.round(activeEntity.value.position.x),
-      y: Math.round(activeEntity.value.position.y)
-    },
-    cell.value
-  );
-
-  return path.length > 0 && path.length <= activeEntity.value.ap;
+  return canMoveTo(cell.value);
 });
 
 const isHighlighted = computed(() => {
@@ -98,21 +91,23 @@ const filters = computed(() => {
   if (isValidSkillTarget.value) _filters.push(skillTargetableFilter);
   if (hoveredCell.value === cell.value) _filters.push(hoverFilter);
   if (!hoveredCell.value || targetMode.value !== 'move') return _filters;
+  if (isValidMoveTarget.value) {
+    const path = pathfinder.value.findPath(
+      {
+        x: Math.round(activeEntity.value.position.x),
+        y: Math.round(activeEntity.value.position.y)
+      },
+      hoveredCell.value
+    );
 
-  const path = pathfinder.value.findPath(
-    {
-      x: Math.round(activeEntity.value.position.x),
-      y: Math.round(activeEntity.value.position.y)
-    },
-    hoveredCell.value
-  );
+    const isInPath = path.some(
+      ([pathX, pathY], index) =>
+        x === pathX && y === pathY && index <= activeEntity.value.ap
+    );
 
-  const isInPath = path.some(([pathX, pathY], index) => {
-    return x === pathX && y === pathY && index <= activeEntity.value.ap;
-  });
-
-  if (isInPath && path.length > 0 && path.length <= activeEntity.value.ap) {
-    _filters.push(pathFilter);
+    if (isInPath) {
+      _filters.push(pathFilter);
+    }
   }
 
   return _filters;

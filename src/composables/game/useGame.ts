@@ -23,6 +23,8 @@ import type { SkillData } from '../../sdk/utils/entityData';
 
 export type GameDetail = Omit<Doc<'games'>, 'creator'> & {
   players: (Doc<'gamePlayers'> & { user: Doc<'users'> })[];
+} & {
+  history: Doc<'gameEventHistories'>['history'];
 };
 
 export type Action =
@@ -49,6 +51,7 @@ export type Game = {
   hoveredCell: Ref<Nullable<GameMapCell>>;
   canSummonAt: (cell: GameMapCell) => boolean;
   canCastAt: (cell: GameMapCell) => boolean;
+  canMoveTo: (cell: GameMapCell) => boolean;
   isInCastRange: (cell: GameMapCell) => boolean;
   move: (cell: GameMapCell) => void;
   summon: (cell: GameMapCell) => void;
@@ -259,6 +262,7 @@ export const useGameProvider = (
     hoveredCell,
     canSummonAt,
     canCastAt,
+    canMoveTo,
     isInCastRange,
     selectedSummon: computed({
       get() {

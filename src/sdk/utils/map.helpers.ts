@@ -2,6 +2,8 @@ import type { Point } from '../../utils/geometry';
 import type { GameState } from '..';
 import { type GameMapCell, CELL_TYPES } from '../map';
 import { isDefined } from '../../utils/assertions';
+import { getEntityAt } from './entity.helpers';
+import type { Entity } from '../entity';
 
 export const getCellAt = (state: GameState, { x, y }: Point): GameMapCell | undefined =>
   state.map.rows[y]?.[x];
@@ -21,6 +23,16 @@ export const isCellWalkable = (state: GameState, { x, y }: Point) => {
   );
 };
 
+// can a unit go through this cell while moving, but not land on it
+export const isCellTraversable = (state: GameState, { x, y }: Point, entity: Entity) => {
+  const entityOnCell = getEntityAt(state, { x, y });
+
+  return (
+    isWithinBounds(state, { x, y }) &&
+    (!entityOnCell || entityOnCell.owner === entity.owner) &&
+    getCellAt(state, { x, y })?.terrain === CELL_TYPES.GROUND
+  );
+};
 export const getSurroundingCells = (state: GameState, { x, y }: Point) => {
   return [
     getCellAt(state, { x: x - 1, y: y - 1 }), //top left
