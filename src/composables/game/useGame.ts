@@ -103,7 +103,9 @@ export const useGameProvider = (
       const sequence = sequencer.buildSequence(newEvents);
 
       sequence.play(state, event => {
-        state.value.reducer(state.value, event);
+        if (!event.transient) {
+          state.value.reducer(state.value, event);
+        }
       });
     }
   );
@@ -248,7 +250,7 @@ export const useGameProvider = (
     });
 
     const timelineReducer = createReducer({
-      persist: false
+      transient: true
     });
     const timeline = [getActiveEntity(timelineState)];
     for (let i = 0; i < 10; i++) {

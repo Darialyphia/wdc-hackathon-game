@@ -56,7 +56,7 @@ export const createGameState = ({
     history: [],
     globalAtb: 0,
     turn: 1,
-    reducer: createReducer({ persist: true })
+    reducer: createReducer({ transient: false })
   };
 
   players.forEach((player, i) => {
@@ -73,7 +73,9 @@ export const createGameState = ({
 
   if (history) {
     history.forEach(event => {
-      state.reducer(state, event);
+      if (!event.transient) {
+        state.reducer(state, event);
+      }
     });
   }
   return state;

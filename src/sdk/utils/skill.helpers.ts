@@ -18,15 +18,24 @@ export const dealSingleTargetDamage = (
     basePower,
     lifeDrainRatio,
     from,
-    to
-  }: { basePower: number; lifeDrainRatio?: number; to: EntityId; from: EntityId }
+    to,
+    isFlat
+  }: {
+    basePower: number;
+    lifeDrainRatio?: number;
+    to: EntityId;
+    from: EntityId;
+    isFlat?: boolean;
+  }
 ) => {
   const target = getEntityById(state, to);
   const caster = getEntityById(state, from);
 
   if (!target || !caster) return;
 
-  const amount = Math.max(1, basePower + caster.attack - target.defense);
+  const amount = isFlat
+    ? basePower
+    : Math.max(1, basePower + caster.attack - target.defense);
   reducer(state, dealDamageEvent.create(state.activeEntityId, target.id, amount));
 
   if (lifeDrainRatio) {

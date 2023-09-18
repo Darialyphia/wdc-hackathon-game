@@ -66,7 +66,9 @@ export const useReplayProvider = (
       const sequence = sequencer.buildSequence(newEvents);
 
       sequence.play(state, async event => {
-        state.value.reducer(state.value, event);
+        if (event.transient) {
+          state.value.reducer(state.value, event);
+        }
         if (isPlaying.value) {
           await waitFor(800);
           replayStep.value++;
@@ -116,7 +118,7 @@ export const useReplayProvider = (
     });
 
     const timeline = [getActiveEntity(timelineState)];
-    const timelineReducer = createReducer({ persist: true });
+    const timelineReducer = createReducer({ transient: true });
     for (let i = 0; i < 10; i++) {
       timelineReducer(timelineState, endTurnEvent.create(timelineState.activeEntityId));
       timeline.push(getActiveEntity(timelineState));

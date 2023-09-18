@@ -17,18 +17,19 @@ import { HEAL, type HealEvent, healEvent } from './healEvent';
 import { exhaustiveSwitch } from '../../utils/assertions';
 import { executeTrigger } from '../trigger';
 
-export type GameEvent =
+export type GameEvent = (
   | EntityMovedEvent
   | EntityDiedEvent
   | SoldierSummonedEvent
   | EndTurnEvent
   | DealDamageEvent
   | SkillUsedEvent
-  | HealEvent;
+  | HealEvent
+) & { transient?: boolean };
 
 export type GameReducer = ReturnType<typeof createReducer>;
 export const createReducer =
-  ({ persist }: { persist: boolean }) =>
+  ({ transient }: { transient: boolean }) =>
   (state: GameState, event: GameEvent) => {
     const { type, payload } = event;
 
@@ -59,7 +60,5 @@ export const createReducer =
     }
 
     executeTrigger(state, event);
-    if (persist) {
-      state.history.push(event);
-    }
+    state.history.push({ ...event, transient });
   };
