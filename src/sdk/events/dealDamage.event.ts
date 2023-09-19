@@ -1,6 +1,5 @@
 import { AnimatedSprite } from 'pixi.js';
 import { defineEvent } from '.';
-import { CELL_SIZE } from '../constants';
 import type { EntityId } from '../entity';
 import { createSpritesheetFrameObject } from '../../utils/sprite-utils';
 import { getEntityById } from '../utils/entity.helpers';

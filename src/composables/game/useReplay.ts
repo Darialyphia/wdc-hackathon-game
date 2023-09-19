@@ -66,7 +66,7 @@ export const useReplayProvider = (
       const sequence = sequencer.buildSequence(newEvents);
 
       sequence.play(state, async event => {
-        if (event.transient) {
+        if (!event.transient) {
           state.value.reducer(state.value, event);
         }
         if (isPlaying.value) {

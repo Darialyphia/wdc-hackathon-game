@@ -9,9 +9,9 @@
   --color-text-2-hsl: var(--gray-8-hsl);
   --color-text-3-hsl: var(--gray-7-hsl);
 
-  --color-surface-1-hsl: 0 0% 100%;
-  --color-surface-2-hsl: var(--gray-0-hsl);
-  --color-surface-3-hsl: var(--gray-1-hsl);
+  --color-surface-1-hsl: var(--gray-1-hsl);
+  --color-surface-2-hsl: var(--gray-2-hsl);
+  --color-surface-3-hsl: var(--gray-3-hsl);
 
   --color-primary-hsl: var(--gray-11-hsl);
   --color-primary-hover-hsl: var(--gray-8-hsl);
@@ -62,7 +62,6 @@ html.dark {
   --surface-1: hsl(var(--color-surface-1-hsl));
   --surface-2: hsl(var(--color-surface-2-hsl));
   --surface-3: hsl(var(--color-surface-3-hsl));
-  --surface-4: hsl(var(--color-surface-4-hsl));
 
   --primary: hsl(var(--color-primary-hsl));
   --primary-hover: hsl(var(--color-primary-hover-hsl));

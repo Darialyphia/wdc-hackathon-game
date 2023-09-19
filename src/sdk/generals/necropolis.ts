@@ -18,20 +18,6 @@ export const necroGeneral: GeneralData = {
   defense: 1,
   triggers: [
     {
-      on: 'new_turn',
-      name: 'Burning agony',
-      description: 'At the start of the turn, inflict 1 damage to the enemy general',
-      duration: Infinity,
-      execute({ state, reducer, from }) {
-        dealSingleTargetDamage(state, reducer, {
-          from: from.id,
-          to: getEnemyGeneral(state, from.owner).id,
-          basePower: 1,
-          isFlat: true
-        });
-      }
-    },
-    {
       on: ENTITY_DIED,
       name: 'Soul feast',
       description: 'Whenever a unit dies, recover 1 HP',

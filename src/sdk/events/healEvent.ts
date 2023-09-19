@@ -1,6 +1,8 @@
+import { AnimatedSprite } from 'pixi.js';
 import { defineEvent } from '.';
 import type { EntityId } from '../entity';
 import { getEntityById } from '../utils/entity.helpers';
+import { createSpritesheetFrameObject } from '../../utils/sprite-utils';
 
 export const HEAL = 'heal';
 
@@ -26,20 +28,22 @@ export const healEvent = defineEvent({
 
     return state;
   },
-  sequence: (state, { payload }) =>
+  sequence: (state, { payload }, { assets, fxContainer, sprites }) =>
     new Promise(resolve => {
-      const entity = getEntityById(state, payload.targetId)!;
-      const hp = entity.hp;
-      gsap.to(entity, {
-        duration: 0.3,
-        ease: Power2.easeOut,
-        onComplete: () => {
-          // set back hp to old value because the game reducer will decrease it as well
-          entity.hp = hp;
-          resolve();
-        },
-        delay: 0,
-        hp: Math.min(entity.blueprint.maxHp, entity.hp + payload.amount)
-      });
+      const targetSprite = sprites.resolve(payload.targetId);
+
+      const sheet = assets.resolveFx('heal01');
+      const blood = new AnimatedSprite(createSpritesheetFrameObject('idle', sheet));
+      blood.position.set(0, 0);
+      blood.loop = false;
+
+      blood.onComplete = () => {
+        blood.destroy();
+      };
+      blood.anchor.set(0.5);
+
+      targetSprite?.addChild(blood);
+      blood.play();
+      resolve();
     })
 });
