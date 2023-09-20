@@ -6,7 +6,6 @@ import { dealSingleTargetDamage } from '../utils/skill.helpers';
 
 export const necroVampire: SoldierData = {
   characterId: 'necroVampire',
-  spriteId: 'necroVampire',
   iconUrl: '/icons/necro_vampire.gif',
   factionId: FACTIONS_IDS.NECRO,
   name: 'Vampire',

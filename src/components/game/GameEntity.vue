@@ -58,7 +58,7 @@ const onPointerleave = () => {
 const { linkSprite } = useFXSequencer();
 
 const textures = computed(() =>
-  createSpritesheetFrameObject('idle', resolveSprite(entity.blueprint.spriteId))
+  createSpritesheetFrameObject('idle', resolveSprite(entity.blueprint.characterId))
 );
 
 const sprite = ref<AnimatedSprite>();

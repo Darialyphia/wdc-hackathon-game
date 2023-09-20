@@ -15,7 +15,7 @@ import {
 } from './constants';
 import { createReducer, type GameEvent, type GameReducer } from './events/reducer';
 import type { Nullable } from '../utils/types';
-import { getGeneralById } from './generals';
+import { generalsLookup } from './generals';
 
 export type GameState = {
   lifecycleState: GameLifecycleState;
@@ -60,7 +60,7 @@ export const createGameState = ({
   };
 
   players.forEach((player, i) => {
-    const general = getGeneralById(player.characterId)!;
+    const general = generalsLookup[player.characterId as keyof typeof generalsLookup]!;
     addGeneral(state, general, {
       atbSeed: player.atbSeed,
       characterId: player.characterId,

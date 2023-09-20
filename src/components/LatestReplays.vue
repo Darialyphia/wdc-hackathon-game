@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { generals } from '../sdk/generals';
+import { generalsLookup } from '../sdk/generals';
 
 const getGeneralIcon = (id: string) =>
-  Object.values(generals).find(g => g.characterId === id)!.iconUrl;
+  Object.values(generalsLookup).find(g => g.characterId === id)!.iconUrl;
 
 const dayjs = useDayjs();
 </script>

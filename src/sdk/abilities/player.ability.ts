@@ -1,12 +1,7 @@
 import { PureAbility } from '@casl/ability';
 import type { GameState } from '..';
 import type { Entity, PlayerId } from '../entity';
-import {
-  getActiveEntity,
-  getGeneral,
-  isActive,
-  isOwnEntity
-} from '../utils/entity.helpers';
+import { getActiveEntity, getGeneral, isActive, isAlly } from '../utils/entity.helpers';
 import type { Point } from '../../utils/geometry';
 import { getCellAt, getSurroundingCells, isCellWalkable } from '../utils/map.helpers';
 import type { SoldierData } from '../soldiers';
@@ -30,7 +25,7 @@ export const createPlayerAbility = (
 ): PlayerAbility => {
   const general = getGeneral(state, playerId);
 
-  const isOwnedAndActive = (e: Entity) => isOwnEntity(playerId, e) && isActive(state, e);
+  const isOwnedAndActive = (e: Entity) => isAlly(playerId, e) && isActive(state, e);
 
   return createAbility<PlayerAbility>(({ can }) => {
     if (getActiveEntity(state).owner === playerId) {

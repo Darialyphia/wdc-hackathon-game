@@ -8,11 +8,11 @@ import type { Point } from '../../utils/geometry';
 export const getEntityById = (state: GameState, id: EntityId) =>
   state.entities.find(e => e.id === id);
 
-export const isOwnEntity = (playerId: PlayerId, entity: Entity) => {
+export const isAlly = (playerId: PlayerId, entity: Entity) => {
   return entity.owner === playerId;
 };
 
-export const isOpponentEntity = (playerId: PlayerId, entity: Entity) => {
+export const isEnemy = (playerId: PlayerId, entity: Entity) => {
   return entity.owner !== playerId;
 };
 

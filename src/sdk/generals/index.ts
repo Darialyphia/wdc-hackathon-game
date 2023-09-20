@@ -1,13 +1,20 @@
-import { necroGeneral } from './necropolis';
-import { havenGeneral } from './haven';
+import { necroGeneral01 } from './necropolis';
+import { havenGeneral01 } from './haven';
 import type { EntityData } from '../utils/entityData';
 import type { CharacterId } from '../entity';
 import type { SoldierData } from '../soldiers';
 
 export type GeneralData = EntityData & { summonBlueprints: SoldierData[] };
 
-export const generals = { havenGeneral, necroGeneral } as const;
-export const generalIds = Object.values(generals).map(g => g.characterId);
+export const generalsLookup = { havenGeneral01, necroGeneral01 } satisfies Record<
+  CharacterId,
+  GeneralData
+>;
 
-export const getGeneralById = (characterId: CharacterId) =>
-  Object.values(generals).find(s => s.characterId === characterId);
+Object.entries(generalsLookup).forEach(([k, v]) => {
+  if (k !== v.characterId) {
+    console.warn(
+      `[General Lookup]: key and characterId mismatch: ${k}, ${v.characterId}`
+    );
+  }
+});

@@ -35,7 +35,7 @@ export const skillUsedEvent = defineEvent({
       const sprite = sprites.resolve(payload.sourceId);
       if (!sprite) return resolve();
 
-      const sheet = assets.resolveSprite(entity.blueprint.spriteId);
+      const sheet = assets.resolveSprite(entity.blueprint.characterId);
 
       sprite.textures = createSpritesheetFrameObject('attacking', sheet);
       sprite.gotoAndPlay(0);

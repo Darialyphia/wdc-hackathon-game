@@ -30,7 +30,7 @@ const { resolveSprite } = useAssets();
 const summonPreviewTextures = computed(
   () =>
     selectedSummon.value &&
-    createSpritesheetFrameObject('idle', resolveSprite(selectedSummon.value?.spriteId))
+    createSpritesheetFrameObject('idle', resolveSprite(selectedSummon.value?.characterId))
 );
 
 const summonPreviewFilters = [

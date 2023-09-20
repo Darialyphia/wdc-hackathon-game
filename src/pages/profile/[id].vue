@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { generals } from '../../sdk/generals';
+import { generalsLookup } from '../../sdk/generals';
 
 definePage({
   name: 'Profile'
@@ -9,7 +9,7 @@ const route = useRoute('Profile');
 const dayjs = useDayjs();
 
 const getGeneralIcon = (id: string) =>
-  Object.values(generals).find(g => g.characterId === id)!.iconUrl;
+  Object.values(generalsLookup).find(g => g.characterId === id)!.iconUrl;
 </script>
 <template>
   <main class="container" style="--container-size: var(--size-md)">

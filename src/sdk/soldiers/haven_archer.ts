@@ -6,7 +6,6 @@ import { dealSingleTargetDamage } from '../utils/skill.helpers';
 
 export const havenArcher: SoldierData = {
   characterId: 'havenArcher',
-  spriteId: 'havenArcher',
   iconUrl: '/icons/haven_archer.gif',
   factionId: FACTIONS_IDS.HAVEN,
   name: 'Swordsman',

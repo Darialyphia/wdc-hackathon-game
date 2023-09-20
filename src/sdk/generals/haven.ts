@@ -3,13 +3,11 @@ import { dealSingleTargetDamage } from '../utils/skill.helpers';
 import { TARGET_TYPES, TARGET_ZONES } from '../utils/entityData';
 import { FACTIONS_IDS } from '../enums';
 import { getEntityAt } from '../utils/entity.helpers';
-import { AURA_TARGET_TYPES } from '../aura';
-import { havenSwordsman } from '../soldiers/havenSwordsman';
-import { havenArcher } from '../soldiers/havenArcher';
+import { aurasLookup } from '../auras';
+import { soldiersLookup } from '../soldiers';
 
-export const havenGeneral: GeneralData = {
-  characterId: 'haven_general_01',
-  spriteId: 'havenGeneral01',
+export const havenGeneral01: GeneralData = {
+  characterId: 'havenGeneral01',
   iconUrl: '/icons/haven_general_01.gif',
   factionId: FACTIONS_IDS.HAVEN,
   name: 'Paladin',
@@ -18,7 +16,8 @@ export const havenGeneral: GeneralData = {
   maxAp: 4,
   attack: 3,
   defense: 1,
-  summonBlueprints: [havenSwordsman, havenArcher],
+  summonBlueprints: [soldiersLookup.havenSwordsman, soldiersLookup.havenArcher],
+  auras: [aurasLookup.divineInspiration],
   triggers: [],
   skills: [
     {
@@ -37,22 +36,6 @@ export const havenGeneral: GeneralData = {
           to: getEntityAt(state, target)!.id,
           basePower: 1
         });
-      }
-    }
-  ],
-  auras: [
-    {
-      id: 'divine_inspiration',
-      range: 1,
-      name: 'Divine Inspiration',
-      description: 'Friendly units around this one get +1 attack',
-      applyToSelf: false,
-      targetType: AURA_TARGET_TYPES.ALLY,
-      execute(state, entity) {
-        entity.attack += 1;
-      },
-      cleanup(state, entity) {
-        entity.attack -= 1;
       }
     }
   ]

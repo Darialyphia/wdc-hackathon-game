@@ -1,15 +1,13 @@
 import type { GeneralData } from '.';
-import { dealSingleTargetDamage, healSingleTarget } from '../utils/skill.helpers';
+import { dealSingleTargetDamage } from '../utils/skill.helpers';
 import { TARGET_TYPES, TARGET_ZONES } from '../utils/entityData';
 import { FACTIONS_IDS } from '../enums';
-import { getEnemyGeneral, getEntityAt } from '../utils/entity.helpers';
-import { ENTITY_DIED } from '../events/entityDied.event';
-import { necroSkeleton } from '../soldiers/necro_skeleton';
-import { necroVampire } from '../soldiers/necro_vampire';
+import { getEntityAt } from '../utils/entity.helpers';
+import { triggersLookup } from '../triggers';
+import { soldiersLookup } from '../soldiers';
 
-export const necroGeneral: GeneralData = {
-  characterId: 'necro_general_01',
-  spriteId: 'necroGeneral01',
+export const necroGeneral01: GeneralData = {
+  characterId: 'necroGeneral01',
   iconUrl: '/icons/necro_general_01.gif',
   factionId: FACTIONS_IDS.NECRO,
   name: 'Necromancer',
@@ -18,18 +16,8 @@ export const necroGeneral: GeneralData = {
   maxAp: 4,
   attack: 3,
   defense: 1,
-  summonBlueprints: [necroSkeleton, necroVampire],
-  triggers: [
-    {
-      on: ENTITY_DIED,
-      name: 'Soul feast',
-      description: 'Whenever a unit dies, recover 1 HP',
-      duration: Infinity,
-      execute({ state, reducer, from }) {
-        healSingleTarget(state, reducer, { from: from.id, to: from.id, baseAmount: 1 });
-      }
-    }
-  ],
+  summonBlueprints: [soldiersLookup.necroSkeleton, soldiersLookup.necroVampire],
+  triggers: [triggersLookup.soulFeast],
   skills: [
     {
       id: 'melee_attack',

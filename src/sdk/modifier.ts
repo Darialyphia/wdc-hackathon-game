@@ -1,19 +1,31 @@
 import type { GameState } from '.';
-import type { AuraId } from './aura';
+import type { Nullable } from '../utils/types';
 import type { Entity, EntityId } from './entity';
-import type { SkillId } from './utils/entityData';
+import { getEntityById } from './utils/entity.helpers';
 
-export type Modifier = {
-  from: EntityId; // indicates the origin of the modifier so it can't be applied twice
-  id: AuraId | SkillId;
+export type ModifierId = string;
+
+export type ModifierData = {
+  id: ModifierId;
   duration: number;
-  execute(state: GameState, entity: Entity): void;
-  cleanup(state: GameState, entity: Entity): void;
+  name: string;
+  description: string;
+  execute(state: GameState, target: Entity, source: Entity): void;
+  cleanup(state: GameState, entity: Entity, source: Nullable<Entity>): void;
 };
 
-export const addModifier = (state: GameState, entity: Entity, modifier: Modifier) => {
-  modifier.execute(state, entity);
-  entity.modifiers.push(modifier);
+export type Modifier = ModifierData & {
+  from: EntityId;
+};
+
+export const addModifier = (
+  state: GameState,
+  source: Entity,
+  target: Entity,
+  modifier: Omit<Modifier, 'from'>
+) => {
+  modifier.execute(state, target, source);
+  target.modifiers.push({ ...modifier, from: source.id });
 };
 
 export const removeModifier = (state: GameState, entity: Entity, modifier: Modifier) => {
@@ -22,6 +34,6 @@ export const removeModifier = (state: GameState, entity: Entity, modifier: Modif
   );
   if (index === -1) return;
 
-  entity.modifiers[index]?.cleanup(state, entity);
+  entity.modifiers[index]?.cleanup(state, entity, getEntityById(state, modifier.from));
   entity.modifiers.splice(index, 1);
 };

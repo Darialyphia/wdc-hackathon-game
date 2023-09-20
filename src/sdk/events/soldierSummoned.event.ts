@@ -7,7 +7,7 @@ import {
   getGeneral,
   isGeneral
 } from '../utils/entity.helpers';
-import { soldiers } from '../soldiers';
+import { soldiersLookup } from '../soldiers';
 import { AnimatedSprite } from 'pixi.js';
 import { CELL_SIZE } from '../constants';
 import { createSpritesheetFrameObject } from '../../utils/sprite-utils';
@@ -41,7 +41,7 @@ export const soldierSummonedEvent = defineEvent({
     if (!isGeneral(activeEntity)) return state;
 
     const general = getGeneral(state, activeEntity.owner);
-    const blueprint = soldiers[event.characterId as keyof typeof soldiers];
+    const blueprint = soldiersLookup[event.characterId as keyof typeof soldiersLookup];
     if (!blueprint) return state;
 
     general.ap -= blueprint.cost;

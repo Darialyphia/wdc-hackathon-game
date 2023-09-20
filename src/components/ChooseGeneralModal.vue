@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { CharacterId } from '../sdk/entity';
-import { generals } from '../sdk/generals';
+import { generalsLookup } from '../sdk/generals';
 
 const { isLoading } = defineProps<{ isLoading: boolean }>();
 const isOpened = defineModel('isOpened', { required: true });
@@ -19,7 +19,7 @@ const generalId = ref<CharacterId>();
       <form class="spacey-4" @submit.prevent="emit('submit', generalId!)">
         <fieldset>
           <label
-            v-for="general in generals"
+            v-for="general in generalsLookup"
             :key="general.characterId"
             :class="['block', generalId === general.characterId && 'is-selected']"
           >

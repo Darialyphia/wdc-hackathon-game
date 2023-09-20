@@ -2,7 +2,10 @@ import type { GameState } from '.';
 import type { Entity } from './entity';
 import { createReducer, type GameEvent, type GameReducer } from './events/reducer';
 
-export type TriggerEvent = GameEvent | { type: 'new_turn'; payload: {} };
+export type TriggerEvent =
+  | GameEvent
+  | { type: 'new_turn'; payload: Record<string, never> };
+export type TriggerId = string;
 
 export type TriggerContext = {
   state: GameState;
@@ -11,6 +14,7 @@ export type TriggerContext = {
 };
 
 export type Trigger = {
+  id: TriggerId;
   on: TriggerEvent['type'];
   name: string;
   description: string;
