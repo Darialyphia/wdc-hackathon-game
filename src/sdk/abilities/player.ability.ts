@@ -1,7 +1,13 @@
 import { PureAbility } from '@casl/ability';
 import type { GameState } from '..';
 import type { Entity, PlayerId } from '../entity';
-import { getActiveEntity, getGeneral, isActive, isAlly } from '../utils/entity.helpers';
+import {
+  getActiveEntity,
+  getEntityAt,
+  getGeneral,
+  isActive,
+  isAlly
+} from '../utils/entity.helpers';
 import type { Point } from '../../utils/geometry';
 import { getCellAt, getSurroundingCells, isCellWalkable } from '../utils/map.helpers';
 import type { SoldierData } from '../soldiers';
@@ -55,8 +61,8 @@ export const createPlayerAbility = (
       const cell = getCellAt(state, subject);
       if (!cell) return false;
 
-      const surroundingCells = getSurroundingCells(state, general.position);
-      return surroundingCells.includes(cell);
+      const surroundingCells = getSurroundingCells(state, subject);
+      return surroundingCells.some(cell => getEntityAt(state, cell)?.owner === playerId);
     });
   });
 };
