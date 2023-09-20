@@ -22,6 +22,11 @@ export type Trigger = {
   execute: (ctx: TriggerContext) => void;
 };
 
+export type SerializedTrigger = {
+  id: TriggerId;
+  duration: number;
+};
+
 export const executeTrigger = (state: GameState, event: TriggerEvent) => {
   state.entities.forEach(entity => {
     if (entity.state === 'DEAD') return;

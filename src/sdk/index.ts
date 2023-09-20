@@ -1,9 +1,12 @@
 import {
   addGeneral,
+  serializeEntity,
   type CharacterId,
   type Entity,
   type EntityId,
-  type PlayerId
+  type PlayerId,
+  type SerializedEntity,
+  deserializeEntity
 } from './entity';
 import { createGameMap, type GameMap } from './map';
 import { tickUntilActiveEntity } from './atb';
@@ -14,7 +17,7 @@ import {
   GAME_LIFECYCLE_STATES
 } from './constants';
 import { createReducer, type GameEvent, type GameReducer } from './events/reducer';
-import type { Nullable } from '../utils/types';
+import type { Nullable, Override } from '../utils/types';
 import { generalsLookup } from './generals';
 
 export type GameState = {
@@ -31,14 +34,34 @@ export type GameState = {
   reducer: GameReducer;
 };
 
-type CreateGamOptionsPlayer = {
+export type SerializedGameState = Override<
+  GameState,
+  {
+    entities: SerializedEntity[];
+  }
+>;
+type CreateGameOptionsPlayer = {
   id: PlayerId;
   characterId: CharacterId;
   atbSeed: number;
 };
 export type CreateGameOptions = {
-  players: [CreateGamOptionsPlayer, CreateGamOptionsPlayer];
+  players: [CreateGameOptionsPlayer, CreateGameOptionsPlayer];
   history?: GameEvent[];
+};
+
+export const serializeGameState = (state: GameState): SerializedGameState => {
+  return {
+    ...state,
+    entities: state.entities.map(serializeEntity)
+  };
+};
+
+export const fromSerializedState = (serializedState: SerializedGameState): GameState => {
+  return {
+    ...serializedState,
+    entities: serializedState.entities.map(deserializeEntity)
+  };
 };
 
 export const createGameState = ({

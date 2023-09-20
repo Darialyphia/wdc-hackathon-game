@@ -2,7 +2,7 @@ import { AURA_TARGET_TYPES, type Aura } from '../aura';
 import { modifiersLookup } from '../modifiers';
 
 export const divineInspiration: Aura = {
-  id: 'divine_inspiration',
+  id: 'divineInspiration',
   name: 'Divine Inspiration',
   description: 'Friendly nearby units get +1 attack',
   range: 1,

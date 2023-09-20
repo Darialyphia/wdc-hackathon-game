@@ -23,6 +23,10 @@ export type Aura = {
   modifier: ModifierData;
 };
 
+export type SerializedAura = {
+  id: AuraId;
+};
+
 export const applyAuras = (state: GameState) => {
   state.entities.forEach(source => {
     source.auras.forEach(aura => {

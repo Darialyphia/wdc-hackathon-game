@@ -15,7 +15,7 @@ import { createSkillAction } from '../src/sdk/actions/skill';
 import { createEndTurnAction } from '../src/sdk/actions/endTurn';
 import { exhaustiveSwitch } from '../src/utils/assertions';
 import { stringify, parse } from 'zipson';
-import { Id } from './_generated/dataModel';
+import type { Id } from './_generated/dataModel';
 import { paginationOptsValidator } from 'convex/server';
 
 // Create a new task with the given text

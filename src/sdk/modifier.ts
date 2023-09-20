@@ -18,6 +18,11 @@ export type Modifier = ModifierData & {
   from: EntityId;
 };
 
+export type SerializedModifier = {
+  id: ModifierId;
+  from: EntityId;
+};
+
 export const addModifier = (
   state: GameState,
   source: Entity,

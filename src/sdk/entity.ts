@@ -3,11 +3,14 @@ import type { Point } from '../utils/geometry';
 import { MAX_ATB } from './constants';
 import type { SoldierData } from './soldiers';
 import type { GeneralData } from './generals';
-import type { Values } from '../utils/types';
-import type { Trigger } from './trigger';
-import type { Modifier } from './modifier';
-import type { Aura } from './aura';
+import type { Override, Values } from '../utils/types';
+import type { SerializedTrigger, Trigger } from './trigger';
+import type { Modifier, SerializedModifier } from './modifier';
+import type { Aura, SerializedAura } from './aura';
 import type { SkillId } from './utils/entityData';
+import { triggersLookup } from './triggers';
+import { aurasLookup } from './auras';
+import { modifiersLookup } from './modifiers';
 
 export type EntityId = number;
 export type GameId = string;
@@ -40,7 +43,6 @@ export type EntityBase = {
   auras: Aura[];
   skillsUsed: SkillId[];
 };
-
 export type Soldier = EntityBase & {
   readonly kind: 'soldier';
   readonly blueprint: SoldierData;
@@ -50,8 +52,19 @@ export type General = EntityBase & {
   readonly blueprint: GeneralData;
   hasSummonned: boolean;
 };
-
 export type Entity = Soldier | General;
+
+export type SerializedEntityBase = Override<
+  EntityBase,
+  {
+    triggers: SerializedTrigger[];
+    modifiers: SerializedModifier[];
+    auras: SerializedAura[];
+  }
+>;
+export type SerializedSoldier = Override<Soldier, SerializedEntityBase>;
+export type SerializedGeneral = Override<General, SerializedEntityBase>;
+export type SerializedEntity = SerializedSoldier | SerializedGeneral;
 
 export const addGeneral = (
   state: GameState,
@@ -106,4 +119,38 @@ export const addSoldier = (
     defense: blueprint.defense
   };
   state.entities.push(entity);
+};
+
+export const serializeEntity = (entity: Entity): SerializedEntity => {
+  return {
+    ...entity,
+    triggers: entity.triggers.map(trigger => ({
+      id: trigger.id,
+      duration: trigger.duration
+    })),
+    auras: entity.auras.map(aura => ({
+      id: aura.id
+    })),
+    modifiers: entity.modifiers.map(modifier => ({
+      id: modifier.id,
+      from: modifier.from
+    }))
+  };
+};
+
+export const deserializeEntity = (serializedEntity: SerializedEntity): Entity => {
+  return {
+    ...serializedEntity,
+    triggers: serializedEntity.triggers.map(trigger => ({
+      ...triggersLookup[trigger.id as keyof typeof triggersLookup],
+      duration: trigger.duration
+    })),
+    auras: serializedEntity.auras.map(aura => ({
+      ...aurasLookup[aura.id as keyof typeof aurasLookup]
+    })),
+    modifiers: serializedEntity.modifiers.map(modifier => ({
+      ...modifiersLookup[modifier.id as keyof typeof modifiersLookup],
+      from: modifier.from
+    }))
+  };
 };
