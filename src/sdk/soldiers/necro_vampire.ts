@@ -12,7 +12,7 @@ export const necroVampire: SoldierData = {
   cost: 3,
   initiative: 8,
   maxHp: 9,
-  maxAp: 4,
+  maxAp: 5,
   attack: 2,
   defense: 0,
   triggers: [],
@@ -24,7 +24,7 @@ export const necroVampire: SoldierData = {
       name: 'Melee attack',
       description:
         'Deals damage to a close enemy and heals for the amount of damage dealt',
-      cost: 1,
+      cost: 2,
       minRange: 0,
       range: 1,
       targetZone: TARGET_ZONES.RADIUS,

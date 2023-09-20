@@ -5,12 +5,10 @@ import { ColorGradientFilter } from '@pixi/filter-color-gradient';
 import { ColorOverlayFilter } from '@pixi/filter-color-overlay';
 import type { Texture } from 'pixi.js';
 import { subject } from '@casl/ability';
-import { createPlayerAbility } from '../../sdk/abilities/player.ability';
 import { getCellAt } from '../../sdk/utils/map.helpers';
-import { getBitMask } from '../../sdk/utils/bit-maksing';
-import type { GameMapCell } from '../../sdk/map';
 import { createSkillAbility } from '../../sdk/abilities/skill.ability';
 import { getEntityAt } from '../../sdk/utils/entity.helpers';
+import { getBitMask, getTextureIndexFromBitMask } from '../../sdk/utils/bit-maksing';
 
 const { x, y, texture } = defineProps<{
   texture: Texture;
@@ -69,7 +67,6 @@ const isHighlighted = computed(() => {
   );
 });
 
-const targetableFilter = new AdjustmentFilter({ gamma: 1.5 });
 const skillTargetableFilter = new ColorOverlayFilter(0xff0000, 0.25);
 const pathFilter = new ColorOverlayFilter(0x00aaff, 0.35);
 const hoverFilter = new ColorGradientFilter({
@@ -82,49 +79,82 @@ const hoverFilter = new ColorGradientFilter({
 });
 
 const filters = computed(() => {
-  if (x < 0 || x > state.value.map.width || y < 0 || y > state.value.map.height) {
-    return [];
-  }
-  if (!cell.value) return [];
-  const _filters = [];
-  if (isHighlighted.value) _filters.push(targetableFilter);
-  if (isValidSkillTarget.value) _filters.push(skillTargetableFilter);
-  if (hoveredCell.value === cell.value) _filters.push(hoverFilter);
-  if (!hoveredCell.value || targetMode.value !== 'move') return _filters;
-  const hasAlly =
-    getEntityAt(state.value, cell.value)?.owner === activeEntity.value.owner;
-  if (isValidMoveTarget.value || hasAlly) {
-    const path = pathfinder.value.findPath(
-      {
-        x: Math.round(activeEntity.value.position.x),
-        y: Math.round(activeEntity.value.position.y)
-      },
-      hoveredCell.value
-    );
-
-    const isInPath = path.some(
-      ([pathX, pathY], index) =>
-        x === pathX && y === pathY && index <= activeEntity.value.ap
-    );
-
-    if (isInPath) {
-      _filters.push(pathFilter);
-    }
-  }
-
-  return _filters;
+  // return hoveredCell.value === cell.value ? [hoverFilter] : [];
+  // if (x < 0 || x > state.value.map.width || y < 0 || y > state.value.map.height) {
+  //   return [];
+  // }
+  // if (!cell.value) return [];
+  // const _filters = [];
+  // // if (isHighlighted.value) _filters.push(targetableFilter);
+  // if (isValidSkillTarget.value) _filters.push(skillTargetableFilter);
+  // if (hoveredCell.value === cell.value) _filters.push(hoverFilter);
+  // if (!hoveredCell.value || targetMode.value !== 'move') return _filters;
+  // const hasAlly =
+  //   getEntityAt(state.value, cell.value)?.owner === activeEntity.value.owner;
+  // if (isValidMoveTarget.value || hasAlly) {
+  //   const path = pathfinder.value.findPath(
+  //     {
+  //       x: Math.round(activeEntity.value.position.x),
+  //       y: Math.round(activeEntity.value.position.y)
+  //     },
+  //     hoveredCell.value
+  //   );
+  //   const isInPath = path.some(
+  //     ([pathX, pathY], index) =>
+  //       x === pathX && y === pathY && index <= activeEntity.value.ap
+  //   );
+  //   if (isInPath) {
+  //     _filters.push(pathFilter);
+  //   }
+  // }
+  // return _filters;
 });
+
+const { resolveTileset } = useAssets();
+
+const bitMask = computed(() => {
+  if (!cell.value) return null;
+  if (!isMyTurn.value) return null;
+
+  return getBitMask(state.value, cell.value, neighbor => {
+    if (!neighbor) return false;
+    if (targetMode.value === 'summon') {
+      return canSummonAt(neighbor);
+    }
+
+    return (
+      (targetMode.value === 'move' ||
+        hoveredCell.value === getCellAt(state.value, activeEntity.value.position)) &&
+      !!(canMoveTo(neighbor) && !getEntityAt(state.value, neighbor))
+    );
+  });
+});
+
+const targetableTileset = resolveTileset('targetable_cell');
+const bitMaskTexture = ref<Texture | null>(null);
+watch(
+  bitMask,
+  (newBitMask, oldBitMask) => {
+    if (newBitMask === oldBitMask) return;
+    bitMaskTexture.value = newBitMask
+      ? getTextureIndexFromBitMask(newBitMask, targetableTileset)
+      : null;
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
-  <sprite
-    :key="`${x}:${y}`"
+  <container
     :x="x * CELL_SIZE"
     :y="y * CELL_SIZE"
-    :texture="texture"
-    :filters="filters"
     @pointerenter="hoveredCell = cell"
     @pointerleave="hoveredCell = null"
     @click="selectedEntity = null"
-  />
+  >
+    <sprite :texture="texture" />
+    <container v-if="bitMaskTexture && isHighlighted">
+      <sprite :texture="bitMaskTexture" event-mode="static" />
+    </container>
+  </container>
 </template>

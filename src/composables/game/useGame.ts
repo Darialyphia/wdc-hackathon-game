@@ -24,7 +24,6 @@ import { subject } from '@casl/ability';
 import { createSkillAbility } from '../../sdk/abilities/skill.ability';
 import { endTurnEvent } from '../../sdk/events/endTurn.event';
 import { type FXSequenceContext } from './useFXSequencer';
-import { parse } from 'zipson';
 import type { SkillData } from '../../sdk/utils/entityData';
 import { createEntityAbility } from '../../sdk/abilities/entity.ability';
 
@@ -79,7 +78,8 @@ export const useGameProvider = (
 
   watch(
     () => game.value.latestEvents,
-    newEvents => {
+    (newEvents, old) => {
+      console.log(newEvents, old);
       const sequence = sequencer.buildSequence(newEvents);
 
       sequence.play(state, event => {

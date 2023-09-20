@@ -51,7 +51,7 @@ const gameInfo = computed(() => {
   return {
     ...game.value,
     serializedState: parse(game.value.serializedState),
-    latestEvents: latestEvents.value?.events ?? []
+    latestEvents: latestEvents.value?.events
   } as GameDetail;
 });
 </script>
@@ -93,7 +93,7 @@ const gameInfo = computed(() => {
 
       <template v-else-if="game?.state === 'ONGOING' || game?.state === 'ENDED'">
         <GameClient
-          v-if="width && height && me && gameInfo"
+          v-if="width && height && me && gameInfo?.latestEvents"
           :me="me?._id"
           :game="gameInfo"
           :width="width"

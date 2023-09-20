@@ -1,7 +1,4 @@
-// Indicates the diff necessary to get neighbors cell
-// with an index fallback in case the cell is out of bounds
-
-import type { Point, Spritesheet } from 'pixi.js';
+import type { Spritesheet } from 'pixi.js';
 import type { GameState } from '..';
 import type { GameMapCell } from '../map';
 import { getCellAt } from './map.helpers';
@@ -110,4 +107,6 @@ export const getTextureIndexFromBitMask = (bitMask: number, spritesheet: Sprites
 
   const bitMaskIndex =
     BITMASK_TO_INDEX_DICT[bitMask as keyof typeof BITMASK_TO_INDEX_DICT];
+
+  return textures[bitMaskIndex];
 };
