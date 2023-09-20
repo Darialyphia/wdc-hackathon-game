@@ -1,10 +1,11 @@
 import { z } from 'zod';
 import { defineAction } from '.';
 import { createPlayerAbility } from '../abilities/player.ability';
-import { getGeneral, getSummonBlueprints } from '../utils/entity.helpers';
+import { getGeneral } from '../utils/entity.helpers';
 import { subject } from '@casl/ability';
 import { soldierSummonedEvent } from '../events/soldierSummoned.event';
 import { endTurnEvent } from '../events/endTurn.event';
+import { soldiers } from '../soldiers';
 
 export const summonActionInput = z.object({
   playerId: z.string(),
@@ -23,9 +24,8 @@ export const createSummonAction = defineAction({
     const playerAbility = createPlayerAbility(state, input.playerId);
 
     const general = getGeneral(state, input.playerId);
-    const summonBlueprints = getSummonBlueprints(general);
 
-    const blueprint = summonBlueprints[input.characterId];
+    const blueprint = soldiers[input.characterId as keyof typeof soldiers];
     if (playerAbility.cannot('summon', subject('soldier', blueprint))) {
       return;
     }

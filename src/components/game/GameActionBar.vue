@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { subject } from '@casl/ability';
 import { createPlayerAbility } from '../../sdk/abilities/player.ability';
-import { getSummonBlueprints } from '../../sdk/utils/entity.helpers';
 import type { SoldierData } from '../../sdk/soldiers';
 import type { SkillData } from '../../sdk/utils/entityData';
 
@@ -18,9 +17,8 @@ const {
 
 const availableSummons = computed(() => {
   if (activeEntity.value.kind !== 'general') return [];
-  const blueprints = getSummonBlueprints(activeEntity.value);
 
-  return Object.values(blueprints);
+  return activeEntity.value.blueprint.summonBlueprints;
 });
 
 const canSummon = (blueprint: SoldierData) => {

@@ -4,6 +4,8 @@ import { TARGET_TYPES, TARGET_ZONES } from '../utils/entityData';
 import { FACTIONS_IDS } from '../enums';
 import { getEntityAt } from '../utils/entity.helpers';
 import { AURA_TARGET_TYPES } from '../aura';
+import { havenSwordsman } from '../soldiers/havenSwordsman';
+import { havenArcher } from '../soldiers/havenArcher';
 
 export const havenGeneral: GeneralData = {
   characterId: 'haven_general_01',
@@ -16,6 +18,7 @@ export const havenGeneral: GeneralData = {
   maxAp: 4,
   attack: 3,
   defense: 1,
+  summonBlueprints: [havenSwordsman, havenArcher],
   triggers: [],
   skills: [
     {
@@ -40,13 +43,17 @@ export const havenGeneral: GeneralData = {
   auras: [
     {
       id: 'divine_inspiration',
-      stat: 'attack',
-      value: 1,
       range: 1,
       name: 'Divine Inspiration',
       description: 'Friendly units around this one get +1 attack',
       applyToSelf: false,
-      targetType: AURA_TARGET_TYPES.ALLY
+      targetType: AURA_TARGET_TYPES.ALLY,
+      execute(state, entity) {
+        entity.attack += 1;
+      },
+      cleanup(state, entity) {
+        entity.attack -= 1;
+      }
     }
   ]
 };

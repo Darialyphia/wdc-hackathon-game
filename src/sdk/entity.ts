@@ -5,7 +5,7 @@ import type { SoldierData } from './soldiers';
 import type { GeneralData } from './generals';
 import type { Values } from '../utils/types';
 import type { Trigger } from './trigger';
-import { applyModifier, type Modifier } from './modifier';
+import type { Modifier } from './modifier';
 import type { Aura } from './aura';
 import type { SkillId } from './utils/entityData';
 
@@ -31,9 +31,9 @@ export type EntityBase = {
   maxAp: number;
   ap: number;
   atb: number;
-  readonly attack: number;
-  readonly defense: number;
-  readonly initiative: number;
+  attack: number;
+  defense: number;
+  initiative: number;
   hp: number;
   triggers: Trigger[];
   modifiers: Modifier[];
@@ -74,15 +74,9 @@ export const addGeneral = (
     modifiers: [],
     auras: blueprint.auras,
     skillsUsed: [],
-    get initiative() {
-      return applyModifier(entity, 'initiative');
-    },
-    get attack() {
-      return applyModifier(entity, 'attack');
-    },
-    get defense() {
-      return applyModifier(entity, 'defense');
-    }
+    initiative: blueprint.initiative,
+    attack: blueprint.attack,
+    defense: blueprint.defense
   };
   state.entities.push(entity);
 };
@@ -107,15 +101,9 @@ export const addSoldier = (
     modifiers: [],
     auras: blueprint.auras,
     skillsUsed: [],
-    get initiative() {
-      return applyModifier(entity, 'initiative');
-    },
-    get attack() {
-      return applyModifier(entity, 'attack');
-    },
-    get defense() {
-      return applyModifier(entity, 'defense');
-    }
+    initiative: blueprint.initiative,
+    attack: blueprint.attack,
+    defense: blueprint.defense
   };
   state.entities.push(entity);
 };

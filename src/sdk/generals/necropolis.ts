@@ -4,6 +4,8 @@ import { TARGET_TYPES, TARGET_ZONES } from '../utils/entityData';
 import { FACTIONS_IDS } from '../enums';
 import { getEnemyGeneral, getEntityAt } from '../utils/entity.helpers';
 import { ENTITY_DIED } from '../events/entityDied.event';
+import { necroSkeleton } from '../soldiers/necro_skeleton';
+import { necroVampire } from '../soldiers/necro_vampire';
 
 export const necroGeneral: GeneralData = {
   characterId: 'necro_general_01',
@@ -16,6 +18,7 @@ export const necroGeneral: GeneralData = {
   maxAp: 4,
   attack: 3,
   defense: 1,
+  summonBlueprints: [necroSkeleton, necroVampire],
   triggers: [
     {
       on: ENTITY_DIED,

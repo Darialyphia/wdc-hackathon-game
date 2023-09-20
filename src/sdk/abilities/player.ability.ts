@@ -4,7 +4,6 @@ import type { Entity, PlayerId } from '../entity';
 import {
   getActiveEntity,
   getGeneral,
-  getSummonBlueprints,
   isActive,
   isOwnEntity
 } from '../utils/entity.helpers';
@@ -48,7 +47,7 @@ export const createPlayerAbility = (
 
     if (!general.hasSummonned) {
       can('summon', 'soldier', (subject: SoldierData) => {
-        const summonBlueprints = getSummonBlueprints(general);
+        const { summonBlueprints } = general.blueprint;
         if (!Object.values(summonBlueprints).includes(subject)) return false;
 
         return isActive(state, general) && subject.cost <= general.ap;

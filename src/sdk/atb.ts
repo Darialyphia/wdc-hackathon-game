@@ -1,6 +1,7 @@
 import type { GameState } from '.';
 import { MAX_ATB } from './constants';
 import { ENTITY_STATES } from './entity';
+import { removeModifier } from './modifier';
 import { executeTrigger } from './trigger';
 
 const GLOBAL_ATB_INITIATIVE = 8;
@@ -27,12 +28,16 @@ const tickGlobalAtb = (state: GameState) => {
         }))
         .filter(trigger => trigger.duration !== 0);
 
-      e.modifiers = e.modifiers
-        .map(modifier => ({
-          ...modifier,
-          duration: modifier.duration - 1
-        }))
-        .filter(trigger => trigger.duration !== 0);
+      e.modifiers = e.modifiers.map(modifier => ({
+        ...modifier,
+        duration: modifier.duration - 1
+      }));
+
+      e.modifiers.forEach(modifier => {
+        if (modifier.duration === 0) {
+          removeModifier(state, e, modifier);
+        }
+      });
     });
 
     state.turn++;
