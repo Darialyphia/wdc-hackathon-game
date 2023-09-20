@@ -16,7 +16,7 @@ until(isLoading)
         <UiSpinner size="xl" />
       </main>
 
-      <RouterView v-slot="{ Component }" v-else>
+      <RouterView v-else v-slot="{ Component }">
         <template v-if="Component">
           <Suspense>
             <component :is="Component"></component>

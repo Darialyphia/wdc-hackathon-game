@@ -1,8 +1,8 @@
 import type { GameState } from '.';
 import type { Point } from '../utils/geometry';
 import { MAX_ATB } from './constants';
-import type { SoldierData } from './soldiers';
-import type { GeneralData } from './generals';
+import { type SoldierData, soldiersLookup } from './soldiers';
+import { generalsLookup, type GeneralData } from './generals';
 import type { Override, Values } from '../utils/types';
 import type { SerializedTrigger, Trigger } from './trigger';
 import type { Modifier, SerializedModifier } from './modifier';
@@ -11,6 +11,7 @@ import type { SkillId } from './utils/entityData';
 import { triggersLookup } from './triggers';
 import { aurasLookup } from './auras';
 import { modifiersLookup } from './modifiers';
+import { exhaustiveSwitch } from '../utils/assertions';
 
 export type EntityId = number;
 export type GameId = string;
@@ -57,6 +58,7 @@ export type Entity = Soldier | General;
 export type SerializedEntityBase = Override<
   EntityBase,
   {
+    blueprint: CharacterId;
     triggers: SerializedTrigger[];
     modifiers: SerializedModifier[];
     auras: SerializedAura[];
@@ -124,6 +126,7 @@ export const addSoldier = (
 export const serializeEntity = (entity: Entity): SerializedEntity => {
   return {
     ...entity,
+    blueprint: entity.blueprint.characterId,
     triggers: entity.triggers.map(trigger => ({
       id: trigger.id,
       duration: trigger.duration
@@ -138,9 +141,10 @@ export const serializeEntity = (entity: Entity): SerializedEntity => {
   };
 };
 
-export const deserializeEntity = (serializedEntity: SerializedEntity): Entity => {
+export const deserializeGeneral = (serializedEntity: SerializedGeneral): General => {
   return {
     ...serializedEntity,
+    blueprint: generalsLookup[serializedEntity.blueprint as keyof typeof generalsLookup],
     triggers: serializedEntity.triggers.map(trigger => ({
       ...triggersLookup[trigger.id as keyof typeof triggersLookup],
       duration: trigger.duration
@@ -153,4 +157,34 @@ export const deserializeEntity = (serializedEntity: SerializedEntity): Entity =>
       from: modifier.from
     }))
   };
+};
+
+export const deserializeSoldier = (serializedEntity: SerializedSoldier): Soldier => {
+  return {
+    ...serializedEntity,
+    blueprint: soldiersLookup[serializedEntity.blueprint as keyof typeof soldiersLookup],
+    triggers: serializedEntity.triggers.map(trigger => ({
+      ...triggersLookup[trigger.id as keyof typeof triggersLookup],
+      duration: trigger.duration
+    })),
+    auras: serializedEntity.auras.map(aura => ({
+      ...aurasLookup[aura.id as keyof typeof aurasLookup]
+    })),
+    modifiers: serializedEntity.modifiers.map(modifier => ({
+      ...modifiersLookup[modifier.id as keyof typeof modifiersLookup],
+      from: modifier.from
+    }))
+  };
+};
+
+export const deserializeEntity = (serializedEntity: SerializedEntity): Entity => {
+  const { kind } = serializedEntity;
+  switch (kind) {
+    case 'general':
+      return deserializeGeneral(serializedEntity);
+    case 'soldier':
+      return deserializeSoldier(serializedEntity);
+    default:
+      return exhaustiveSwitch(kind);
+  }
 };

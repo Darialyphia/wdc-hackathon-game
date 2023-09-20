@@ -38,7 +38,7 @@ export const applyAuras = (state: GameState) => {
           (aura.targetType === AURA_TARGET_TYPES.ENEMY && isEnemy(source.owner, target)) ||
           (aura.targetType === AURA_TARGET_TYPES.ALLY && isAlly(source.owner, target));
 
-        if (isValidTarget) return;
+        if (!isValidTarget) return;
 
         const dist = getEntityDistance(source, target);
         const isOutOfRange = dist.x > aura.range || dist.y > aura.range;

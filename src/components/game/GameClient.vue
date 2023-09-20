@@ -152,9 +152,9 @@ const isChatDisplayed = ref(false);
         Turn&nbsp;{{ gameState.state.value.turn }}
       </div>
       <button
-        style="appearance: none"
         v-for="(entity, index) in gameState.atbTimeline.value"
         :key="index"
+        style="appearance: none"
         @click="gameState.selectedEntity.value = entity"
       >
         <img :src="entity.blueprint.iconUrl" />
@@ -251,7 +251,7 @@ const isChatDisplayed = ref(false);
         </ul>
       </Query>
 
-      <form @submit.prevent="onSubmit" class="flex gap-3">
+      <form class="flex gap-3" @submit.prevent="onSubmit">
         <UiIconButton
           type="button"
           icon="game-icons:chat-bubble"

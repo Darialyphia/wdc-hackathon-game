@@ -7,16 +7,19 @@ import { GAME_STATES, type GameAction } from './games/game.entity';
 import { subject } from '@casl/ability';
 import { internal } from './_generated/api';
 import { JOIN_CONFIRMATION_TIMEOUT } from './games/game.utils';
-import { createGameState } from '../src/sdk/index';
-import type { GameEvent as GameLogicEvent } from '../src/sdk/events/reducer';
+import {
+  createGameState,
+  fromSerializedState,
+  serializeGameState
+} from '../src/sdk/index';
 import { createMoveAction } from '../src/sdk/actions/move';
 import { createSummonAction } from '../src/sdk/actions/summon';
 import { createSkillAction } from '../src/sdk/actions/skill';
 import { createEndTurnAction } from '../src/sdk/actions/endTurn';
 import { exhaustiveSwitch } from '../src/utils/assertions';
-import { stringify, parse } from 'zipson';
 import type { Id } from './_generated/dataModel';
 import { paginationOptsValidator } from 'convex/server';
+import { parse, stringify } from 'zipson';
 
 // Create a new task with the given text
 export const create = mutation({
@@ -150,14 +153,37 @@ export const confirm = mutation({
     const userAbility = await createUserability({ auth, db });
     await ensureAuthorized(userAbility.can('confirm', subject('game', game)));
 
+    const gamePlayers = await db
+      .query('gamePlayers')
+      .withIndex('by_game_id', q => q.eq('gameId', gameId))
+      .collect();
+
     await Promise.all([
       db.patch(game._id, {
         state: GAME_STATES.ONGOING
       }),
 
-      db.insert('gameEventHistories', {
-        history: stringify([]),
-        gameId: game._id
+      db.insert('gameStates', {
+        gameId: game._id,
+        state: stringify(
+          serializeGameState(
+            createGameState({
+              players: [
+                {
+                  id: gamePlayers[0].userId,
+                  characterId: gamePlayers[0].generalId,
+                  atbSeed: gamePlayers[0].atbSeed
+                },
+                {
+                  id: gamePlayers[1].userId,
+                  characterId: gamePlayers[1].generalId,
+                  atbSeed: gamePlayers[1].atbSeed
+                }
+              ],
+              history: []
+            })
+          )
+        )
       })
     ]);
   }
@@ -179,34 +205,14 @@ export const actOn = mutation({
     const userAbility = await createUserability({ auth, db });
     await ensureAuthorized(userAbility.can('act_on', subject('game', game)));
 
-    // get game infos from DB
-    const gamePlayers = await db
-      .query('gamePlayers')
-      .withIndex('by_game_id', q => q.eq('gameId', gameId))
-      .collect();
-
-    const gameHistory = await db
-      .query('gameEventHistories')
+    // replay game event to get to current state
+    const serializedState = await db
+      .query('gameStates')
       .withIndex('by_game_id', q => q.eq('gameId', game._id))
       .first();
-    const gameEvents: GameLogicEvent[] = gameHistory ? parse(gameHistory.history) : [];
 
-    // replay game event to get to current state
-    const state = createGameState({
-      players: [
-        {
-          id: gamePlayers[0].userId,
-          characterId: gamePlayers[0].generalId,
-          atbSeed: gamePlayers[0].atbSeed
-        },
-        {
-          id: gamePlayers[1].userId,
-          characterId: gamePlayers[1].generalId,
-          atbSeed: gamePlayers[1].atbSeed
-        }
-      ],
-      history: gameEvents
-    });
+    if (!serializedState) return;
+    const state = fromSerializedState(parse(serializedState?.state ?? ''));
 
     // Execute the new action
     const type = action.type as GameAction;
@@ -228,16 +234,15 @@ export const actOn = mutation({
         throw new Error(`Unknown action type: ${type}`);
     }
 
-    if (gameHistory) {
-      await db.patch(gameHistory._id, {
-        history: stringify(state.history)
-      });
-    } else {
-      await db.insert('gameEventHistories', {
+    await Promise.all([
+      db.insert('gameEventDeltas', {
         gameId: game._id,
-        history: stringify(state.history)
-      });
-    }
+        events: state.history
+      }),
+      db.patch(serializedState._id, {
+        state: stringify(serializeGameState(state))
+      })
+    ]);
 
     if (state.lifecycleState === 'FINISHED') {
       await db.patch(game._id, {
@@ -328,10 +333,6 @@ export const getById = query({
   handler: async ({ db }, { gameId }) => {
     const game = await db.get(gameId);
     if (!game) return null;
-    const gameHistory = await db
-      .query('gameEventHistories')
-      .withIndex('by_game_id', q => q.eq('gameId', game._id))
-      .first();
 
     const players = await db
       .query('gamePlayers')
@@ -345,16 +346,28 @@ export const getById = query({
       })
     );
 
+    const serializedState = await db
+      .query('gameStates')
+      .withIndex('by_game_id', q => q.eq('gameId', game._id))
+      .first();
+
     return {
       ...game,
-      history: gameHistory?.history ?? null,
+      serializedState: serializedState?.state,
       creator: await db.get(game.creator),
-      // events: await db
-      //   .query('gameEvents')
-      //   .withIndex('by_game_id', q => q.eq('gameId', gameId))
-      //   .collect(),
       players: playersWithUser
     };
+  }
+});
+
+export const latestEventBatch = query({
+  args: { gameId: v.id('games') },
+  handler: async ({ db }, { gameId }) => {
+    return db
+      .query('gameEventDeltas')
+      .withIndex('by_game_id', q => q.eq('gameId', gameId))
+      .order('desc')
+      .first();
   }
 });
 
@@ -445,13 +458,15 @@ export const clearAllGames = internalMutation({
     const games = await db.query('games').collect();
     const players = await db.query('gamePlayers').collect();
     const messages = await db.query('gameMessages').collect();
-    const events = await db.query('gameEventHistories').collect();
+    const events = await db.query('gameEventDeltas').collect();
+    const states = await db.query('gameStates').collect();
 
     await Promise.all([
       ...players.map(p => db.delete(p._id)),
       ...games.map(g => db.delete(g._id)),
       ...messages.map(m => db.delete(m._id)),
-      ...events.map(e => db.delete(e._id))
+      ...events.map(e => db.delete(e._id)),
+      ...states.map(s => db.delete(s._id))
     ]);
   }
 });

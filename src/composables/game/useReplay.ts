@@ -1,6 +1,5 @@
 import type { ComputedRef } from 'vue';
-import type { Id } from '../../../convex/_generated/dataModel';
-import { createGameState } from '../../sdk';
+import { fromSerializedState, serializeGameState } from '../../sdk';
 import { createReducer, type GameEvent } from '../../sdk/events/reducer';
 import type { SoldierData } from '../../sdk/soldiers';
 import type { Nullable } from '../../utils/types';
@@ -9,7 +8,6 @@ import { getActiveEntity } from '../../sdk/utils/entity.helpers';
 import { createPathFinder } from '../../sdk/utils/pathfinding.helpers';
 import { endTurnEvent } from '../../sdk/events/endTurn.event';
 import { type FXSequenceContext } from './useFXSequencer';
-import { parse } from 'zipson';
 import type { ActionDispatcher, Game, GameDetail } from './useGame';
 import type { SkillData } from '../../sdk/utils/entityData';
 
@@ -31,31 +29,8 @@ export const useReplayProvider = (
   replayStep: Ref<number>,
   isPlaying: Ref<boolean>
 ) => {
-  const gameEvents = computed<GameEvent[]>(() => {
-    if (!game.value.history) return [];
-    return parse(game.value.history).slice(0, replayStep.value);
-  });
-
-  const state = ref(
-    createGameState({
-      players: [
-        {
-          id: game.value.players[0].userId,
-          characterId: game.value.players[0].generalId,
-          atbSeed: game.value.players[0].atbSeed
-        },
-        {
-          id: game.value.players[1].userId,
-          characterId: game.value.players[1].generalId,
-          atbSeed: game.value.players[1].atbSeed
-        }
-      ],
-      history: gameEvents.value
-      // game.value.events.map(
-      //   e => ({ type: e.type, payload: e.payload }) as GameEvent
-      // )
-    })
-  );
+  const state = ref(fromSerializedState(game.value.serializedState));
+  const gameEvents = computed(() => game.value.latestEvents.slice(0, replayStep.value));
 
   watch(
     () => gameEvents.value.length,
@@ -66,9 +41,7 @@ export const useReplayProvider = (
       const sequence = sequencer.buildSequence(newEvents);
 
       sequence.play(state, async event => {
-        if (!event.transient) {
-          state.value.reducer(state.value, event);
-        }
+        state.value.reducer(state.value, event);
         if (isPlaying.value) {
           await waitFor(800);
           replayStep.value++;
@@ -99,26 +72,10 @@ export const useReplayProvider = (
   const endTurn = noop;
 
   const atbTimeline = computed(() => {
-    const timelineState = createGameState({
-      players: [
-        {
-          id: game.value.players[0].userId,
-          characterId: game.value.players[0].generalId,
-          atbSeed: game.value.players[0].atbSeed
-        },
-        {
-          id: game.value.players[1].userId,
-          characterId: game.value.players[1].generalId,
-          atbSeed: game.value.players[1].atbSeed
-        }
-      ],
-      history: gameEvents.value.map(
-        e => ({ type: e.type, payload: e.payload }) as GameEvent
-      )
-    });
+    const timelineState = fromSerializedState(serializeGameState(state.value));
 
+    const timelineReducer = createReducer({ transient: false });
     const timeline = [getActiveEntity(timelineState)];
-    const timelineReducer = createReducer({ transient: true });
     for (let i = 0; i < 10; i++) {
       timelineReducer(timelineState, endTurnEvent.create(timelineState.activeEntityId));
       timeline.push(getActiveEntity(timelineState));

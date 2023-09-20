@@ -60,5 +60,5 @@ export const createReducer =
     }
 
     executeTrigger(state, event);
-    state.history.push({ ...event, transient });
+    state.history.push(event);
   };

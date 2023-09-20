@@ -38,6 +38,7 @@ export type SerializedGameState = Override<
   GameState,
   {
     entities: SerializedEntity[];
+    reducer?: undefined;
   }
 >;
 type CreateGameOptionsPlayer = {
@@ -51,15 +52,20 @@ export type CreateGameOptions = {
 };
 
 export const serializeGameState = (state: GameState): SerializedGameState => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { reducer, ...rest } = state;
+
   return {
-    ...state,
-    entities: state.entities.map(serializeEntity)
+    ...rest,
+    entities: state.entities.map(serializeEntity),
+    history: []
   };
 };
 
 export const fromSerializedState = (serializedState: SerializedGameState): GameState => {
   return {
     ...serializedState,
+    reducer: createReducer({ transient: false }),
     entities: serializedState.entities.map(deserializeEntity)
   };
 };

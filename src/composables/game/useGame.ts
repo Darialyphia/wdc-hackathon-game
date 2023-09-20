@@ -1,13 +1,19 @@
 import type { WritableComputedRef, ComputedRef, Ref } from 'vue';
 import type { Doc, Id } from '../../../convex/_generated/dataModel';
-import { type GameState, createGameState } from '../../sdk';
+import {
+  type GameState,
+  createGameState,
+  type SerializedGameState,
+  fromSerializedState,
+  serializeGameState
+} from '../../sdk';
 import { createReducer, type GameEvent } from '../../sdk/events/reducer';
 import type { EndTurnActionInput } from '../../sdk/actions/endTurn';
 import type { MoveActionInput } from '../../sdk/actions/move';
 import type { SkillActionInput } from '../../sdk/actions/skill';
 import type { SummonActionInput } from '../../sdk/actions/summon';
 import type { SoldierData } from '../../sdk/soldiers';
-import type { Nullable } from '../../utils/types';
+import type { Nullable, Override } from '../../utils/types';
 import type { Entity } from '../../sdk/entity';
 import { getActiveEntity } from '../../sdk/utils/entity.helpers';
 import { createPathFinder } from '../../sdk/utils/pathfinding.helpers';
@@ -22,10 +28,10 @@ import { parse } from 'zipson';
 import type { SkillData } from '../../sdk/utils/entityData';
 import { createEntityAbility } from '../../sdk/abilities/entity.ability';
 
-export type GameDetail = Omit<Doc<'games'>, 'creator'> & {
+export type GameDetail = Override<Doc<'games'>, { creator: Doc<'users'> }> & {
   players: (Doc<'gamePlayers'> & { user: Doc<'users'> })[];
-} & {
-  history: Doc<'gameEventHistories'>['history'];
+  serializedState: SerializedGameState;
+  latestEvents: GameEvent[];
 };
 
 export type Action =
@@ -69,43 +75,15 @@ export const useGameProvider = (
   me: Nullable<Id<'users'>>,
   sequencer: FXSequenceContext
 ) => {
-  const gameEvents = computed<GameEvent[]>(() =>
-    game.value.history ? parse(game.value.history) : []
-  );
-
-  const state = ref(
-    createGameState({
-      players: [
-        {
-          id: game.value.players[0].userId,
-          characterId: game.value.players[0].generalId,
-          atbSeed: game.value.players[0].atbSeed
-        },
-        {
-          id: game.value.players[1].userId,
-          characterId: game.value.players[1].generalId,
-          atbSeed: game.value.players[1].atbSeed
-        }
-      ],
-      history: gameEvents.value
-      // game.value.events.map(
-      //   e => ({ type: e.type, payload: e.payload }) as GameEvent
-      // )
-    })
-  );
+  const state = ref(fromSerializedState(game.value.serializedState));
 
   watch(
-    () => gameEvents.value.length,
-    (newLength, oldLength) => {
-      const newEvents = gameEvents.value.slice(
-        -1 * (newLength - oldLength)
-      ) as GameEvent[];
+    () => game.value.latestEvents,
+    newEvents => {
       const sequence = sequencer.buildSequence(newEvents);
 
       sequence.play(state, event => {
-        if (!event.transient) {
-          state.value.reducer(state.value, event);
-        }
+        state.value.reducer(state.value, event);
       });
     }
   );
@@ -231,27 +209,9 @@ export const useGameProvider = (
   };
 
   const atbTimeline = computed(() => {
-    const timelineState = createGameState({
-      players: [
-        {
-          id: game.value.players[0].userId,
-          characterId: game.value.players[0].generalId,
-          atbSeed: game.value.players[0].atbSeed
-        },
-        {
-          id: game.value.players[1].userId,
-          characterId: game.value.players[1].generalId,
-          atbSeed: game.value.players[1].atbSeed
-        }
-      ],
-      history: gameEvents.value.map(
-        e => ({ type: e.type, payload: e.payload }) as GameEvent
-      )
-    });
+    const timelineState = fromSerializedState(serializeGameState(state.value));
 
-    const timelineReducer = createReducer({
-      transient: true
-    });
+    const timelineReducer = createReducer({ transient: false });
     const timeline = [getActiveEntity(timelineState)];
     for (let i = 0; i < 10; i++) {
       timelineReducer(timelineState, endTurnEvent.create(timelineState.activeEntityId));

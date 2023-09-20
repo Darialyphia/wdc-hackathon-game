@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Id } from '../../../convex/_generated/dataModel';
+import { parse } from 'zipson';
 import { api } from '../../api';
 import type { Action, GameDetail } from '../../composables/game/useGame';
 
@@ -16,7 +17,9 @@ const { push } = useRouter();
 const game = useQuery(api.games.getById, () => [
   { gameId: route.params.id as Id<'games'> }
 ]);
-
+const latestEvents = useQuery(api.games.latestEventBatch, () => [
+  { gameId: route.params.id as Id<'games'> }
+]);
 const { mutate: cancel, isLoading: isCancelling } = useMutation(api.games.cancel);
 
 watchEffect(() => {
@@ -41,7 +44,16 @@ const onAction = (action: Action) => {
 const { mutate: surrender } = useMutation(api.games.surrender);
 
 // syntax highlighting doesn't like type assertions in template
-const gameInfo = computed(() => game.value as GameDetail);
+const gameInfo = computed(() => {
+  if (!game.value) return null;
+  if (!game.value.serializedState) return null;
+
+  return {
+    ...game.value,
+    serializedState: parse(game.value.serializedState),
+    latestEvents: latestEvents.value?.events ?? []
+  } as GameDetail;
+});
 </script>
 
 <template>
@@ -59,6 +71,7 @@ const gameInfo = computed(() => game.value as GameDetail);
         <UiButton
           :theme="{ bg: 'red-6', hoverBg: 'red-7' }"
           left-icon="mdi:close"
+          :is-loading="isCancelling"
           @click="cancel({ gameId: game._id })"
         >
           Cancel
@@ -80,7 +93,7 @@ const gameInfo = computed(() => game.value as GameDetail);
 
       <template v-else-if="game?.state === 'ONGOING' || game?.state === 'ENDED'">
         <GameClient
-          v-if="width && height && me && gameInfo.history"
+          v-if="width && height && me && gameInfo"
           :me="me?._id"
           :game="gameInfo"
           :width="width"

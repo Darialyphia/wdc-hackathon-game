@@ -19,9 +19,14 @@ export default defineSchema({
     winnerId: v.optional(v.id('users'))
   }).index('by_creator', ['creator']),
 
-  gameEventHistories: defineTable({
+  gameStates: defineTable({
     gameId: v.id('games'),
-    history: v.string()
+    state: v.string()
+  }).index('by_game_id', ['gameId']),
+
+  gameEventDeltas: defineTable({
+    gameId: v.id('games'),
+    events: v.array(v.object({ type: v.string(), payload: v.any() }))
   }).index('by_game_id', ['gameId']),
 
   gameMessages: defineTable({
