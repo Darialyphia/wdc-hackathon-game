@@ -31,7 +31,7 @@ export const createMoveAction = defineAction({
       entity.position,
       input.target
     );
-    if (path.length > entity.ap) {
+    if (!path.length || path.length > entity.ap) {
       return;
     }
 

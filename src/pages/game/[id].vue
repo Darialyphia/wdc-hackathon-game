@@ -3,7 +3,6 @@ import type { Id } from '../../../convex/_generated/dataModel';
 import { parse } from 'zipson';
 import { api } from '../../api';
 import type { Action, GameDetail } from '../../composables/game/useGame';
-import { late } from 'zod';
 
 definePage({
   name: 'Game',
@@ -46,7 +45,6 @@ const { mutate: surrender } = useMutation(api.games.surrender);
 
 // syntax highlighting doesn't like type assertions in template
 const gameInfo = computed(() => {
-  console.log(latestEvents.value);
   if (!game.value) return null;
   if (!game.value.serializedState) return null;
 

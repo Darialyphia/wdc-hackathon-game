@@ -9,7 +9,6 @@ import type { Texture } from 'pixi.js';
 import type { AnimatedSprite } from 'pixi.js';
 import { Power2 } from 'gsap';
 import type { FederatedPointerEvent } from 'pixi.js';
-import { AdjustmentFilter } from '@pixi/filter-adjustment';
 
 const { entity } = defineProps<{
   entity: Entity;

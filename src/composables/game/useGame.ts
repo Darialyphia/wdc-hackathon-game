@@ -78,8 +78,7 @@ export const useGameProvider = (
 
   watch(
     () => game.value.latestEvents,
-    (newEvents, old) => {
-      console.log(newEvents, old);
+    newEvents => {
       const sequence = sequencer.buildSequence(newEvents);
 
       sequence.play(state, event => {
@@ -134,6 +133,10 @@ export const useGameProvider = (
       },
       cell
     );
+    const isSameCell =
+      cell.x === activeEntity.value.position.x &&
+      cell.y === activeEntity.value.position.y;
+    if (isSameCell) return true;
 
     return path.length > 0 && path.length <= activeEntity.value.ap;
   };

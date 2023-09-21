@@ -1,4 +1,4 @@
-import { type Ref } from 'vue';
+import type { Ref, ComputedRef } from 'vue';
 import type { GameState } from '../../sdk';
 import { DEAL_DAMAGE, dealDamageEvent } from '../../sdk/events/dealDamage.event';
 import { END_TURN, endTurnEvent } from '../../sdk/events/endTurn.event';
@@ -30,6 +30,7 @@ export type FXSequenceContext = {
   linkSprite(id: EntityId, sprite: MaybeRefOrGetter<AnimatedSprite | undefined>): void;
   buildSequence(events: GameEvent[]): FXSequence;
   fxContainer: Container;
+  isPlaying: ComputedRef<boolean>;
 };
 
 export const FX_SEQUENCER_INJECTION_KEY = Symbol(
@@ -44,6 +45,7 @@ export const useFXSequencerProvider = (assetsCtx: AssetsContext) => {
       sprite: MaybeRefOrGetter<AnimatedSprite | undefined>;
     }
   >();
+  const isPlaying = ref(false);
 
   const linkSprite = (
     id: EntityId,
@@ -85,6 +87,7 @@ export const useFXSequencerProvider = (assetsCtx: AssetsContext) => {
 
     return {
       async play(state: Ref<GameState>, onStepComplete: (event: GameEvent) => void) {
+        isPlaying.value = true;
         for (const step of steps) {
           await step.play(state.value, step.event as any, {
             assets: assetsCtx,
@@ -99,12 +102,19 @@ export const useFXSequencerProvider = (assetsCtx: AssetsContext) => {
           });
           await onStepComplete(step.event);
         }
+        isPlaying.value = false;
       }
     };
   };
 
-  provide(FX_SEQUENCER_INJECTION_KEY, { linkSprite, buildSequence, fxContainer });
-  return { buildSequence, linkSprite, fxContainer };
+  const api = {
+    linkSprite,
+    buildSequence,
+    fxContainer,
+    isPlaying: computed(() => isPlaying.value)
+  };
+  provide(FX_SEQUENCER_INJECTION_KEY, api);
+  return api;
 };
 
 export const useFXSequencer = () => useSafeInject(FX_SEQUENCER_INJECTION_KEY);

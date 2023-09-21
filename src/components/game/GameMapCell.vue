@@ -1,15 +1,13 @@
 <script setup lang="ts">
+import { PTransition } from 'vue3-pixi';
 import { CELL_SIZE } from '../../sdk/constants';
-import { AdjustmentFilter } from '@pixi/filter-adjustment';
-import { ColorGradientFilter } from '@pixi/filter-color-gradient';
 import { ColorOverlayFilter } from '@pixi/filter-color-overlay';
-import type { Resource, Texture } from 'pixi.js';
-import { subject } from '@casl/ability';
+import type { Resource, Texture, Container } from 'pixi.js';
 import { getCellAt } from '../../sdk/utils/map.helpers';
-import { createSkillAbility } from '../../sdk/abilities/skill.ability';
 import { getEntityAt } from '../../sdk/utils/entity.helpers';
 import { getBitMask, getTextureIndexFromBitMask } from '../../sdk/utils/bit-maksing';
-import type { Filter } from 'pixi.js';
+import { ColorMatrixFilter } from 'pixi.js';
+import type { GameMapCell } from '../../sdk/map';
 
 const { x, y, texture } = defineProps<{
   texture: Texture;
@@ -21,93 +19,71 @@ const {
   state,
   activeEntity,
   isMyTurn,
+  isInCastRange,
   canSummonAt,
-  selectedSkill,
   selectedEntity,
   canMoveTo,
   pathfinder,
   targetMode,
   hoveredCell
 } = useGame();
-
+const { isPlaying } = useFXSequencer();
 const cell = computed(() => getCellAt(state.value, { x, y }));
+
+const isHoveringActiveEntity = computed(
+  () => hoveredCell.value === getCellAt(state.value, activeEntity.value.position)
+);
 const isValidSummonTarget = computed(() => {
   if (!cell.value) return;
 
   return canSummonAt(cell.value);
 });
 
-const isValidSkillTarget = computed(() => {
-  if (!cell.value) return;
-  if (!selectedSkill.value) return false;
-  if (targetMode.value !== 'skill') return false;
+const isValidMoveTarget = (cell: GameMapCell) => {
+  if (!cell) return false;
+  const entity = getEntityAt(state.value, cell);
 
-  const ability = createSkillAbility(
-    state.value,
-    selectedSkill.value,
-    activeEntity.value
-  );
-
-  return ability.can('highlight', subject('cell', cell.value));
-});
-
-const isValidMoveTarget = computed(() => {
-  if (!cell.value) return;
-
-  return canMoveTo(cell.value) && !getEntityAt(state.value, cell.value);
-});
-
-const isHighlighted = computed(() => {
-  if (!isMyTurn.value) return;
-  if (targetMode.value === 'summon') return isValidSummonTarget.value;
+  if (!canMoveTo(cell)) return false;
 
   return (
-    (targetMode.value === 'move' ||
-      hoveredCell.value === getCellAt(state.value, activeEntity.value.position)) &&
-    isValidMoveTarget.value
+    !entity || entity === activeEntity.value || entity.owner === activeEntity.value.owner
   );
+};
+
+const isHighlighted = computed(() => {
+  if (!cell.value) return;
+  if (!isMyTurn.value) return;
+
+  if (targetMode.value === 'skill') return isInCastRange(cell.value);
+  if (targetMode.value === 'summon') return isValidSummonTarget.value;
+  if (targetMode.value === 'move') return isValidMoveTarget(cell.value);
+
+  return isHoveringActiveEntity.value && isValidMoveTarget(cell.value);
 });
 
-const skillTargetableFilter = new ColorOverlayFilter(0xff0000, 0.25);
-const pathFilter = new ColorOverlayFilter(0x99aaff, 0.5);
-const hoverFilter = new ColorGradientFilter({
-  type: ColorGradientFilter.RADIAL,
-  stops: [
-    { offset: 0.0, color: 'white', alpha: 0 },
-    { offset: 0.5, color: 'white', alpha: 0 },
-    { offset: 1.0, color: 'white', alpha: 0.3 }
-  ]
-});
+const pathFilter = new ColorOverlayFilter(0x9edfff, 0.5);
 
 const filters = computed(() => {
-  const f: Filter[] = [];
-  if (!cell.value) return f;
-  if (!hoveredCell.value) return f;
-  if (hoveredCell.value === cell.value) f.push(hoverFilter);
-  if (isValidSkillTarget.value) f.push(skillTargetableFilter);
-
-  if (!hoveredCell.value || targetMode.value !== 'move') return f;
+  if (!cell.value) return [];
+  if (!hoveredCell.value) return [];
+  if (!isMyTurn.value) return [];
+  if (targetMode.value !== 'move') return [];
 
   const hasAlly =
     getEntityAt(state.value, cell.value)?.owner === activeEntity.value.owner;
-  if (isValidMoveTarget.value || hasAlly) {
-    const path = pathfinder.value.findPath(
-      {
-        x: Math.round(activeEntity.value.position.x),
-        y: Math.round(activeEntity.value.position.y)
-      },
-      hoveredCell.value
-    );
-    const isInPath = path.some(
-      ([pathX, pathY], index) =>
-        x === pathX && y === pathY && index <= activeEntity.value.ap
-    );
-    if (isInPath) {
-      // _filters.push(pathFilter);
-      return [pathFilter];
-    }
-  }
-  // return _filters;
+  if (!isValidMoveTarget(cell.value) && !hasAlly) return;
+  const path = pathfinder.value.findPath(
+    {
+      x: Math.round(activeEntity.value.position.x),
+      y: Math.round(activeEntity.value.position.y)
+    },
+    hoveredCell.value
+  );
+  const isInPath = path.some(
+    ([pathX, pathY], index) =>
+      x === pathX && y === pathY && index <= activeEntity.value.ap
+  );
+  return isInPath ? [pathFilter] : [];
 });
 
 const { resolveTileset } = useAssets();
@@ -115,22 +91,18 @@ const { resolveTileset } = useAssets();
 const bitMask = computed(() => {
   if (!cell.value) return null;
   if (!isMyTurn.value) return null;
+  if (isPlaying.value) return null;
 
   return getBitMask(state.value, cell.value, neighbor => {
     if (!neighbor) return false;
-    if (targetMode.value === 'skill') return false;
+    if (targetMode.value === 'skill') {
+      return isInCastRange(neighbor);
+    }
     if (targetMode.value === 'summon') {
-      return canSummonAt(neighbor);
+      return canSummonAt(neighbor) && !getEntityAt(state.value, neighbor);
     }
 
-    if (
-      targetMode.value === null &&
-      hoveredCell.value !== getCellAt(state.value, activeEntity.value.position)
-    ) {
-      return false;
-    }
-
-    return !!(canMoveTo(neighbor) && !getEntityAt(state.value, neighbor));
+    return isValidMoveTarget(neighbor);
   });
 });
 
@@ -141,25 +113,71 @@ watch(
   bitMask,
   (newBitMask, oldBitMask) => {
     if (newBitMask === oldBitMask) return;
-    if (!newBitMask) return;
+    if (!isDefined(newBitMask)) return;
 
     bitMaskTexture.value = getTextureIndexFromBitMask(newBitMask, targetableTileset);
   },
   { immediate: true }
 );
+
+const overlay = ref<Container>();
+const skillTargetFilter = new ColorMatrixFilter();
+skillTargetFilter.hue(120, false);
+
+const overlayFilters = computed(() =>
+  targetMode.value === 'skill' ? [skillTargetFilter] : []
+);
+const onBeforeEnter = (el: Container) => {
+  nextTick(() => {
+    gsap.set(el, {
+      pixi: {
+        alpha: 0
+      }
+    });
+  });
+};
+
+const onEnter = (el: Container, done: () => void) => {
+  gsap.to(el, {
+    duration: 0.5,
+    ease: Power2.easeOut,
+    onComplete: done,
+    pixi: {
+      alpha: 1
+    }
+  });
+};
+const onLeave = (el: Container, done: () => void) => {
+  gsap.to(el, {
+    duration: 0.5,
+    ease: Power2.easeOut,
+    onComplete: done,
+    pixi: {
+      alpha: 0
+    }
+  });
+};
 </script>
 
 <template>
   <container
     :x="x * CELL_SIZE"
     :y="y * CELL_SIZE"
+    :filters="filters"
     @pointerenter="hoveredCell = cell"
     @pointerleave="hoveredCell = null"
     @click="selectedEntity = null"
   >
-    <sprite :texture="texture" :filters="filters" />
-    <container v-if="bitMaskTexture && isHighlighted" :alpha="0.75">
-      <sprite :texture="bitMaskTexture" event-mode="static" />
-    </container>
+    <sprite :texture="texture" />
+
+    <PTransition appear @before-enter="onBeforeEnter" @enter="onEnter" @leave="onLeave">
+      <container
+        v-if="bitMaskTexture && isHighlighted"
+        ref="overlay"
+        :filters="overlayFilters"
+      >
+        <sprite :texture="bitMaskTexture" event-mode="static" />
+      </container>
+    </PTransition>
   </container>
 </template>
