@@ -2,6 +2,7 @@ import type { Spritesheet } from 'pixi.js';
 import type { GameState } from '..';
 import type { GameMapCell } from '../map';
 import { getCellAt } from './map.helpers';
+import type { Texture } from 'pixi.js';
 
 // prettier-ignore
 const neighborCoords: [number, number][] = [
@@ -49,7 +50,10 @@ export const getBitMask = (
   return weight;
 };
 
-export const getTextureIndexFromBitMask = (bitMask: number, spritesheet: Spritesheet) => {
+export const getTextureIndexFromBitMask = (
+  bitMask: number,
+  spritesheet: Spritesheet
+): Texture => {
   const textures = Object.values(spritesheet.textures);
 
   // see http://www.cr31.co.uk/stagecast/wang/blob.html

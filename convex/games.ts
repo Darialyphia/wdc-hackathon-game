@@ -163,6 +163,11 @@ export const confirm = mutation({
         state: GAME_STATES.ONGOING
       }),
 
+      db.insert('gameEventDeltas', {
+        gameId: game._id,
+        events: []
+      }),
+
       db.insert('gameStates', {
         gameId: game._id,
         state: stringify(
