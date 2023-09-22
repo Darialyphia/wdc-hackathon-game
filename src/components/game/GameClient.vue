@@ -9,6 +9,11 @@ import PixiRenderer from './PixiRenderer.vue';
 import { api } from '../../api';
 import PixiPlugin from 'gsap/PixiPlugin';
 import { Stage } from '@pixi/layers';
+import cursorUrl from '../../assets/ui/cursor.png';
+import cursorDisabledUrl from '../../assets/ui/cursor_disabled.png';
+import cursorAttackUrl from '../../assets/ui/cursor_attack.png';
+import cursorMoveUrl from '../../assets/ui/cursor_move.png';
+import cursorSummonUrl from '../../assets/ui/cursor_summon.png';
 
 // @ts-ignore  enable PIXI devtools
 window.PIXI = PIXI;
@@ -39,8 +44,8 @@ const assets = useAssetsProvider();
 const sequencer = useFXSequencerProvider(assets);
 
 const replayStep = ref(0);
-const isPlaying = ref(false);
 
+const isPlaying = ref(false);
 watch(isPlaying, newValue => {
   if (newValue) replayStep.value++;
 });
@@ -60,6 +65,14 @@ const gameState = isReplay
       sequencer
     );
 
+const cursors = {
+  default: `url('${cursorUrl}'), auto`,
+  disabled: `url('${cursorDisabledUrl}'), auto`,
+  attack: `url('${cursorAttackUrl}'), auto`,
+  move: `url('${cursorMoveUrl}'), auto`,
+  summon: `url('${cursorSummonUrl}'), auto`
+};
+
 onMounted(() => {
   // We create the pixi app manually instead of using vue3-pixi's <Application /> component
   // because we want to be able to provide a bunch of stuff so we need access to the underlying vue-pixi app
@@ -73,6 +86,7 @@ onMounted(() => {
   });
 
   pixiApp.stage = new Stage();
+  pixiApp.renderer.events.cursorStyles = cursors;
 
   if (import.meta.env.DEV) {
     // @ts-ignore  enable PIXI devtools
@@ -303,6 +317,7 @@ const isChatDisplayed = ref(false);
 
   --link: var(--primary);
 
+  cursor: v-bind('cursors.default');
   user-select: none;
 
   position: relative;
@@ -312,6 +327,32 @@ const isChatDisplayed = ref(false);
 
   font-family: monospace;
   color: var(--gray-0);
+
+  :where(
+      :not(canvas),
+      a[href],
+      area,
+      button,
+      input:not(
+          [type='text'],
+          [type='email'],
+          [type='number'],
+          [type='password'],
+          [type=''],
+          [type='tel'],
+          [type='url']
+        ),
+      label[for],
+      select,
+      summary,
+      [tabindex]:not([tabindex*='-'])
+    ) {
+    cursor: inherit !important;
+
+    &:disabled {
+      cursor: v-bind('cursors.disabled') !important;
+    }
+  }
 }
 
 .player-1 {

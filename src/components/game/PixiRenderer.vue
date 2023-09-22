@@ -30,12 +30,15 @@ const { resolveSprite, resolveFx } = useAssets();
 const summonPreviewTextures = computed(
   () =>
     selectedSummon.value &&
-    createSpritesheetFrameObject('idle', resolveSprite(selectedSummon.value?.characterId))
+    (createSpritesheetFrameObject(
+      'idle',
+      resolveSprite(selectedSummon.value?.characterId)
+    ) as unknown as Texture[])
 );
 const hoveredCellTextures = createSpritesheetFrameObject(
   'idle',
   resolveFx('hoveredCell')
-);
+) as unknown as Texture[];
 
 const summonPreviewFilters = [
   new AdjustmentFilter({
@@ -87,7 +90,7 @@ until(viewport)
       :anchor="0.5"
       :alpha="0.5"
       playing
-      :textures="hoveredCellTextures as unknown as Texture[]"
+      :textures="hoveredCellTextures"
     />
 
     <GameEntity v-for="entity in state.entities" :key="entity.id" :entity="entity" />
@@ -97,7 +100,7 @@ until(viewport)
       :x="hoveredCell.x * CELL_SIZE + CELL_SIZE / 2"
       :y="hoveredCell.y * CELL_SIZE + CELL_SIZE / 2"
       :event-mode="'none'"
-      :textures="summonPreviewTextures as unknown as Texture[]"
+      :textures="summonPreviewTextures"
       :scale-x="activeEntity.owner === game.players[0].userId ? 1 : -1"
       :anchor="0.5"
       :playing="false"

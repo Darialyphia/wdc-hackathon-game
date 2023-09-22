@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { PTransition } from 'vue3-pixi';
+import { PTransition, useApplication } from 'vue3-pixi';
 import { CELL_SIZE } from '../../sdk/constants';
 import { ColorOverlayFilter } from '@pixi/filter-color-overlay';
-import type { Resource, Texture, Container } from 'pixi.js';
+import type { Resource, Texture, Container, Cursor } from 'pixi.js';
 import { getCellAt } from '../../sdk/utils/map.helpers';
 import { getEntityAt } from '../../sdk/utils/entity.helpers';
 import { getBitMask, getTextureIndexFromBitMask } from '../../sdk/utils/bit-maksing';
@@ -156,6 +156,17 @@ const onLeave = (el: Container, done: () => void) => {
     }
   });
 };
+
+const app = useApplication();
+const cursor = computed(() => {
+  if (cell.value && targetMode.value === 'move' && isValidMoveTarget(cell.value)) {
+    return app.value.renderer.events.cursorStyles.move as Cursor;
+  }
+  if (targetMode.value === 'summon' && isValidSummonTarget.value) {
+    return app.value.renderer.events.cursorStyles.summon as Cursor;
+  }
+  return undefined;
+});
 </script>
 
 <template>
@@ -174,7 +185,7 @@ const onLeave = (el: Container, done: () => void) => {
         ref="overlay"
         :filters="overlayFilters"
       >
-        <sprite :texture="bitMaskTexture" event-mode="static" />
+        <sprite :texture="bitMaskTexture" :cursor="cursor" event-mode="static" />
       </container>
     </PTransition>
   </container>

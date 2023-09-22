@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PTransition } from 'vue3-pixi';
+import { PTransition, useApplication } from 'vue3-pixi';
 import type { Entity } from '../../sdk/entity';
 import { CELL_SIZE } from '../../sdk/constants';
 import { getCellAt } from '../../sdk/utils/map.helpers';
@@ -9,6 +9,7 @@ import type { Texture } from 'pixi.js';
 import type { AnimatedSprite } from 'pixi.js';
 import { Power2 } from 'gsap';
 import type { FederatedPointerEvent } from 'pixi.js';
+import type { Cursor } from 'pixi.js';
 
 const { entity } = defineProps<{
   entity: Entity;
@@ -129,6 +130,23 @@ const onEnter = (el: AnimatedSprite, done: () => void) => {
     }
   });
 };
+
+const app = useApplication();
+const cursor = computed(() => {
+  const cell = getCellAt(state.value, entity.position);
+
+  if (
+    targetMode.value === 'skill' &&
+    hoveredCell.value?.x === entity.position.x &&
+    hoveredCell.value?.y === entity.position.y &&
+    cell &&
+    canCastAt(cell) &&
+    isInCastRange(cell)
+  ) {
+    return app.value.renderer.events.cursorStyles.attack as Cursor;
+  }
+  return undefined;
+});
 </script>
 
 <template>
@@ -138,6 +156,7 @@ const onEnter = (el: AnimatedSprite, done: () => void) => {
     :x="entity.position.x * CELL_SIZE + CELL_SIZE / 2"
     :y="entity.position.y * CELL_SIZE + CELL_SIZE / 2"
     :sortable-children="true"
+    :cursor="cursor"
     @pointerenter="onPointerenter"
     @pointerleave="onPointerleave"
     @pointerdown="onPointerdown($event)"
