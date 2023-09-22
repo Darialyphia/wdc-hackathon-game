@@ -21,7 +21,6 @@ const {
   isMyTurn,
   isInCastRange,
   canSummonAt,
-  selectedEntity,
   canMoveTo,
   pathfinder,
   targetMode,
@@ -122,7 +121,7 @@ watch(
 
 const overlay = ref<Container>();
 const skillTargetFilter = new ColorMatrixFilter();
-skillTargetFilter.hue(120, false);
+skillTargetFilter.tint(0xff0000, false);
 
 const overlayFilters = computed(() =>
   targetMode.value === 'skill' ? [skillTargetFilter] : []
@@ -166,7 +165,6 @@ const onLeave = (el: Container, done: () => void) => {
     :filters="filters"
     @pointerenter="hoveredCell = cell"
     @pointerleave="hoveredCell = null"
-    @click="selectedEntity = null"
   >
     <sprite :texture="texture" />
 

@@ -7,8 +7,8 @@ import { appInjectKey, createApp } from 'vue3-pixi';
 import * as PIXI from 'pixi.js';
 import PixiRenderer from './PixiRenderer.vue';
 import { api } from '../../api';
-
 import PixiPlugin from 'gsap/PixiPlugin';
+import { Stage } from '@pixi/layers';
 
 // @ts-ignore  enable PIXI devtools
 window.PIXI = PIXI;
@@ -71,6 +71,8 @@ onMounted(() => {
     autoDensity: true,
     antialias: false
   });
+
+  pixiApp.stage = new Stage();
 
   if (import.meta.env.DEV) {
     // @ts-ignore  enable PIXI devtools

@@ -22,14 +22,14 @@ export const getBitMask = (
   cell: GameMapCell,
   compareFn: (neighbor: GameMapCell | undefined) => boolean
 ) => {
-  const getCellWithDiff = (neighborIndex: number) => {
+  const getCell = (neighborIndex: number) => {
     const [diffX, diffY] = neighborCoords[neighborIndex];
 
     return getCellAt(state, { x: cell.x + diffX, y: cell.y + diffY });
   };
 
   const [topLeft, top, topRight, left, center, right, bottomLeft, bottom, bottomRight] =
-    neighborCoords.map((_, index) => getCellWithDiff(index));
+    neighborCoords.map((_, index) => getCell(index));
 
   // for a corner to match, both of its sides must match as well
   // see https://gamedevelopment.tutsplus.com/how-to-use-tile-bitmasking-to-auto-tile-your-level-layouts--cms-25673t

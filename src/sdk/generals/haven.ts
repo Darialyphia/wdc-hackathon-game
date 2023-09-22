@@ -13,7 +13,7 @@ export const havenGeneral01: GeneralData = {
   name: 'Paladin',
   initiative: 10,
   maxHp: 20,
-  maxAp: 6,
+  maxAp: 5,
   attack: 3,
   defense: 1,
   summonBlueprints: [soldiersLookup.havenSwordsman, soldiersLookup.havenArcher],

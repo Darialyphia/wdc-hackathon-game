@@ -12,7 +12,7 @@ export const necroSkeleton: SoldierData = {
   cost: 2,
   initiative: 7,
   maxHp: 6,
-  maxAp: 5,
+  maxAp: 4,
   attack: 2,
   defense: 0,
   triggers: [],

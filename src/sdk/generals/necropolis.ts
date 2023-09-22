@@ -13,7 +13,7 @@ export const necroGeneral01: GeneralData = {
   name: 'Necromancer',
   initiative: 10,
   maxHp: 20,
-  maxAp: 6,
+  maxAp: 5,
   attack: 3,
   defense: 1,
   summonBlueprints: [soldiersLookup.necroSkeleton, soldiersLookup.necroVampire],

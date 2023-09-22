@@ -26,11 +26,15 @@ const isSummonPreviewDisplayed = computed(
     targetMode.value === 'summon' && hoveredCell.value && canSummonAt(hoveredCell.value)
 );
 
-const { resolveSprite } = useAssets();
+const { resolveSprite, resolveFx } = useAssets();
 const summonPreviewTextures = computed(
   () =>
     selectedSummon.value &&
     createSpritesheetFrameObject('idle', resolveSprite(selectedSummon.value?.characterId))
+);
+const hoveredCellTextures = createSpritesheetFrameObject(
+  'idle',
+  resolveFx('hoveredCell')
 );
 
 const summonPreviewFilters = [
@@ -74,6 +78,17 @@ until(viewport)
     "
   >
     <GameMap />
+
+    <animated-sprite
+      v-if="hoveredCell && hoveredCellTextures"
+      :x="hoveredCell.x * CELL_SIZE + CELL_SIZE / 2"
+      :y="hoveredCell.y * CELL_SIZE + CELL_SIZE / 2"
+      :event-mode="'none'"
+      :anchor="0.5"
+      :alpha="0.5"
+      playing
+      :textures="hoveredCellTextures as unknown as Texture[]"
+    />
 
     <GameEntity v-for="entity in state.entities" :key="entity.id" :entity="entity" />
 

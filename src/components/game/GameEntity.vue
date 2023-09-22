@@ -43,15 +43,15 @@ const onPointerdown = (event: FederatedPointerEvent) => {
   }
 };
 
-const onClick = () => {
-  selectedEntity.value = entity;
-};
-
 const onPointerenter = () => {
+  if (!targetMode.value) {
+    selectedEntity.value = entity;
+  }
   hoveredCell.value = getCellAt(state.value, entity.position);
 };
 
 const onPointerleave = () => {
+  selectedEntity.value = null;
   hoveredCell.value = null;
 };
 const { linkSprite } = useFXSequencer();
@@ -138,7 +138,6 @@ const onEnter = (el: AnimatedSprite, done: () => void) => {
     :x="entity.position.x * CELL_SIZE + CELL_SIZE / 2"
     :y="entity.position.y * CELL_SIZE + CELL_SIZE / 2"
     :sortable-children="true"
-    @click="onClick"
     @pointerenter="onPointerenter"
     @pointerleave="onPointerleave"
     @pointerdown="onPointerdown($event)"
@@ -171,28 +170,28 @@ const onEnter = (el: AnimatedSprite, done: () => void) => {
       loop
       playing
     />
-
-    <StatBar
-      :z-index="entity.position.y + 1"
-      :x="-CELL_SIZE / 2"
-      :y="CELL_SIZE / 2 - 6"
-      :size="3"
-      :value="entity.hp"
-      :max-value="entity.blueprint.maxHp"
-      :filled-color="0x00cc00"
-      :empty-color="0xcc0000"
-    />
-
-    <StatBar
-      :z-index="entity.position.y + 1"
-      :x="-CELL_SIZE / 2"
-      :y="CELL_SIZE / 2 - 3"
-      :size="3"
-      :value="entity.ap"
-      :max-value="entity.maxAp"
-      :filled-color="0x0000cc"
-    />
   </container>
+
+  <StatBar
+    :z-index="entity.position.y"
+    :x="entity.position.x * CELL_SIZE"
+    :y="entity.position.y * CELL_SIZE + (CELL_SIZE - 6)"
+    :size="3"
+    :value="entity.hp"
+    :max-value="entity.blueprint.maxHp"
+    :filled-color="0x00cc00"
+    :empty-color="0xcc0000"
+  />
+
+  <StatBar
+    :z-index="entity.position.y"
+    :x="entity.position.x * CELL_SIZE"
+    :y="entity.position.y * CELL_SIZE + (CELL_SIZE - 3)"
+    :size="3"
+    :value="entity.ap"
+    :max-value="entity.maxAp"
+    :filled-color="0x0000cc"
+  />
 
   <graphics
     v-if="entity.state === 'ALIVE'"
