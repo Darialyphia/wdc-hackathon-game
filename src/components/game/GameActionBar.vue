@@ -38,7 +38,7 @@ const onSummonPointerdown = (summon: SoldierData) => {
 </script>
 
 <template>
-  <div v-if="activeEntity.owner === me" class="flex items-center gap-4 action-bar">
+  <div v-if="activeEntity.owner === me" class="action-bar fancy-surface">
     <button
       v-for="skill in activeEntity.blueprint.skills"
       :key="skill.id"
@@ -74,21 +74,20 @@ const onSummonPointerdown = (summon: SoldierData) => {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="postcss">
 .action-bar {
+  display: flex;
+  gap: var(--size-4);
+  align-items: center;
+
   min-width: var(--size-sm);
   padding: var(--size-3);
 
-  background-color: hsl(0 0% 0% / 0.6);
   backdrop-filter: blur(5px);
   border-radius: var(--radius-3);
 }
 
-.skill {
-  width: 64px;
-}
-.skill,
-.summon {
+:is(.skill, .summon) {
   position: relative;
 
   aspect-ratio: 1;
@@ -96,22 +95,23 @@ const onSummonPointerdown = (summon: SoldierData) => {
   background-repeat: no-repeat;
   background-size: cover;
   border: solid 2px var(--primary);
-  border-radius: 4px;
   &::after {
     content: attr(data-cost);
 
     position: absolute;
-    top: calc(100% - var(--size-3));
-    right: calc(-1 * var(--size-3));
+    right: -12px;
+    bottom: -7px;
+
+    display: grid;
+    place-content: center;
 
     aspect-ratio: 1;
-    width: var(--size-6);
-    padding: var(--size-1);
+    width: 3ch;
 
-    background-color: black;
-    border: solid 2px var(--primary);
+    background: var(--fancy-bg);
+    background-blend-mode: overlay;
+    border: var(--fancy-border);
     border-radius: var(--radius-round);
-    outline: solid 5px black;
   }
 
   &:hover,
@@ -129,8 +129,16 @@ const onSummonPointerdown = (summon: SoldierData) => {
     width: 48px;
     height: auto;
     object-fit: none;
-    image-rendering: pixelated;
   }
+}
+
+.skill {
+  width: 64px;
+  border-radius: 4px;
+}
+
+.summon {
+  border-radius: var(--radius-round);
 }
 
 .end-turn {

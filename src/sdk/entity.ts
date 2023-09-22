@@ -108,7 +108,7 @@ export const addSoldier = (
     kind: 'soldier',
     id: ++state.nextEntityId,
     atbSeed: options.atbSeed,
-    atb: options.atbSeed,
+    atb: MAX_ATB / 4 + options.atbSeed,
     maxAp: blueprint.maxAp,
     ap: blueprint.maxAp,
     hp: blueprint.maxHp,

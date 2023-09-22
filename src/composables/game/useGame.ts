@@ -64,6 +64,7 @@ export type Game = {
   summon: (cell: GameMapCell) => void;
   useSkill: (cell: GameMapCell) => void;
   endTurn: (cell: GameMapCell) => void;
+  surrender: () => void;
 };
 
 export const GAME_INJECTION_KEY = Symbol('game') as InjectionKey<Game>;
@@ -71,6 +72,7 @@ export const GAME_INJECTION_KEY = Symbol('game') as InjectionKey<Game>;
 export const useGameProvider = (
   game: ComputedRef<GameDetail>,
   sendAction: ActionDispatcher,
+  onSurrender: () => void,
   me: Nullable<Id<'users'>>,
   sequencer: FXSequenceContext
 ) => {
@@ -246,6 +248,9 @@ export const useGameProvider = (
     canCast,
     canMoveTo,
     isInCastRange,
+    surrender() {
+      return onSurrender();
+    },
     selectedSummon: computed({
       get() {
         return selectedSummon.value;

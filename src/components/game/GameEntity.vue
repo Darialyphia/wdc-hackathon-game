@@ -10,6 +10,7 @@ import type { AnimatedSprite } from 'pixi.js';
 import { Power2 } from 'gsap';
 import type { FederatedPointerEvent } from 'pixi.js';
 import type { Cursor } from 'pixi.js';
+import { AdjustmentFilter } from '@pixi/filter-adjustment';
 
 const { entity } = defineProps<{
   entity: Entity;
@@ -68,7 +69,11 @@ linkSprite(entity.id, sprite);
 const activeFilter = new OutlineFilter(2, 0xffffff, 0.2, 0.6);
 const targetedOutlineFilter = new OutlineFilter(3, 0xff0000, 0.2, 0.5);
 const targetedOverlayFilter = new ColorOverlayFilter(0xff0000, 0.35);
-const selectedfilter = new OutlineFilter(3, 0x00ffff, 0.2, 1);
+const selectedfilter = new AdjustmentFilter({
+  gamma: 1.4,
+  contrast: 1.4,
+  saturation: 1.25
+});
 
 const filters = computed(() => {
   const _filters = [];

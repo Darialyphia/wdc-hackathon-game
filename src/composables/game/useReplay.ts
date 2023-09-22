@@ -106,6 +106,9 @@ export const useReplayProvider = (
     canCastAt,
     canCast,
     isInCastRange,
+    surrender() {
+      return null;
+    },
     selectedSummon: computed({
       get() {
         return selectedSummon.value;
