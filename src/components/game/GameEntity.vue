@@ -5,7 +5,7 @@ import { CELL_SIZE } from '../../sdk/constants';
 import { getCellAt } from '../../sdk/utils/map.helpers';
 import { OutlineFilter } from '@pixi/filter-outline';
 import { ColorOverlayFilter } from '@pixi/filter-color-overlay';
-import type { Texture } from 'pixi.js';
+import { type Texture } from 'pixi.js';
 import type { AnimatedSprite } from 'pixi.js';
 import { Power2 } from 'gsap';
 import type { FederatedPointerEvent } from 'pixi.js';

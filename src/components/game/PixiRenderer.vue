@@ -6,7 +6,7 @@ import { CELL_SIZE } from '../../sdk/constants';
 import type { GameMapCell } from '../../sdk/map';
 import { createPlayerAbility } from '../../sdk/abilities/player.ability';
 import { subject } from '@casl/ability';
-import type { Texture } from 'pixi.js';
+import { type Texture } from 'pixi.js';
 
 const { game, state, selectedSummon, activeEntity, targetMode, hoveredCell } = useGame();
 const app = useApplication();

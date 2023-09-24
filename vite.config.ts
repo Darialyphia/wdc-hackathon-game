@@ -8,6 +8,26 @@ import Components from 'unplugin-vue-components/vite';
 import { ArkUiResolver } from './tools/ark-ui-resolver';
 import { VitePWA } from 'vite-plugin-pwa';
 
+const pixiProjectionElements: string[] = [
+  'camera-3d',
+  'container-2d',
+  'container-3d',
+  'sprite-2d',
+  'sprite-2s',
+  'sprite-3d',
+  'text-2d',
+  'text-2s',
+  'text-3d',
+  'tiling-sprite-2d',
+  'simple-mesh-2d',
+  'simple-mesh-3d-2d',
+  'mesh-2d',
+  'mesh-3d-2d'
+];
+const customElements = [...pixiProjectionElements, 'viewport', 'layer'];
+
+const prefix = 'pixi-';
+
 export default defineConfig(async () => {
   const { isCustomElement, transformAssetUrls } = await import('vue3-pixi');
 
@@ -26,7 +46,16 @@ export default defineConfig(async () => {
         template: {
           compilerOptions: {
             isCustomElement(name) {
-              return isCustomElement(name) || name === 'viewport';
+              let normalizedName = name.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`);
+              if (normalizedName.startsWith('-'))
+                normalizedName = normalizedName.slice(1);
+
+              const isPixiElement = customElements.includes(normalizedName);
+              const isPrefixElement =
+                normalizedName.startsWith(prefix) &&
+                customElements.includes(normalizedName.slice(prefix.length));
+
+              return isCustomElement(name) || isPixiElement || isPrefixElement;
             }
           },
           transformAssetUrls

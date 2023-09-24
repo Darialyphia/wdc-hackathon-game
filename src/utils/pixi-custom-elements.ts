@@ -1,8 +1,10 @@
 // main.js
 import { Layer } from '@pixi/layers';
 import { Viewport, type IViewportOptions } from 'pixi-viewport';
-
+import ProjectionRenderer from 'vue3-pixi-projection';
 import { patchProp, renderer } from 'vue3-pixi';
+
+renderer.use(ProjectionRenderer);
 
 renderer.use({
   name: 'Viewport',

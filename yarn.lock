@@ -5340,6 +5340,11 @@ pify@^3.0.0:
   resolved "https://registry.yarnpkg.com/pify/-/pify-3.0.0.tgz#e5a4acd2c101fdf3d9a4d07f0dbc4db49dd28176"
   integrity sha512-C3FsVNH1udSEX48gGX1xfvwTWfsYWj5U+8/uK15BGzIGrKoUpghX8hWZwa/OFnakBiiVNmBvemTJR5mcy7iPcg==
 
+pixi-projection@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/pixi-projection/-/pixi-projection-1.0.0.tgz#4120f63157996a74bb3272ddfdbf461ef63b881d"
+  integrity sha512-+fV7SA69OLxNR3nXOoR6Z5vFTqcp3oH/+sHXsQ+Jw6J9nOK+APzlrnCcO3ftB9Y/GIVgR3+HIDpKpRWe6EPPSw==
+
 pixi-viewport@^5.0.2:
   version "5.0.2"
   resolved "https://registry.yarnpkg.com/pixi-viewport/-/pixi-viewport-5.0.2.tgz#d0065bd28a3c34d5888ce66eff538fa78ef5cd07"
@@ -6800,10 +6805,31 @@ vue-tsc@^1.8.8:
     "@vue/typescript" "1.8.8"
     semver "^7.3.8"
 
+vue3-pixi-projection@^0.8.2:
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/vue3-pixi-projection/-/vue3-pixi-projection-0.8.2.tgz#abb21a6149e5c79eef91237cf314bdf63735fef3"
+  integrity sha512-L7iTyLcur9OcTJnE/JADWAHkSjsofrIzal86qPP0roRKnxfKXT6o5jmeoxcnNllv2iWsgUIPaPxaUfXbmd+rzg==
+  dependencies:
+    "@antfu/utils" "^0.7.2"
+    pixi-projection "^1.0.0"
+    vue-demi "^0.14.1"
+    vue3-pixi "^0.8.2"
+
 vue3-pixi@^0.8.1:
   version "0.8.1"
   resolved "https://registry.yarnpkg.com/vue3-pixi/-/vue3-pixi-0.8.1.tgz#b50e448735db2930c91821b8c3ea74fff9d68fd5"
   integrity sha512-CKpFtJIbDuUqQfwGKXS0gwnEj1zWg4aRDnHllxZs9Mdpcvhy8FTN3uPOiSW22fJStQvOc9P/yyix29s6MQGbQg==
+  dependencies:
+    "@antfu/utils" "^0.7.2"
+    "@vueuse/core" "^10.1.2"
+    nanoid "^4.0.2"
+    pixi.js "^7.2.4"
+    vue-demi "^0.14.1"
+
+vue3-pixi@^0.8.2:
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/vue3-pixi/-/vue3-pixi-0.8.2.tgz#6e40159abeefdb374789fe0e08727e20106a5015"
+  integrity sha512-o36UWyd1U4B/e7VMPS+6+SkAXmsARMRrBRS+b5ezH6JbhoNS2kbmLqQRa3Ju2RX5gZJ/VjdybWSftkj6HQJcvw==
   dependencies:
     "@antfu/utils" "^0.7.2"
     "@vueuse/core" "^10.1.2"

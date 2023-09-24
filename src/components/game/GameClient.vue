@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import '../../utils/pixi-custom-elements';
 import type { Id } from '../../../convex/_generated/dataModel';
 import type { Action, GameDetail } from '../../composables/game/useGame';
 import { Application, BaseTexture, SCALE_MODES, WRAP_MODES } from 'pixi.js';
@@ -8,6 +7,7 @@ import * as PIXI from 'pixi.js';
 import PixiRenderer from './PixiRenderer.vue';
 import PixiPlugin from 'gsap/PixiPlugin';
 import { Stage } from '@pixi/layers';
+
 import cursorUrl from '../../assets/ui/cursor.png';
 import cursorDisabledUrl from '../../assets/ui/cursor_disabled.png';
 import cursorAttackUrl from '../../assets/ui/cursor_attack.png';

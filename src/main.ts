@@ -1,4 +1,5 @@
 import './styles/global.css';
+import './utils/pixi-custom-elements';
 import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router/auto';
 import { createAuth0 } from '@auth0/auth0-vue';
