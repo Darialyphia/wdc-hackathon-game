@@ -160,6 +160,7 @@ const cursor = computed(() => {
     :z-index="entity.position.y"
     :sortable-children="true"
     :cursor="cursor"
+    :pivot-x="-CELL_SIZE / 2"
     @pointerenter="onPointerenter"
     @pointerleave="onPointerleave"
     @pointerdown="onPointerdown($event)"

@@ -7,6 +7,7 @@ import { getEntityAt } from '../../sdk/utils/entity.helpers';
 import { getBitMask, getTextureIndexFromBitMask } from '../../sdk/utils/bit-maksing';
 import { ColorMatrixFilter } from 'pixi.js';
 import type { GameMapCell } from '../../sdk/map';
+import { CELL_SIZE } from '../../sdk/constants';
 
 const { x, y, texture } = defineProps<{
   texture: Texture;
@@ -62,26 +63,27 @@ const isHighlighted = computed(() => {
 const pathFilter = new ColorOverlayFilter(0x9edfff, 0.5);
 
 const filters = computed(() => {
-  if (!cell.value) return [];
-  if (!hoveredCell.value) return [];
-  if (!isMyTurn.value) return [];
-  if (targetMode.value !== 'move') return [];
+  return cell.value && getEntityAt(state.value, cell.value) ? [pathFilter] : [];
+  // if (!cell.value) return [];
+  // if (!hoveredCell.value) return [];
+  // if (!isMyTurn.value) return [];
+  // if (targetMode.value !== 'move') return [];
 
-  const hasAlly =
-    getEntityAt(state.value, cell.value)?.owner === activeEntity.value.owner;
-  if (!isValidMoveTarget(cell.value) && !hasAlly) return;
-  const path = pathfinder.value.findPath(
-    {
-      x: Math.round(activeEntity.value.position.x),
-      y: Math.round(activeEntity.value.position.y)
-    },
-    hoveredCell.value
-  );
-  const isInPath = path.some(
-    ([pathX, pathY], index) =>
-      x === pathX && y === pathY && index <= activeEntity.value.ap
-  );
-  return isInPath ? [pathFilter] : [];
+  // const hasAlly =
+  //   getEntityAt(state.value, cell.value)?.owner === activeEntity.value.owner;
+  // if (!isValidMoveTarget(cell.value) && !hasAlly) return;
+  // const path = pathfinder.value.findPath(
+  //   {
+  //     x: Math.round(activeEntity.value.position.x),
+  //     y: Math.round(activeEntity.value.position.y)
+  //   },
+  //   hoveredCell.value
+  // );
+  // const isInPath = path.some(
+  //   ([pathX, pathY], index) =>
+  //     x === pathX && y === pathY && index <= activeEntity.value.ap
+  // );
+  // return isInPath ? [pathFilter] : [];
 });
 
 const { resolveTileset } = useAssets();
@@ -166,6 +168,13 @@ const cursor = computed(() => {
   }
   return undefined;
 });
+
+const { resolveFx } = useAssets();
+
+const hoveredCellTextures = createSpritesheetFrameObject(
+  'idle',
+  resolveFx('hoveredCell')
+) as unknown as Texture[];
 </script>
 
 <template>
@@ -174,7 +183,17 @@ const cursor = computed(() => {
     @pointerenter="hoveredCell = cell"
     @pointerleave="hoveredCell = null"
   >
-    <sprite :texture="texture" />
+    <sprite :texture="texture">
+      <animated-sprite
+        v-if="hoveredCell === cell && hoveredCellTextures"
+        :x="CELL_SIZE / 2"
+        :y="CELL_SIZE / 2"
+        :event-mode="'none'"
+        :anchor="0.5"
+        playing
+        :textures="hoveredCellTextures"
+      />
+    </sprite>
 
     <PTransition appear @before-enter="onBeforeEnter" @enter="onEnter" @leave="onLeave">
       <container

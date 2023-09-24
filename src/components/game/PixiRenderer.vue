@@ -45,20 +45,6 @@ const summonPreviewFilters = [
   })
 ];
 
-const isoEntities = computed(() =>
-  state.value.entities.map(entity => {
-    const x = entity.position.x;
-    const y = entity.position.y;
-    console.log('entity', x, y);
-    return {
-      entity,
-      isoX: (x - y) * (CELL_SIZE / 2),
-      isoY: (x + y) * (CELL_SIZE / 4),
-      isoZ: CELL_SIZE / 2
-    };
-  })
-);
-
 until(viewport)
   .not.toBe(undefined)
   .then(() => {
@@ -91,30 +77,33 @@ until(viewport)
   >
     <GameMap />
 
-    <!-- <animated-sprite
+    <!-- <IsoPositioner
       v-if="hoveredCell && hoveredCellTextures"
-      :x="hoveredCell.x * CELL_SIZE + CELL_SIZE / 2"
-      :y="hoveredCell.y * CELL_SIZE + CELL_SIZE / 2"
+      :x="hoveredCell.x"
+      :y="hoveredCell.y"
+      :z="0"
       :event-mode="'none'"
-      :anchor="0.5"
-      :alpha="0.5"
-      playing
-      :textures="hoveredCellTextures"
-    /> -->
-
-    <AnimatedPosition
-      v-for="entity in isoEntities"
-      :key="entity.entity.id"
-      :x="entity.isoX"
-      :y="entity.isoY"
-      :z="entity.isoZ"
-      :axis="{
-        x: (state.map.width * CELL_SIZE) / 2,
-        y: (state.map.height * CELL_SIZE) / 2
-      }"
     >
-      <GameEntity :entity="entity.entity" :x="CELL_SIZE / 2" />
-    </AnimatedPosition>
+      <animated-sprite
+        v-if="hoveredCell && hoveredCellTextures"
+        :x="CELL_SIZE / 2"
+        :y="CELL_SIZE / 2"
+        :event-mode="'none'"
+        :anchor="0.5"
+        playing
+        :textures="hoveredCellTextures"
+      />
+    </IsoPositioner> -->
+
+    <IsoPositioner
+      v-for="entity in state.entities"
+      :key="entity.id"
+      :x="entity.position.x"
+      :y="entity.position.y"
+      :z="1"
+    >
+      <GameEntity :entity="entity" />
+    </IsoPositioner>
 
     <!--
     <animated-sprite

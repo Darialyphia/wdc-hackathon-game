@@ -1,24 +1,26 @@
 <script setup lang="ts">
 import gsap from 'gsap';
+import type { Point } from '../../utils/geometry';
 
 const props = defineProps<{
   x: number;
   y: number;
-  axis: { x: number; y: number };
+  axis: Point;
   z: number;
   debug?: boolean;
 }>();
 
-type Point = {
-  x: number;
-  y: number;
-};
-
+const { isPlaying } = useFXSequencer();
 const tweened = ref({ x: props.x, y: props.y });
 
 watch(
   () => ({ x: props.x, y: props.y }),
   newPos => {
+    if (isPlaying) {
+      tweened.value = { x: props.x, y: props.y };
+      return;
+    }
+
     gsap.to(tweened.value, {
       duration: 0.5,
       ...newPos
@@ -41,14 +43,17 @@ const zIndex = computed(() => {
 
   return cartesian.x + cartesian.y + props.z;
 });
+
+const { autoDestroyRef } = useAutoDestroy();
 </script>
 
 <template>
-  <container :x="tweened.x" :y="tweened.y" :z-index="zIndex">
+  <container :ref="autoDestroyRef" :x="tweened.x" :y="tweened.y" :z-index="zIndex">
     <slot />
   </container>
   <text
     v-if="props.debug"
+    :ref="autoDestroyRef"
     :style="{ fontSize: 20, fill: 'white' }"
     :scale="0.5"
     :z-index="1000"

@@ -49,6 +49,7 @@ declare module 'vue' {
     GameScreen: typeof import('./src/components/game/GameScreen.vue')['default']
     GameUi: typeof import('./src/components/game/GameUi.vue')['default']
     HeaderMenu: typeof import('./src/components/HeaderMenu.vue')['default']
+    IsoPositioner: typeof import('./src/components/game/IsoPositioner.vue')['default']
     LatestReplays: typeof import('./src/components/LatestReplays.vue')['default']
     PaginatedQuery: typeof import('./src/components/convex/PaginatedQuery.vue')['default']
     PaginatedQueryInner: typeof import('./src/components/convex/PaginatedQueryInner.vue')['default']

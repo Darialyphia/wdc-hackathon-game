@@ -177,6 +177,7 @@ declare global {
   const useAsyncState: typeof import('@vueuse/core')['useAsyncState']
   const useAttrs: typeof import('vue')['useAttrs']
   const useAuth0: typeof import('@auth0/auth0-vue')['useAuth0']
+  const useAutoDestroy: typeof import('./src/composables/game/useAutoDestroy')['useAutoDestroy']
   const useBase64: typeof import('@vueuse/core')['useBase64']
   const useBattery: typeof import('@vueuse/core')['useBattery']
   const useBluetooth: typeof import('@vueuse/core')['useBluetooth']
