@@ -17,7 +17,7 @@ const tweened = ref({ x: props.x, y: props.y });
 watch(
   () => ({ x: props.x, y: props.y }),
   newPos => {
-    if (isPlaying) {
+    if (isPlaying.value) {
       tweened.value = { x: props.x, y: props.y };
       return;
     }

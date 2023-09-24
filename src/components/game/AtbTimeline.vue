@@ -1,5 +1,9 @@
 <script setup lang="ts">
-const { state, selectedEntity, atbTimeline } = useGame();
+const { state, selectedEntity, atbTimeline, rotation } = useGame();
+
+const rotateCw = () => {
+  rotation.value = ((rotation.value + 90) % 360) as any;
+};
 </script>
 
 <template>
@@ -17,6 +21,13 @@ const { state, selectedEntity, atbTimeline } = useGame();
     >
       <img :src="entity.blueprint.iconUrl" />
     </button>
+
+    <UiIconButton
+      icon="mdi-horizontal-rotate-clockwise"
+      title="rotate map"
+      :theme="{ size: 'font-size-5' }"
+      @click="rotateCw"
+    />
   </div>
 </template>
 
@@ -36,7 +47,7 @@ const { state, selectedEntity, atbTimeline } = useGame();
   background-color: hsl(0 0% 0% / 0.6);
   backdrop-filter: blur(5px);
   border-radius: var(--radius-3);
-  button {
+  button:not(.ui-icon-button) {
     all: initial;
 
     aspect-ratio: 1;
@@ -72,5 +83,9 @@ const { state, selectedEntity, atbTimeline } = useGame();
   background-repeat: no-repeat;
   border: solid var(--border-size-1) var(--primary);
   border-radius: var(--radius-round);
+}
+
+.ui-icon-button {
+  transform: rotateZ(90deg);
 }
 </style>

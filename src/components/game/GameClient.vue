@@ -7,12 +7,14 @@ import * as PIXI from 'pixi.js';
 import PixiRenderer from './PixiRenderer.vue';
 import PixiPlugin from 'gsap/PixiPlugin';
 import { Stage } from '@pixi/layers';
+import hardcodedmap from '../../assets/maps/iso/iso.json';
 
 import cursorUrl from '../../assets/ui/cursor.png';
 import cursorDisabledUrl from '../../assets/ui/cursor_disabled.png';
 import cursorAttackUrl from '../../assets/ui/cursor_attack.png';
 import cursorMoveUrl from '../../assets/ui/cursor_move.png';
 import cursorSummonUrl from '../../assets/ui/cursor_summon.png';
+import type { ITiledMap } from '@workadventure/tiled-map-type-guard';
 
 // @ts-ignore  enable PIXI devtools
 window.PIXI = PIXI;
@@ -65,6 +67,8 @@ const gameState = isReplay
       sequencer
     );
 
+const screenMap = useScreenMapProvider(hardcodedmap as ITiledMap, gameState);
+
 const cursors = {
   default: `url('${cursorUrl}'), auto`,
   disabled: `url('${cursorDisabledUrl}'), auto`,
@@ -101,6 +105,7 @@ onMounted(() => {
   const app = createApp(PixiRenderer);
   app.provide(appInjectKey, pixiApp);
   app.provide(GAME_INJECTION_KEY, gameState);
+  app.provide(SCREEN_MAP_INJECTION_KEY, screenMap);
   app.provide(FX_SEQUENCER_INJECTION_KEY, sequencer);
   app.provide(ASSETS_INJECTION_KEY, assets);
   assets.load().then(() => {

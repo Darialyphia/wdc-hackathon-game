@@ -36,10 +36,6 @@ const summonPreviewTextures = computed(
       resolveSprite(selectedSummon.value?.characterId)
     ) as unknown as Texture[])
 );
-const hoveredCellTextures = createSpritesheetFrameObject(
-  'idle',
-  resolveFx('hoveredCell')
-) as unknown as Texture[];
 
 const summonPreviewFilters = [
   new AdjustmentFilter({
@@ -47,6 +43,17 @@ const summonPreviewFilters = [
     alpha: 0.3
   })
 ];
+
+const { getEntityRotatedPosition } = useScreenMap();
+
+const rotatedEntities = computed(() => {
+  return state.value.entities.map(entity => {
+    return {
+      entity,
+      position: getEntityRotatedPosition(entity)
+    };
+  });
+});
 
 until(viewport)
   .not.toBe(undefined)
@@ -75,32 +82,14 @@ until(viewport)
     <container :ref="initFxContainer" :sortable-children="true">
       <GameMap />
 
-      <!-- <IsoPositioner
-      v-if="hoveredCell && hoveredCellTextures"
-      :x="hoveredCell.x"
-      :y="hoveredCell.y"
-      :z="0"
-      :event-mode="'none'"
-    >
-      <animated-sprite
-        v-if="hoveredCell && hoveredCellTextures"
-        :x="CELL_SIZE / 2"
-        :y="CELL_SIZE / 2"
-        :event-mode="'none'"
-        :anchor="0.5"
-        playing
-        :textures="hoveredCellTextures"
-      />
-    </IsoPositioner> -->
-
       <IsoPositioner
-        v-for="entity in state.entities"
-        :key="entity.id"
+        v-for="entity in rotatedEntities"
+        :key="entity.entity.id"
         :x="entity.position.x"
         :y="entity.position.y"
         :z="1"
       >
-        <GameEntity :entity="entity" />
+        <GameEntity :entity="entity.entity" />
       </IsoPositioner>
 
       <!--

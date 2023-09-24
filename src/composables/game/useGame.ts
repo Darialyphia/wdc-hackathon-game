@@ -2,7 +2,6 @@ import type { WritableComputedRef, ComputedRef, Ref } from 'vue';
 import type { Doc, Id } from '../../../convex/_generated/dataModel';
 import {
   type GameState,
-  createGameState,
   type SerializedGameState,
   fromSerializedState,
   serializeGameState
@@ -55,6 +54,7 @@ export type Game = {
   pathfinder: ComputedRef<AStarFinder>;
   atbTimeline: ComputedRef<Entity[]>;
   hoveredCell: Ref<Nullable<GameMapCell>>;
+  rotation: Ref<0 | 90 | 180 | 270>;
   canSummonAt: (cell: GameMapCell) => boolean;
   canCastAt: (cell: GameMapCell) => boolean;
   canCast: (skill: SkillData) => boolean;
@@ -77,7 +77,6 @@ export const useGameProvider = (
   sequencer: FXSequenceContext
 ) => {
   const state = ref(fromSerializedState(game.value.serializedState));
-
   watch(
     () => game.value.latestEvents,
     newEvents => {
@@ -248,6 +247,7 @@ export const useGameProvider = (
     canCast,
     canMoveTo,
     isInCastRange,
+    rotation: ref(0),
     surrender() {
       return onSurrender();
     },

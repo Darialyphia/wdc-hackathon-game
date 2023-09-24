@@ -9,6 +9,7 @@ export type CellType = 0 | 1 | 2; // GROUND / water / wall
 
 export type GameMapCell = Point & {
   terrain: CellType;
+  id: number;
 };
 
 export type GameMap = Size & {
@@ -16,12 +17,15 @@ export type GameMap = Size & {
 };
 
 export const createGameMap = (width: number, height: number): GameMap => {
+  let nextId = 1;
+
   const cells = Array.from({ length: height }, (_, y) =>
     Array.from({ length: width }, (_, x) => {
       const cell: GameMapCell = {
         x,
         y,
-        terrain: CELL_TYPES.GROUND
+        terrain: CELL_TYPES.GROUND,
+        id: nextId++
       };
 
       return cell;
