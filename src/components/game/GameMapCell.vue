@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { PTransition, useApplication } from 'vue3-pixi';
-import { CELL_SIZE } from '../../sdk/constants';
 import { ColorOverlayFilter } from '@pixi/filter-color-overlay';
 import type { Resource, Texture, Container, Cursor } from 'pixi.js';
 import { getCellAt } from '../../sdk/utils/map.helpers';
@@ -171,8 +170,6 @@ const cursor = computed(() => {
 
 <template>
   <container
-    :x="x * CELL_SIZE"
-    :y="y * CELL_SIZE"
     :filters="filters"
     @pointerenter="hoveredCell = cell"
     @pointerleave="hoveredCell = null"

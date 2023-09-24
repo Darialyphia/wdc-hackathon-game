@@ -11,8 +11,6 @@ import { type Texture } from 'pixi.js';
 const { game, state, selectedSummon, activeEntity, targetMode, hoveredCell } = useGame();
 const app = useApplication();
 
-const PADDING = 20;
-
 const { fxContainer } = useFXSequencer();
 const viewport = ref<Viewport>();
 
@@ -47,6 +45,20 @@ const summonPreviewFilters = [
   })
 ];
 
+const isoEntities = computed(() =>
+  state.value.entities.map(entity => {
+    const x = entity.position.x;
+    const y = entity.position.y;
+    console.log('entity', x, y);
+    return {
+      entity,
+      isoX: (x - y) * (CELL_SIZE / 2),
+      isoY: (x + y) * (CELL_SIZE / 4),
+      isoZ: CELL_SIZE / 2
+    };
+  })
+);
+
 until(viewport)
   .not.toBe(undefined)
   .then(() => {
@@ -56,11 +68,8 @@ until(viewport)
       })
       .pinch()
       .wheel({ smooth: 3, percent: 0.05 })
-      .zoomPercent(1.01, false)
-      .moveCenter(
-        (state.value.map.width * CELL_SIZE + PADDING) / 2,
-        (state.value.map.height * CELL_SIZE + PADDING) / 2
-      );
+      .zoomPercent(1, false)
+      .moveCenter(100, 180);
   });
 </script>
 
@@ -69,8 +78,8 @@ until(viewport)
     ref="viewport"
     :screen-width="app.view.width"
     :screen-height="app.view.height"
-    :world-width="state.map.width * CELL_SIZE + PADDING"
-    :world-height="state.map.height * CELL_SIZE + PADDING"
+    :world-width="state.map.width * CELL_SIZE"
+    :world-height="state.map.height * CELL_SIZE"
     :events="app.renderer.events"
     :disable-on-context-menu="true"
     @render="
@@ -82,7 +91,7 @@ until(viewport)
   >
     <GameMap />
 
-    <animated-sprite
+    <!-- <animated-sprite
       v-if="hoveredCell && hoveredCellTextures"
       :x="hoveredCell.x * CELL_SIZE + CELL_SIZE / 2"
       :y="hoveredCell.y * CELL_SIZE + CELL_SIZE / 2"
@@ -91,10 +100,23 @@ until(viewport)
       :alpha="0.5"
       playing
       :textures="hoveredCellTextures"
-    />
+    /> -->
 
-    <GameEntity v-for="entity in state.entities" :key="entity.id" :entity="entity" />
+    <AnimatedPosition
+      v-for="entity in isoEntities"
+      :key="entity.entity.id"
+      :x="entity.isoX"
+      :y="entity.isoY"
+      :z="entity.isoZ"
+      :axis="{
+        x: (state.map.width * CELL_SIZE) / 2,
+        y: (state.map.height * CELL_SIZE) / 2
+      }"
+    >
+      <GameEntity :entity="entity.entity" :x="CELL_SIZE / 2" />
+    </AnimatedPosition>
 
+    <!--
     <animated-sprite
       v-if="hoveredCell && isSummonPreviewDisplayed && summonPreviewTextures"
       :x="hoveredCell.x * CELL_SIZE + CELL_SIZE / 2"
@@ -105,6 +127,6 @@ until(viewport)
       :anchor="0.5"
       :playing="false"
       :filters="summonPreviewFilters"
-    />
+    /> -->
   </viewport>
 </template>

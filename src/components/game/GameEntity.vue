@@ -158,8 +158,6 @@ const cursor = computed(() => {
   <container
     v-if="entity.state === 'ALIVE'"
     :z-index="entity.position.y"
-    :x="entity.position.x * CELL_SIZE + CELL_SIZE / 2"
-    :y="entity.position.y * CELL_SIZE + CELL_SIZE / 2"
     :sortable-children="true"
     :cursor="cursor"
     @pointerenter="onPointerenter"
@@ -196,7 +194,7 @@ const cursor = computed(() => {
     />
   </container>
 
-  <StatBar
+  <!-- <StatBar
     :z-index="entity.position.y"
     :x="entity.position.x * CELL_SIZE"
     :y="entity.position.y * CELL_SIZE + (CELL_SIZE - 6)"
@@ -265,5 +263,5 @@ const cursor = computed(() => {
     <text :style="textStyle" :anchor="0.5" :scale-x="0.5" :scale-y="0.5">
       {{ entity.defense }}
     </text>
-  </graphics>
+  </graphics> -->
 </template>

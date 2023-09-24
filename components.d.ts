@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     ActionBar: typeof import('./src/components/game/ActionBar.vue')['default']
     AddTodoForm: typeof import('./src/components/AddTodoForm.vue')['default']
+    AnimatedPosition: typeof import('./src/components/game/AnimatedPosition.vue')['default']
     ArkCheckbox: typeof import('@ark-ui/vue')['Checkbox']
     ArkCheckboxControl: typeof import('@ark-ui/vue')['CheckboxControl']
     ArkCheckboxLabel: typeof import('@ark-ui/vue')['CheckboxLabel']
