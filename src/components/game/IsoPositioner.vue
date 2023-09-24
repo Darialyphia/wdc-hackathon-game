@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { CELL_SIZE } from '../../sdk/constants';
+import { toIso } from '../../sdk/utils/iso';
 
 const { x, y, z } = defineProps<{
   x: number;
@@ -7,14 +8,7 @@ const { x, y, z } = defineProps<{
   z: number;
 }>();
 
-const TILE_WIDTH = CELL_SIZE;
-const TILE_HEIGHT = TILE_WIDTH / 2;
-
-const position = computed(() => ({
-  isoX: (x - y) * (TILE_WIDTH / 2),
-  isoY: (x + y) * (TILE_HEIGHT / 2),
-  isoZ: z * TILE_HEIGHT
-}));
+const position = computed(() => toIso({ x, y, z }));
 
 const { state } = useGame();
 </script>

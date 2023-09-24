@@ -40,8 +40,14 @@ const { state, selectedEntity, atbTimeline } = useGame();
     all: initial;
 
     aspect-ratio: 1;
-    width: 32px;
+    width: 48px;
     padding: 0;
+
+    background: radial-gradient(
+      circle at center,
+      rgba(255, 255, 255, 0.5),
+      transparent 65%
+    );
 
     image-rendering: pixelated;
     &:hover {

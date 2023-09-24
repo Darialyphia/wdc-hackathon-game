@@ -193,76 +193,74 @@ const cursor = computed(() => {
       loop
       playing
     />
+
+    <StatBar
+      :z-index="entity.position.y"
+      :y="CELL_SIZE * 0.65 - 6"
+      :size="3"
+      :value="entity.hp"
+      :max-value="entity.blueprint.maxHp"
+      :filled-color="0x00cc00"
+      :empty-color="0xcc0000"
+    />
+
+    <StatBar
+      :z-index="entity.position.y"
+      :y="CELL_SIZE * 0.65 - 3"
+      :size="3"
+      :value="entity.ap"
+      :max-value="entity.maxAp"
+      :filled-color="0x0000cc"
+    />
+
+    <graphics
+      v-if="entity.state === 'ALIVE'"
+      :z-index="entity.position.y * 2 + 1"
+      :x="-CELL_SIZE / 3"
+      :y="-CELL_SIZE / 4"
+      @render="
+        g => {
+          g.clear();
+
+          g.lineStyle({
+            width: 1,
+            color: 'yellow'
+          });
+
+          g.beginFill('black');
+          g.drawCircle(0, 0, circleSize);
+          g.endFill();
+        }
+      "
+    >
+      <text :style="textStyle" :anchor="0.5" :scale-x="0.5" :scale-y="0.5">
+        {{ entity.attack }}
+      </text>
+    </graphics>
+
+    <graphics
+      v-if="entity.state === 'ALIVE'"
+      :z-index="entity.position.y * 2 + 1"
+      :x="CELL_SIZE / 3"
+      :y="-CELL_SIZE / 4"
+      @render="
+        g => {
+          g.clear();
+
+          g.lineStyle({
+            width: 1,
+            color: 'red'
+          });
+
+          g.beginFill('black');
+          g.drawCircle(0, 0, circleSize);
+          g.endFill();
+        }
+      "
+    >
+      <text :style="textStyle" :anchor="0.5" :scale-x="0.5" :scale-y="0.5">
+        {{ entity.defense }}
+      </text>
+    </graphics>
   </container>
-
-  <!-- <StatBar
-    :z-index="entity.position.y"
-    :x="entity.position.x * CELL_SIZE"
-    :y="entity.position.y * CELL_SIZE + (CELL_SIZE - 6)"
-    :size="3"
-    :value="entity.hp"
-    :max-value="entity.blueprint.maxHp"
-    :filled-color="0x00cc00"
-    :empty-color="0xcc0000"
-  />
-
-  <StatBar
-    :z-index="entity.position.y"
-    :x="entity.position.x * CELL_SIZE"
-    :y="entity.position.y * CELL_SIZE + (CELL_SIZE - 3)"
-    :size="3"
-    :value="entity.ap"
-    :max-value="entity.maxAp"
-    :filled-color="0x0000cc"
-  />
-
-  <graphics
-    v-if="entity.state === 'ALIVE'"
-    :z-index="entity.position.y * 2 + 1"
-    :x="entity.position.x * CELL_SIZE + circleSize / 2"
-    :y="entity.position.y * CELL_SIZE + circleSize / 2"
-    @render="
-      g => {
-        g.clear();
-
-        g.lineStyle({
-          width: 1,
-          color: 'yellow'
-        });
-
-        g.beginFill('black');
-        g.drawCircle(0, 0, circleSize);
-        g.endFill();
-      }
-    "
-  >
-    <text :style="textStyle" :anchor="0.5" :scale-x="0.5" :scale-y="0.5">
-      {{ entity.attack }}
-    </text>
-  </graphics>
-
-  <graphics
-    v-if="entity.state === 'ALIVE'"
-    :z-index="entity.position.y * 2 + 1"
-    :x="entity.position.x * CELL_SIZE + CELL_SIZE - circleSize / 2"
-    :y="entity.position.y * CELL_SIZE + circleSize / 2"
-    @render="
-      g => {
-        g.clear();
-
-        g.lineStyle({
-          width: 1,
-          color: 'red'
-        });
-
-        g.beginFill('black');
-        g.drawCircle(0, 0, circleSize);
-        g.endFill();
-      }
-    "
-  >
-    <text :style="textStyle" :anchor="0.5" :scale-x="0.5" :scale-y="0.5">
-      {{ entity.defense }}
-    </text>
-  </graphics> -->
 </template>

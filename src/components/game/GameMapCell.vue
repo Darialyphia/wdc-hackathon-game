@@ -8,6 +8,7 @@ import { getBitMask, getTextureIndexFromBitMask } from '../../sdk/utils/bit-maks
 import { ColorMatrixFilter } from 'pixi.js';
 import type { GameMapCell } from '../../sdk/map';
 import { CELL_SIZE } from '../../sdk/constants';
+import { Polygon } from 'pixi.js';
 
 const { x, y, texture } = defineProps<{
   texture: Texture;
@@ -60,30 +61,29 @@ const isHighlighted = computed(() => {
   return isHoveringActiveEntity.value && isValidMoveTarget(cell.value);
 });
 
-const pathFilter = new ColorOverlayFilter(0x9edfff, 0.5);
+const pathFilter = new ColorOverlayFilter(0x7777ff, 0.5);
 
 const filters = computed(() => {
-  return cell.value && getEntityAt(state.value, cell.value) ? [pathFilter] : [];
-  // if (!cell.value) return [];
-  // if (!hoveredCell.value) return [];
-  // if (!isMyTurn.value) return [];
-  // if (targetMode.value !== 'move') return [];
+  if (!cell.value) return [];
+  if (!hoveredCell.value) return [];
+  if (!isMyTurn.value) return [];
+  if (targetMode.value !== 'move') return [];
 
-  // const hasAlly =
-  //   getEntityAt(state.value, cell.value)?.owner === activeEntity.value.owner;
-  // if (!isValidMoveTarget(cell.value) && !hasAlly) return;
-  // const path = pathfinder.value.findPath(
-  //   {
-  //     x: Math.round(activeEntity.value.position.x),
-  //     y: Math.round(activeEntity.value.position.y)
-  //   },
-  //   hoveredCell.value
-  // );
-  // const isInPath = path.some(
-  //   ([pathX, pathY], index) =>
-  //     x === pathX && y === pathY && index <= activeEntity.value.ap
-  // );
-  // return isInPath ? [pathFilter] : [];
+  const hasAlly =
+    getEntityAt(state.value, cell.value)?.owner === activeEntity.value.owner;
+  if (!isValidMoveTarget(cell.value) && !hasAlly) return;
+  const path = pathfinder.value.findPath(
+    {
+      x: Math.round(activeEntity.value.position.x),
+      y: Math.round(activeEntity.value.position.y)
+    },
+    hoveredCell.value
+  );
+  const isInPath = path.some(
+    ([pathX, pathY], index) =>
+      x === pathX && y === pathY && index <= activeEntity.value.ap
+  );
+  return isInPath ? [pathFilter] : [];
 });
 
 const { resolveTileset } = useAssets();
@@ -175,11 +175,21 @@ const hoveredCellTextures = createSpritesheetFrameObject(
   'idle',
   resolveFx('hoveredCell')
 ) as unknown as Texture[];
+
+const hitArea = new Polygon([
+  { x: CELL_SIZE / 2, y: 0 },
+  { x: CELL_SIZE, y: CELL_SIZE / 4 },
+  { x: CELL_SIZE, y: CELL_SIZE * 0.75 },
+  { x: CELL_SIZE / 2, y: CELL_SIZE },
+  { x: 0, y: CELL_SIZE * 0.75 },
+  { x: 0, y: CELL_SIZE / 4 }
+]);
 </script>
 
 <template>
   <container
     :filters="filters"
+    :hit-area="hitArea"
     @pointerenter="hoveredCell = cell"
     @pointerleave="hoveredCell = null"
   >

@@ -29,16 +29,18 @@ watch(
 
 <template>
   <graphics
+    :pivot-x="CELL_SIZE / 4"
+    :pivot-y="CELL_SIZE / 4"
     @render="
       g => {
         g.clear();
 
         if (emptyColor) {
           g.beginFill(emptyColor);
-          g.drawRect(0, 0, CELL_SIZE, size);
+          g.drawRect(0, 0, CELL_SIZE / 2, size);
         }
         g.beginFill(filledColor);
-        g.drawRect(0, 0, (animatedValue * CELL_SIZE) / maxValue, size);
+        g.drawRect(0, 0, (animatedValue * CELL_SIZE) / 2 / maxValue, size);
         g.endFill();
 
         g.lineStyle({
@@ -46,7 +48,7 @@ watch(
           color: 'black',
           alpha: 1
         });
-        g.drawRect(0, 0, CELL_SIZE, size);
+        g.drawRect(0, 0, CELL_SIZE / 2, size);
       }
     "
   />

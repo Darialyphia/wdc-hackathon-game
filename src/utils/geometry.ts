@@ -1,4 +1,5 @@
 export type Point = { x: number; y: number };
+export type Point3D = Point & { z: number };
 export type Size = { width: number; height: number };
 export type Circle = Point & { radius: number };
 export type Rectangle = Point & Size;

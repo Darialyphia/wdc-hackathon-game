@@ -10,7 +10,7 @@ import {
   SOLDIER_SUMMONED,
   soldierSummonedEvent
 } from '../../sdk/events/soldierSummoned.event';
-import { Container, AnimatedSprite } from 'pixi.js';
+import { type Container, AnimatedSprite, DisplayObject } from 'pixi.js';
 import type { EntityId } from '../../sdk/entity';
 import type { MaybeRefOrGetter } from '@vueuse/core';
 import type { AssetsContext } from './useAssets';
@@ -29,7 +29,7 @@ export type FXSequence = {
 export type FXSequenceContext = {
   linkSprite(id: EntityId, sprite: MaybeRefOrGetter<AnimatedSprite | undefined>): void;
   buildSequence(events: GameEvent[]): FXSequence;
-  fxContainer: Container;
+  setFxContainer: (c: Container) => void;
   isPlaying: ComputedRef<boolean>;
 };
 
@@ -37,8 +37,8 @@ export const FX_SEQUENCER_INJECTION_KEY = Symbol(
   'fx_sequencer'
 ) as InjectionKey<FXSequenceContext>;
 
-export const useFXSequencerProvider = (assetsCtx: AssetsContext) => {
-  const fxContainer = new Container();
+export const useFXSequencerProvider = (assetsCtx: AssetsContext): FXSequenceContext => {
+  const fxContainer = ref<Container | null>(null);
   const spritesMap = new Map<
     EntityId,
     {
@@ -88,10 +88,16 @@ export const useFXSequencerProvider = (assetsCtx: AssetsContext) => {
     return {
       async play(state: Ref<GameState>, onStepComplete: (event: GameEvent) => void) {
         isPlaying.value = true;
+        const _fxContainer = unref(fxContainer);
+        if (!_fxContainer) {
+          throw new Error(
+            'Fx Container not set! You must call setFxContainer from useFxSequencer to assign a container for FX sprites.'
+          );
+        }
         for (const step of steps) {
           await step.play(state.value, step.event as any, {
             assets: assetsCtx,
-            fxContainer,
+            fxContainer: _fxContainer as Container,
             sprites: {
               resolve(id: EntityId) {
                 const asset = spritesMap.get(id);
@@ -110,7 +116,9 @@ export const useFXSequencerProvider = (assetsCtx: AssetsContext) => {
   const api = {
     linkSprite,
     buildSequence,
-    fxContainer,
+    setFxContainer(c: Container) {
+      fxContainer.value = c;
+    },
     isPlaying: computed(() => isPlaying.value)
   };
   provide(FX_SEQUENCER_INJECTION_KEY, api);

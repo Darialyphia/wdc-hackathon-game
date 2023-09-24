@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import gsap from 'gsap';
 import type { Point } from '../../utils/geometry';
+import { CELL_SIZE } from '../../sdk/constants';
 
 const props = defineProps<{
   x: number;
@@ -28,13 +29,14 @@ watch(
   }
 );
 
-const tileWidth = 64;
+const tileWidth = CELL_SIZE;
 const tileHeight = tileWidth / 2;
 
 const cartesian = computed(() => ({
   x: tweened.value.x / (tileWidth / 2),
   y: (tweened.value.y / (tileHeight / 2)) * 2
 }));
+
 const zIndex = computed(() => {
   const cartesian = {
     x: tweened.value.x / (tileWidth / 2),

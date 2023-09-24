@@ -6,12 +6,15 @@ import { CELL_SIZE } from '../../sdk/constants';
 import type { GameMapCell } from '../../sdk/map';
 import { createPlayerAbility } from '../../sdk/abilities/player.ability';
 import { subject } from '@casl/ability';
-import { type Texture } from 'pixi.js';
+import { Container, type Texture } from 'pixi.js';
 
 const { game, state, selectedSummon, activeEntity, targetMode, hoveredCell } = useGame();
 const app = useApplication();
 
-const { fxContainer } = useFXSequencer();
+const { setFxContainer } = useFXSequencer();
+const initFxContainer = (c: Container) => {
+  setFxContainer(c);
+};
 const viewport = ref<Viewport>();
 
 const canSummonAt = ({ x, y }: GameMapCell) => {
@@ -68,16 +71,11 @@ until(viewport)
     :world-height="state.map.height * CELL_SIZE"
     :events="app.renderer.events"
     :disable-on-context-menu="true"
-    @render="
-      (viewport: Viewport) => {
-        viewport.addChild(fxContainer);
-        viewport.sortableChildren = true;
-      }
-    "
   >
-    <GameMap />
+    <container :ref="initFxContainer" :sortable-children="true">
+      <GameMap />
 
-    <!-- <IsoPositioner
+      <!-- <IsoPositioner
       v-if="hoveredCell && hoveredCellTextures"
       :x="hoveredCell.x"
       :y="hoveredCell.y"
@@ -95,17 +93,17 @@ until(viewport)
       />
     </IsoPositioner> -->
 
-    <IsoPositioner
-      v-for="entity in state.entities"
-      :key="entity.id"
-      :x="entity.position.x"
-      :y="entity.position.y"
-      :z="1"
-    >
-      <GameEntity :entity="entity" />
-    </IsoPositioner>
+      <IsoPositioner
+        v-for="entity in state.entities"
+        :key="entity.id"
+        :x="entity.position.x"
+        :y="entity.position.y"
+        :z="1"
+      >
+        <GameEntity :entity="entity" />
+      </IsoPositioner>
 
-    <!--
+      <!--
     <animated-sprite
       v-if="hoveredCell && isSummonPreviewDisplayed && summonPreviewTextures"
       :x="hoveredCell.x * CELL_SIZE + CELL_SIZE / 2"
@@ -117,5 +115,6 @@ until(viewport)
       :playing="false"
       :filters="summonPreviewFilters"
     /> -->
+    </container>
   </viewport>
 </template>

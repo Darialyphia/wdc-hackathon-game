@@ -1,17 +1,13 @@
 import type { Point } from '../../utils/geometry';
 import { addSoldier, type CharacterId, type EntityId } from '../entity';
 import { defineEvent } from '.';
-import {
-  getActiveEntity,
-  getEntityById,
-  getGeneral,
-  isGeneral
-} from '../utils/entity.helpers';
+import { getActiveEntity, getGeneral, isGeneral } from '../utils/entity.helpers';
 import { soldiersLookup } from '../soldiers';
 import { AnimatedSprite } from 'pixi.js';
 import { CELL_SIZE } from '../constants';
 import { createSpritesheetFrameObject } from '../../utils/sprite-utils';
 import { applyAuras } from '../aura';
+import { getIsoDepth, toIso } from '../utils/iso';
 
 export const SOLDIER_SUMMONED = 'soldier_summoned';
 
@@ -66,10 +62,13 @@ export const soldierSummonedEvent = defineEvent({
       const summonCircle = new AnimatedSprite(
         createSpritesheetFrameObject('idle', sheet)
       );
-      summonCircle.position.set(
-        payload.position.x * CELL_SIZE + CELL_SIZE / 2,
-        payload.position.y * CELL_SIZE + CELL_SIZE / 2
-      );
+      const isoPos = toIso({
+        ...payload.position,
+        z: 1
+      });
+      summonCircle.position.set(isoPos.isoX + CELL_SIZE / 2, isoPos.isoY);
+      summonCircle.zIndex = getIsoDepth(isoPos);
+
       summonCircle.loop = false;
       summonCircle.onFrameChange = frame => {
         if (frame > summonCircle.totalFrames / 2) {
