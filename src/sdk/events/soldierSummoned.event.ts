@@ -56,14 +56,14 @@ export const soldierSummonedEvent = defineEvent({
     return state;
   },
 
-  sequence: (state, { payload }, { assets, fxContainer }) =>
+  sequence: (state, { payload }, { assets, fxContainer, screenMap }) =>
     new Promise(resolve => {
       const sheet = assets.resolveFx('summoningCircle');
       const summonCircle = new AnimatedSprite(
         createSpritesheetFrameObject('idle', sheet)
       );
       const isoPos = toIso({
-        ...payload.position,
+        ...screenMap.getRotatedPosition(payload.position),
         z: 1
       });
       summonCircle.position.set(isoPos.isoX + CELL_SIZE / 2, isoPos.isoY);

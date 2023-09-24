@@ -25,7 +25,8 @@ const {
   canMoveTo,
   pathfinder,
   targetMode,
-  hoveredCell
+  hoveredCell,
+  rotation
 } = useGame();
 const { isPlaying } = useFXSequencer();
 const cell = computed(() => getCellAt(state.value, { x, y }));
@@ -93,7 +94,7 @@ const bitMask = computed(() => {
   if (!isMyTurn.value) return null;
   if (isPlaying.value) return null;
 
-  return getBitMask(state.value, cell.value, neighbor => {
+  return getBitMask(state.value, cell.value, rotation.value, neighbor => {
     if (!neighbor) return false;
     if (targetMode.value === 'skill') {
       return isInCastRange(neighbor);

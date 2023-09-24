@@ -2,6 +2,7 @@ import type { AnimatedSprite, Container, Spritesheet } from 'pixi.js';
 import type { GameState } from '..';
 import type { EntityId } from '../entity';
 import type { Nullable } from '../../utils/types';
+import type { ScreenMapContext } from '../../composables/game/useScreenMap';
 
 export type EventHandler<
   TName extends string,
@@ -31,6 +32,7 @@ export type EventSequence<T extends AnyEvent> = (
     sprites: {
       resolve(id: EntityId): Nullable<AnimatedSprite>;
     };
+    screenMap: ScreenMapContext;
   }
 ) => Promise<void>;
 

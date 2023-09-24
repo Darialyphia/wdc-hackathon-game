@@ -14,6 +14,11 @@ export type EntityMovedEvent = {
   };
 };
 
+const waitFor = (duration: number) =>
+  new Promise<void>(resolve => {
+    setTimeout(() => resolve(), duration);
+  });
+
 export const entityMovedEvent = defineEvent({
   create: (sourceId: EntityId, to: Point[]): EntityMovedEvent => ({
     type: ENTITY_MOVED,
@@ -30,23 +35,13 @@ export const entityMovedEvent = defineEvent({
 
     return state;
   },
-  sequence: (state, event) => {
-    return new Promise(resolve => {
-      const entity = getEntityById(state, event.payload.sourceId)!;
+  sequence: async (state, event) => {
+    const entity = getEntityById(state, event.payload.sourceId)!;
 
-      const tl = gsap.timeline();
-      event.payload.to.forEach((point, index) => {
-        const isLast = point === event.payload.to.at(-1);
-
-        tl.to(entity.position, {
-          duration: 0.3,
-          ease: isLast ? Power1.easeOut : Power0.easeNone,
-          onComplete: isLast ? resolve : undefined,
-          delay: 0,
-          x: point.x,
-          y: point.y
-        });
-      });
-    });
+    for (const point of event.payload.to) {
+      entity.position.x = point.x;
+      entity.position.y = point.y;
+      await waitFor(300);
+    }
   }
 });

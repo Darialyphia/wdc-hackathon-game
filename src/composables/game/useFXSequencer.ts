@@ -16,6 +16,7 @@ import type { MaybeRefOrGetter } from '@vueuse/core';
 import type { AssetsContext } from './useAssets';
 import type { EventSequence } from '../../sdk/events';
 import { HEAL, healEvent } from '../../sdk/events/healEvent';
+import type { ScreenMapContext } from './useScreenMap';
 
 export type FXSequenceStep<T extends { type: string; payload: any }> = {
   event: T;
@@ -30,6 +31,7 @@ export type FXSequenceContext = {
   linkSprite(id: EntityId, sprite: MaybeRefOrGetter<AnimatedSprite | undefined>): void;
   buildSequence(events: GameEvent[]): FXSequence;
   setFxContainer: (c: Container) => void;
+  setScreenMapContext: (ctx: ScreenMapContext) => void;
   isPlaying: ComputedRef<boolean>;
 };
 
@@ -53,6 +55,8 @@ export const useFXSequencerProvider = (assetsCtx: AssetsContext): FXSequenceCont
   ) => {
     spritesMap.set(id, { sprite });
   };
+
+  let screenMapContext: ScreenMapContext | null = null;
 
   const buildSequence = (events: GameEvent[]) => {
     const steps = events.map(event => {
@@ -94,10 +98,16 @@ export const useFXSequencerProvider = (assetsCtx: AssetsContext): FXSequenceCont
             'Fx Container not set! You must call setFxContainer from useFxSequencer to assign a container for FX sprites.'
           );
         }
+        if (!screenMapContext) {
+          throw new Error(
+            'ScreenMap context not set! You must call setScreenContext from useFxSequencer to assign the context to get the rotated map.'
+          );
+        }
         for (const step of steps) {
           await step.play(state.value, step.event as any, {
             assets: assetsCtx,
             fxContainer: _fxContainer as Container,
+            screenMap: screenMapContext,
             sprites: {
               resolve(id: EntityId) {
                 const asset = spritesMap.get(id);
@@ -116,6 +126,9 @@ export const useFXSequencerProvider = (assetsCtx: AssetsContext): FXSequenceCont
   const api = {
     linkSprite,
     buildSequence,
+    setScreenMapContext(ctx: ScreenMapContext) {
+      screenMapContext = ctx;
+    },
     setFxContainer(c: Container) {
       fxContainer.value = c;
     },

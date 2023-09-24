@@ -5,10 +5,10 @@ import { getCellAt } from './map.helpers';
 import type { Texture } from 'pixi.js';
 
 // prettier-ignore
-const neighborCoords: [number, number][] = [
-  [-1, -1], [0, -1], [1, -1],
-  [-1, 0],  [0, 0],  [1, 0],
-  [-1, 1],  [0, 1],  [1, 1]
+const neighborCoords: [number, number][][] = [
+  [[-1, -1], [0, -1], [1, -1]],
+  [[-1, 0],  [0, 0],  [1, 0]],
+  [[-1, 1],  [0, 1],  [1, 1]]
 ]
 // prettier-ignore
 const weights = [
@@ -20,16 +20,19 @@ const weights = [
 export const getBitMask = (
   state: GameState,
   cell: GameMapCell,
+  rotation: number,
   compareFn: (neighbor: GameMapCell | undefined) => boolean
 ) => {
+  const rotatedNeighbors = rotate(neighborCoords, rotation as 0 | 90 | 180 | 270).flat();
+
   const getCell = (neighborIndex: number) => {
-    const [diffX, diffY] = neighborCoords[neighborIndex];
+    const [diffX, diffY] = rotatedNeighbors[neighborIndex];
 
     return getCellAt(state, { x: cell.x + diffX, y: cell.y + diffY });
   };
 
   const [topLeft, top, topRight, left, center, right, bottomLeft, bottom, bottomRight] =
-    neighborCoords.map((_, index) => getCell(index));
+    rotatedNeighbors.map((_, index) => getCell(index));
 
   // for a corner to match, both of its sides must match as well
   // see https://gamedevelopment.tutsplus.com/how-to-use-tile-bitmasking-to-auto-tile-your-level-layouts--cms-25673t

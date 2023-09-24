@@ -11,10 +11,13 @@ import { Container, type Texture } from 'pixi.js';
 const { game, state, selectedSummon, activeEntity, targetMode, hoveredCell } = useGame();
 const app = useApplication();
 
-const { setFxContainer } = useFXSequencer();
+const { setFxContainer, setScreenMapContext } = useFXSequencer();
 const initFxContainer = (c: Container) => {
   setFxContainer(c);
 };
+const screenMap = useScreenMap();
+setScreenMapContext(screenMap);
+
 const viewport = ref<Viewport>();
 
 const canSummonAt = ({ x, y }: GameMapCell) => {
@@ -44,13 +47,11 @@ const summonPreviewFilters = [
   })
 ];
 
-const { getEntityRotatedPosition } = useScreenMap();
-
 const rotatedEntities = computed(() => {
   return state.value.entities.map(entity => {
     return {
       entity,
-      position: getEntityRotatedPosition(entity)
+      position: screenMap.getRotatedPosition(entity.position)
     };
   });
 });
@@ -92,18 +93,23 @@ until(viewport)
         <GameEntity :entity="entity.entity" />
       </IsoPositioner>
 
-      <!--
-    <animated-sprite
-      v-if="hoveredCell && isSummonPreviewDisplayed && summonPreviewTextures"
-      :x="hoveredCell.x * CELL_SIZE + CELL_SIZE / 2"
-      :y="hoveredCell.y * CELL_SIZE + CELL_SIZE / 2"
-      :event-mode="'none'"
-      :textures="summonPreviewTextures"
-      :scale-x="activeEntity.owner === game.players[0].userId ? 1 : -1"
-      :anchor="0.5"
-      :playing="false"
-      :filters="summonPreviewFilters"
-    /> -->
+      <IsoPositioner
+        v-if="hoveredCell && isSummonPreviewDisplayed && summonPreviewTextures"
+        v-bind="screenMap.getRotatedPosition(hoveredCell)"
+        :z="1"
+        :speed="0"
+      >
+        <animated-sprite
+          v-if="hoveredCell && isSummonPreviewDisplayed && summonPreviewTextures"
+          :x="CELL_SIZE / 2"
+          :event-mode="'none'"
+          :textures="summonPreviewTextures"
+          :scale-x="activeEntity.owner === game.players[0].userId ? 1 : -1"
+          :anchor="0.5"
+          :playing="false"
+          :filters="summonPreviewFilters"
+        />
+      </IsoPositioner>
     </container>
   </viewport>
 </template>

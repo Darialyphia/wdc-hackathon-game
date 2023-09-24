@@ -3,7 +3,6 @@ import type { GameMapCell } from '../../sdk/map';
 import type { InjectionKey, ComputedRef } from 'vue';
 import type { GameTiledMap } from '../../utils/tiled';
 import type { Game } from './useGame';
-import type { Entity } from '../../sdk/entity';
 import type { Point } from '../../utils/geometry';
 
 export type ScreenMapContext = {
@@ -16,7 +15,7 @@ export type ScreenMapContext = {
       screenY: number;
     }[]
   >;
-  getEntityRotatedPosition(entity: Entity): Point;
+  getRotatedPosition(point: Point): Point;
 };
 
 export const SCREEN_MAP_INJECTION_KEY = Symbol(
@@ -45,17 +44,14 @@ export const useScreenMapProvider = (map: ITiledMap, game: Game) => {
       .sort((a, b) => a.gameCell.id - b.gameCell.id);
   });
 
-  const getEntityRotatedPosition = (entity: Entity) => {
+  const getRotatedPosition = (point: Point) => {
     let pos = { x: 0, y: 0 };
 
     outer: for (let y = 0; y < tiledMap.height; y++) {
       for (let x = 0; x < tiledMap.width; x++) {
         const cell = rotatedCells.value[y * tiledMap.width + x];
 
-        if (
-          cell.gameCell.x === entity.position.x &&
-          cell.gameCell.y === entity.position.y
-        ) {
+        if (cell.gameCell.x === point.x && cell.gameCell.y === point.y) {
           pos = { x: cell.screenX, y: cell.screenY };
           break outer;
         }
@@ -68,10 +64,10 @@ export const useScreenMapProvider = (map: ITiledMap, game: Game) => {
   provide(SCREEN_MAP_INJECTION_KEY, {
     rotatedCells,
     map: tiledMap,
-    getEntityRotatedPosition
+    getRotatedPosition
   });
 
-  return { rotatedCells, map: tiledMap, getEntityRotatedPosition };
+  return { rotatedCells, map: tiledMap, getRotatedPosition };
 };
 
 export const useScreenMap = () => useSafeInject(SCREEN_MAP_INJECTION_KEY);

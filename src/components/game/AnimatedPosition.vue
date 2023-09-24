@@ -9,6 +9,7 @@ const props = defineProps<{
   axis: Point;
   z: number;
   debug?: boolean;
+  speed?: number;
 }>();
 
 const { isPlaying } = useFXSequencer();
@@ -17,13 +18,8 @@ const tweened = ref({ x: props.x, y: props.y });
 watch(
   () => ({ x: props.x, y: props.y }),
   newPos => {
-    if (isPlaying.value) {
-      tweened.value = { x: props.x, y: props.y };
-      return;
-    }
-
     gsap.to(tweened.value, {
-      duration: 0.5,
+      duration: isPlaying.value ? 0.3 : props.speed ?? 0.5,
       ...newPos
     });
   }
