@@ -73,6 +73,7 @@ const filters = computed(() => {
   const hasAlly =
     getEntityAt(state.value, cell.value)?.owner === activeEntity.value.owner;
   if (!isValidMoveTarget(cell.value) && !hasAlly) return;
+
   const path = pathfinder.value.findPath(
     {
       x: Math.round(activeEntity.value.position.x),
@@ -84,7 +85,11 @@ const filters = computed(() => {
     ([pathX, pathY], index) =>
       x === pathX && y === pathY && index <= activeEntity.value.ap
   );
-  return isInPath ? [pathFilter] : [];
+
+  const isActiveEntityPosition =
+    x === activeEntity.value.position.x && y === activeEntity.value.position.y;
+
+  return isInPath || isActiveEntityPosition ? [pathFilter] : [];
 });
 
 const { resolveTileset } = useAssets();

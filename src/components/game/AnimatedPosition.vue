@@ -19,7 +19,7 @@ watch(
   () => ({ x: props.x, y: props.y }),
   newPos => {
     gsap.to(tweened.value, {
-      duration: isPlaying.value ? 0.3 : props.speed ?? 0.5,
+      duration: isPlaying.value ? 0.3 : props.speed ?? 0.3,
       ...newPos
     });
   }
