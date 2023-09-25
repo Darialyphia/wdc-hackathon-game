@@ -1,25 +1,5 @@
 <script setup lang="ts">
-import { api } from '../../api';
-
-const { game, state, selectedEntity, atbTimeline, surrender } = useGame();
-
-const players = computed(() =>
-  game.value.players.map(player => ({
-    ...player,
-    general: state.value.entities.find(
-      e => e.kind === 'general' && e.owner === player.userId
-    )
-  }))
-);
-
-const { mutate: postMessage } = useMutation(api.games.postMessageToGame);
-const text = ref('');
-const onSubmit = async () => {
-  await postMessage({ gameId: game.value._id, text: text.value });
-  text.value = '';
-};
-
-const isChatDisplayed = ref(false);
+const { selectedEntity, surrender } = useGame();
 </script>
 
 <template>

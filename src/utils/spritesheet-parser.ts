@@ -19,6 +19,38 @@ const asepriteRectSchema = asepriteSizeSchema.extend({
   y: z.number()
 });
 
+export const asepriteJsonMetaSchema = z.object({
+  image: z.string(),
+  size: asepriteSizeSchema,
+  scale: z.string(),
+  frameTags: z
+    .object({
+      name: z.string(),
+      from: z.number(),
+      to: z.number(),
+      direction: z.string()
+    })
+    .array(),
+  slices: z
+    .object({
+      name: z.string(),
+      keys: z
+        .object({
+          frame: z.number(),
+          bounds: z.object({
+            x: z.number(),
+            y: z.number(),
+            w: z.number(),
+            h: z.number()
+          })
+        })
+        .array()
+    })
+    .array()
+    .optional()
+});
+export type AsepriteMeta = z.infer<typeof asepriteJsonMetaSchema>;
+
 const asepriteJsonSchema = z.object({
   frames: z
     .object({
@@ -28,19 +60,7 @@ const asepriteJsonSchema = z.object({
       duration: z.number().optional()
     })
     .array(),
-  meta: z.object({
-    image: z.string(),
-    size: asepriteSizeSchema,
-    scale: z.string(),
-    frameTags: z
-      .object({
-        name: z.string(),
-        from: z.number(),
-        to: z.number(),
-        direction: z.string()
-      })
-      .array()
-  })
+  meta: asepriteJsonMetaSchema
 });
 type AsepriteJson = z.infer<typeof asepriteJsonSchema>;
 

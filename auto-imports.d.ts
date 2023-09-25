@@ -20,6 +20,7 @@ declare global {
   const RouterLinkProps: (typeof import('./typed-router.d'))['RouterLinkProps']
   const SCEEN_MAP_INJECTION_KEY: typeof import('./src/composables/game/useScreenMap')['SCEEN_MAP_INJECTION_KEY']
   const SCREEN_MAP_INJECTION_KEY: typeof import('./src/composables/game/useScreenMap')['SCREEN_MAP_INJECTION_KEY']
+  const asepriteJsonMetaSchema: typeof import('./src/utils/spritesheet-parser')['asepriteJsonMetaSchema']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
   const buildOptions: typeof import('./src/utils/casl')['buildOptions']

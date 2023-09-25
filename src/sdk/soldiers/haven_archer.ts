@@ -25,7 +25,7 @@ export const havenArcher: SoldierData = {
       iconUrl: '/icons/ranged_attack.png',
       name: 'Ranged attack',
       description: 'Deals damage to an enemy at range',
-      cost: 2,
+      cost: 1,
       range: 5,
       minRange: 2,
       targetZone: TARGET_ZONES.LINE,

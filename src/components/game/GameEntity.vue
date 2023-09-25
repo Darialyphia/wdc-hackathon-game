@@ -11,6 +11,8 @@ import { Power2 } from 'gsap';
 import type { FederatedPointerEvent } from 'pixi.js';
 import type { Cursor } from 'pixi.js';
 import { AdjustmentFilter } from '@pixi/filter-adjustment';
+import type { AsepriteMeta } from '../../utils/spritesheet-parser';
+import { Polygon } from 'pixi.js';
 
 const { entity } = defineProps<{
   entity: Entity;
@@ -59,6 +61,7 @@ const onPointerleave = () => {
 };
 const { linkSprite } = useFXSequencer();
 
+console.log(resolveSprite(entity.blueprint.characterId));
 const textures = computed(
   () =>
     createSpritesheetFrameObject(
@@ -106,12 +109,12 @@ const filters = computed(() => {
 
 const shadowFilters = [new ColorOverlayFilter(0x000000)];
 
-const circleSize = 6;
-const textStyle = {
-  fontSize: 22,
-  fontFamily: 'monospace',
-  fill: 'white'
-};
+// const circleSize = 6;
+// const textStyle = {
+//   fontSize: 22,
+//   fontFamily: 'monospace',
+//   fill: 'white'
+// };
 
 const onBeforeEnter = (el: AnimatedSprite) => {
   nextTick(() => {
@@ -165,6 +168,25 @@ const scaleX = computed(() => {
 
   return entity.owner === game.value.players[0].userId ? 1 : -1;
 });
+
+const hitArea = computed(() => {
+  const sprite = resolveSprite(entity.characterId);
+  const meta = sprite.data.meta as AsepriteMeta;
+  if (!meta.slices) return undefined;
+
+  const hitAreaSlice = meta.slices.find(slice => slice.name === 'hitArea');
+  if (!hitAreaSlice) return undefined;
+
+  const {
+    bounds: { x, y, w, h }
+  } = hitAreaSlice.keys[0];
+  return new Polygon([
+    { x: x, y: y },
+    { x: x + w, y: y },
+    { x: x + w, y: y + h },
+    { x: x, y: y + h }
+  ]);
+});
 </script>
 
 <template>
@@ -190,6 +212,7 @@ const scaleX = computed(() => {
         :anchor="0.5"
         loop
         playing
+        :hit-area="hitArea"
       />
     </PTransition>
     <animated-sprite

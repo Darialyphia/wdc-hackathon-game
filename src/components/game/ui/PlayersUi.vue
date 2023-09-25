@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { api } from '../../api';
-
 const { game, state } = useGame();
 
 const players = computed(() =>

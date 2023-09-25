@@ -9,7 +9,7 @@ export const necroSkeleton: SoldierData = {
   iconUrl: '/icons/necro_skeleton.gif',
   factionId: FACTIONS_IDS.NECRO,
   name: 'Skeleton',
-  cost: 2,
+  cost: 1,
   initiative: 7,
   maxHp: 6,
   maxAp: 4,

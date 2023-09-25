@@ -9,7 +9,7 @@ export const necroVampire: SoldierData = {
   iconUrl: '/icons/necro_vampire.gif',
   factionId: FACTIONS_IDS.NECRO,
   name: 'Vampire',
-  cost: 3,
+  cost: 1,
   initiative: 8,
   maxHp: 8,
   maxAp: 4,

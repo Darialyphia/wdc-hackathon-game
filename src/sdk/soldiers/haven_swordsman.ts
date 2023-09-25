@@ -25,7 +25,7 @@ export const havenSwordsman: SoldierData = {
       iconUrl: '/icons/melee_attack.png',
       name: 'Melee attack',
       description: 'Deals damage to a close enemy',
-      cost: 2,
+      cost: 1,
       minRange: 0,
       range: 1,
       targetZone: TARGET_ZONES.RADIUS,

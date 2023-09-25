@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Entity } from '../../sdk/entity';
+import type { Entity } from '../../../sdk/entity';
 
 const { entity } = defineProps<{
   entity: Entity;

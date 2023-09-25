@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { subject } from '@casl/ability';
-import { createPlayerAbility } from '../../sdk/abilities/player.ability';
-import type { SoldierData } from '../../sdk/soldiers';
-import type { SkillData } from '../../sdk/utils/entityData';
+import { createPlayerAbility } from '../../../sdk/abilities/player.ability';
+import type { SoldierData } from '../../../sdk/soldiers';
+import type { SkillData } from '../../../sdk/utils/entityData';
 
 const {
   activeEntity,
@@ -38,7 +38,7 @@ const onSummonPointerdown = (summon: SoldierData) => {
 </script>
 
 <template>
-  <div v-if="activeEntity.owner === me" class="action-bar fancy-surface">
+  <div v-if="activeEntity.owner === me" class="action-bar fancy-surface" @mousemove.stop>
     <button
       v-for="skill in activeEntity.blueprint.skills"
       :key="skill.id"
