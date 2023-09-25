@@ -1,6 +1,6 @@
 import type { Point } from '../../utils/geometry';
 import type { GameState } from '..';
-import { type GameMapCell, CELL_TYPES } from '../map';
+import { type GameMapCell } from '../map';
 import { isDefined } from '../../utils/assertions';
 import { getEntityAt } from './entity.helpers';
 import type { Entity } from '../entity';
@@ -19,7 +19,7 @@ export const isCellWalkable = (state: GameState, { x, y }: Point) => {
   return (
     isWithinBounds(state, { x, y }) &&
     !isCellOccupied(state, { x, y }) &&
-    getCellAt(state, { x, y })?.terrain === CELL_TYPES.GROUND
+    getCellAt(state, { x, y })?.isWalkable
   );
 };
 
@@ -30,7 +30,7 @@ export const isCellTraversable = (state: GameState, { x, y }: Point, entity: Ent
   return (
     isWithinBounds(state, { x, y }) &&
     (!entityOnCell || entityOnCell.owner === entity.owner) &&
-    getCellAt(state, { x, y })?.terrain === CELL_TYPES.GROUND
+    getCellAt(state, { x, y })?.isWalkable
   );
 };
 export const getSurroundingCells = (state: GameState, { x, y }: Point) => {

@@ -7,14 +7,12 @@ import * as PIXI from 'pixi.js';
 import PixiRenderer from './PixiRenderer.vue';
 import PixiPlugin from 'gsap/PixiPlugin';
 import { Stage } from '@pixi/layers';
-import hardcodedmap from '../../assets/maps/iso/iso.json';
 
 import cursorUrl from '../../assets/ui/cursor.png';
 import cursorDisabledUrl from '../../assets/ui/cursor_disabled.png';
 import cursorAttackUrl from '../../assets/ui/cursor_attack.png';
 import cursorMoveUrl from '../../assets/ui/cursor_move.png';
 import cursorSummonUrl from '../../assets/ui/cursor_summon.png';
-import type { ITiledMap } from '@workadventure/tiled-map-type-guard';
 
 // @ts-ignore  enable PIXI devtools
 window.PIXI = PIXI;
@@ -67,7 +65,7 @@ const gameState = isReplay
       sequencer
     );
 
-const screenMap = useScreenMapProvider(hardcodedmap as ITiledMap, gameState);
+const screenMap = useScreenMapProvider(gameState);
 
 const cursors = {
   default: `url('${cursorUrl}'), auto`,

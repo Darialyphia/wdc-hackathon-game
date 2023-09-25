@@ -16,6 +16,8 @@ export const necroGeneral01: GeneralData = {
   maxAp: 5,
   attack: 3,
   defense: 1,
+  speed: 3,
+  apRegenRate: 1,
   summonBlueprints: [soldiersLookup.necroSkeleton, soldiersLookup.necroVampire],
   triggers: [triggersLookup.soulFeast],
   skills: [

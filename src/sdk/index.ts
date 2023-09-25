@@ -8,14 +8,9 @@ import {
   type SerializedEntity,
   deserializeEntity
 } from './entity';
-import { createGameMap, type GameMap } from './map';
+import { createGameMap, type GameMap, type SerializedMap } from './map';
 import { tickUntilActiveEntity } from './atb';
-import {
-  MAP_WIDTH,
-  MAP_HEIGHT,
-  type GameLifecycleState,
-  GAME_LIFECYCLE_STATES
-} from './constants';
+import { type GameLifecycleState, GAME_LIFECYCLE_STATES } from './constants';
 import { createReducer, type GameEvent, type GameReducer } from './events/reducer';
 import type { Nullable, Override } from '../utils/types';
 import { generalsLookup } from './generals';
@@ -37,6 +32,7 @@ export type GameState = {
 export type SerializedGameState = Override<
   GameState,
   {
+    map: SerializedMap;
     entities: SerializedEntity[];
     reducer?: undefined;
   }
@@ -49,6 +45,7 @@ type CreateGameOptionsPlayer = {
 export type CreateGameOptions = {
   players: [CreateGameOptionsPlayer, CreateGameOptionsPlayer];
   history?: GameEvent[];
+  map: SerializedMap;
 };
 
 export const serializeGameState = (state: GameState): SerializedGameState => {
@@ -57,6 +54,7 @@ export const serializeGameState = (state: GameState): SerializedGameState => {
 
   return {
     ...rest,
+    map: state.map.raw,
     entities: state.entities.map(serializeEntity),
     history: []
   };
@@ -65,6 +63,7 @@ export const serializeGameState = (state: GameState): SerializedGameState => {
 export const fromSerializedState = (serializedState: SerializedGameState): GameState => {
   return {
     ...serializedState,
+    map: createGameMap(serializedState.map.map, serializedState.map.tileset),
     reducer: createReducer({ transient: false }),
     entities: serializedState.entities.map(deserializeEntity)
   };
@@ -72,7 +71,8 @@ export const fromSerializedState = (serializedState: SerializedGameState): GameS
 
 export const createGameState = ({
   players,
-  history = []
+  history = [],
+  map
 }: CreateGameOptions): GameState => {
   const state: GameState = {
     winner: null,
@@ -80,7 +80,7 @@ export const createGameState = ({
     players: [players[0].id, players[1].id],
     nextEntityId: 0,
     activeEntityId: 0,
-    map: createGameMap(MAP_WIDTH, MAP_HEIGHT),
+    map: createGameMap(map.map, map.tileset),
     entities: [],
     history: [],
     globalAtb: 0,
@@ -94,7 +94,10 @@ export const createGameState = ({
       atbSeed: player.atbSeed,
       characterId: player.characterId,
       owner: player.id,
-      position: { y: Math.floor(MAP_HEIGHT / 2), x: i === 0 ? 2 : MAP_WIDTH - 3 }
+      position: {
+        y: Math.floor(state.map.height / 2),
+        x: i === 0 ? 2 : state.map.width - 3
+      }
     });
   });
 

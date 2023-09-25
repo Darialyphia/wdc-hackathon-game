@@ -26,8 +26,8 @@ export const createEntityAbility = (state: GameState, entity: Entity): EntityAbi
       return skill && entity.ap >= subject.cost;
     });
 
-    cannot('cast', 'skill', (subject: SkillData) => {
-      return entity.skillsUsed.includes(subject.id);
+    cannot('cast', 'skill', () => {
+      return entity.hasDoneAction;
     });
   });
 };

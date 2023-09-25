@@ -1,40 +1,124 @@
-import type { Point, Size } from '../utils/geometry';
-
-export const CELL_TYPES = {
-  GROUND: 0, // walkable, doesn't block vision and projectiles
-  WATER: 1, // not walkable, doesn't block vision or projectiles
-  WALL: 2 // not walkable, blocks vision and projectiles
-} as const;
-export type CellType = 0 | 1 | 2; // GROUND / water / wall
+import {
+  ITiledMapTileLayer,
+  ITiledMapTileset,
+  ITiledMap,
+  ITiledMapTile
+} from '@workadventure/tiled-map-type-guard';
+import type { Point } from '../utils/geometry';
+import { isDefined, isNumber } from '../utils/assertions';
 
 export type GameMapCell = Point & {
-  terrain: CellType;
+  isWalkable: boolean;
   id: number;
+  tile: number;
 };
 
-export type GameMap = Size & {
+export type GameMap = GameTiledMap & {
+  raw: { map: ITiledMap; tileset: ITiledMapTileset };
+};
+export type SerializedMap = { map: ITiledMap; tileset: ITiledMapTileset };
+
+export type GameTiledMap = {
+  width: number;
+  height: number;
+  tiles: GameMapCell[];
   rows: GameMapCell[][];
+  getTileAt: (coords: Point) => GameMapCell;
 };
 
-export const createGameMap = (width: number, height: number): GameMap => {
+const getTileProperty = <T>(
+  tile: ITiledMapTile | undefined,
+  propName: string,
+  defaultValue: T
+): T => {
+  if (!tile) return defaultValue;
+
+  const prop = tile.properties?.find(prop => prop.name === propName);
+
+  return prop ? (prop.value as T) : defaultValue;
+};
+
+const getGlobalTiles = (map: ITiledMap) => {
+  const layoutLayer = map.layers.find(layer => layer.name === 'layout') as
+    | ITiledMapTileLayer
+    | undefined;
+
+  if (!layoutLayer) {
+    throw new Error(`Missing layout layer for map`);
+  }
+
+  // technically Tiled can output an encoded base64 string for map data but it seems to...not do it ?
+  // tried a 300 * 300 map and it was still a number array...
+  return layoutLayer.data as number[];
+};
+
+// https://doc.mapeditor.org/en/latest/reference/global-tile-ids
+const getTileOffset = (map: ITiledMap, gid: number) => {
+  return map.tilesets.reduce((current, tileset) => {
+    const { firstgid } = tileset;
+    if (!firstgid) return current;
+    if (firstgid > gid) return current;
+    if (firstgid < current) return current;
+    return firstgid;
+  }, 0);
+};
+
+export const createTiledMap = (
+  map: ITiledMap,
+  tileset: ITiledMapTileset
+): GameTiledMap => {
+  const { height, width } = map;
+
+  if (!isNumber(height) || !isNumber(width)) {
+    throw new Error(`Map does not have a width or height`);
+  }
+
+  if (!('tiles' in tileset) || !isDefined(tileset.tiles)) {
+    throw new Error(`Tileset has no tiles !`);
+  }
+
+  const globalTiles = getGlobalTiles(map);
+
   let nextId = 1;
 
-  const cells = Array.from({ length: height }, (_, y) =>
-    Array.from({ length: width }, (_, x) => {
-      const cell: GameMapCell = {
-        x,
-        y,
-        terrain: CELL_TYPES.GROUND,
-        id: nextId++
-      };
+  const tiles = globalTiles.map((gid, index) => {
+    const offset = getTileOffset(map, gid);
+    const tile = tileset.tiles?.find(tile => tile.id === gid - offset);
 
-      return cell;
-    })
-  );
+    return {
+      id: nextId++,
+      isWalkable: getTileProperty(tile, 'walkable', false),
+      tile: gid - offset,
+      x: index % width,
+      y: Math.floor(index / width)
+    };
+  });
 
   return {
-    width,
     height,
-    rows: cells
+    width,
+    tiles,
+    rows: Array.from({ length: height }, (_, y): GameMapCell[] =>
+      Array.from({ length: width }, (_, x) => tiles[y * width + x])
+    ),
+    getTileAt({ x, y }) {
+      const idx = y * (width as number) + x;
+      return tiles[idx];
+    }
   };
 };
+
+export const createGameMap = (
+  tiledMap: ITiledMap,
+  tileset: ITiledMapTileset
+): GameMap => {
+  const map = createTiledMap(tiledMap, tileset);
+
+  return {
+    ...map,
+    raw: { map: tiledMap, tileset }
+  };
+};
+
+export const serializeMap = (map: GameMap) => map.raw;
+export const deserializeMap = createGameMap;

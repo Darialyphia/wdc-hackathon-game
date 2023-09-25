@@ -226,7 +226,7 @@ const scaleX = computed(() => {
       :filled-color="0x0000cc"
     />
 
-    <graphics
+    <!-- <graphics
       v-if="entity.state === 'ALIVE'"
       :z-index="entity.position.y * 2 + 1"
       :x="-CELL_SIZE / 3"
@@ -274,6 +274,6 @@ const scaleX = computed(() => {
       <text :style="textStyle" :anchor="0.5" :scale-x="0.5" :scale-y="0.5">
         {{ entity.defense }}
       </text>
-    </graphics>
+    </graphics> -->
   </container>
 </template>

@@ -29,7 +29,7 @@ export const entityMovedEvent = defineEvent({
     if (!entity) return state;
 
     entity.position = event.to.at(-1)!;
-    entity.ap -= event.to.length;
+    entity.movedAmount += event.to.length;
 
     applyAuras(state);
 

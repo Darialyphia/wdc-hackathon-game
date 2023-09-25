@@ -1,13 +1,68 @@
-{ "columns":2,
+{ "columns":7,
  "image":"..\/..\/tilesets\/iso\/iso.png",
  "imageheight":64,
- "imagewidth":128,
+ "imagewidth":448,
  "margin":0,
  "name":"iso",
  "spacing":0,
- "tilecount":2,
+ "tilecount":7,
  "tiledversion":"1.9.2",
  "tileheight":64,
+ "tiles":[
+        {
+         "id":1,
+         "properties":[
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":2,
+         "properties":[
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":3,
+         "properties":[
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":4,
+         "properties":[
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":5,
+         "properties":[
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":6,
+         "properties":[
+                {
+                 "name":"walkabke",
+                 "type":"bool",
+                 "value":false
+                }]
+        }],
  "tilewidth":64,
  "type":"tileset",
  "version":"1.9"

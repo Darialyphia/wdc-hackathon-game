@@ -15,6 +15,8 @@ export const necroVampire: SoldierData = {
   maxAp: 4,
   attack: 2,
   defense: 0,
+  speed: 3,
+  apRegenRate: 1,
   triggers: [],
   auras: [],
   skills: [

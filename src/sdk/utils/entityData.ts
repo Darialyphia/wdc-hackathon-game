@@ -1,6 +1,5 @@
 import type { GameState } from '..';
 import type { CharacterId, Entity } from '../entity';
-import type { GameEvent } from '../events/reducer';
 import type { Point } from '../../utils/geometry';
 import type { Values } from '../../utils/types';
 import type { FactionId } from '../enums';
@@ -53,8 +52,10 @@ export type EntityData = {
   skills: SkillData[];
   maxHp: number;
   maxAp: number;
+  apRegenRate: number;
   attack: number;
   defense: number;
+  speed: number;
   initiative: number;
   triggers: Trigger[];
   auras: Aura[];

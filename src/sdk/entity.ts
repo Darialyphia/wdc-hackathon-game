@@ -7,7 +7,6 @@ import type { Override, Values } from '../utils/types';
 import type { SerializedTrigger, Trigger } from './trigger';
 import type { Modifier, SerializedModifier } from './modifier';
 import type { Aura, SerializedAura } from './aura';
-import type { SkillId } from './utils/entityData';
 import { triggersLookup } from './triggers';
 import { aurasLookup } from './auras';
 import { modifiersLookup } from './modifiers';
@@ -34,15 +33,18 @@ export type EntityBase = {
   position: Point;
   maxAp: number;
   ap: number;
+  apRegenRate: number;
   atb: number;
   attack: number;
   defense: number;
+  speed: number;
   initiative: number;
   hp: number;
   triggers: Trigger[];
   modifiers: Modifier[];
   auras: Aura[];
-  skillsUsed: SkillId[];
+  movedAmount: number;
+  hasDoneAction: boolean;
 };
 export type Soldier = EntityBase & {
   readonly kind: 'soldier';
@@ -51,7 +53,6 @@ export type Soldier = EntityBase & {
 export type General = EntityBase & {
   readonly kind: 'general';
   readonly blueprint: GeneralData;
-  hasSummonned: boolean;
 };
 export type Entity = Soldier | General;
 
@@ -79,19 +80,21 @@ export const addGeneral = (
     blueprint,
     kind: 'general',
     id: ++state.nextEntityId,
-    hasSummonned: false,
+    hasDoneAction: false,
+    movedAmount: 0,
     atbSeed: options.atbSeed,
     atb: MAX_ATB + options.atbSeed,
     maxAp: blueprint.maxAp,
     ap: blueprint.maxAp,
+    apRegenRate: blueprint.apRegenRate,
     hp: blueprint.maxHp,
     triggers: [...blueprint.triggers],
     modifiers: [],
     auras: blueprint.auras,
-    skillsUsed: [],
     initiative: blueprint.initiative,
     attack: blueprint.attack,
-    defense: blueprint.defense
+    defense: blueprint.defense,
+    speed: blueprint.speed
   };
   state.entities.push(entity);
 };
@@ -111,14 +114,17 @@ export const addSoldier = (
     atb: MAX_ATB / 4 + options.atbSeed,
     maxAp: blueprint.maxAp,
     ap: blueprint.maxAp,
+    apRegenRate: blueprint.apRegenRate,
     hp: blueprint.maxHp,
     triggers: [...blueprint.triggers],
     modifiers: [],
     auras: blueprint.auras,
-    skillsUsed: [],
+    hasDoneAction: false,
+    movedAmount: 0,
     initiative: blueprint.initiative,
     attack: blueprint.attack,
-    defense: blueprint.defense
+    defense: blueprint.defense,
+    speed: blueprint.speed
   };
   state.entities.push(entity);
 };

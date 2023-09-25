@@ -12,7 +12,8 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "dep-graph": "ts_dependency_graph --start"
   },
   "dependencies": {
     "@ark-ui/vue": "^0.8.0",
@@ -41,6 +42,7 @@
     "open-props": "^1.5.15",
     "pixi-viewport": "^5.0.2",
     "pixi.js": "^7.2.4",
+    "ts_dependency_graph": "^2.0.0",
     "vee-validate": "^4.11.3",
     "vite-plugin-vue-layouts": "^0.8.0",
     "vue": "^3.3.4",

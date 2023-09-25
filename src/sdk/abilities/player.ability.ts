@@ -46,7 +46,7 @@ export const createPlayerAbility = (
       return isOwnedAndActive(subject);
     });
 
-    if (!general.hasSummonned) {
+    if (!general.hasDoneAction) {
       can('summon', 'soldier', (subject: SoldierData) => {
         const { summonBlueprints } = general.blueprint;
         if (!Object.values(summonBlueprints).includes(subject)) return false;

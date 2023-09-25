@@ -1,8 +1,22 @@
+import type { ComputedRef } from 'vue';
 import type { AnimatedSprite, Container, Spritesheet } from 'pixi.js';
 import type { GameState } from '..';
 import type { EntityId } from '../entity';
 import type { Nullable } from '../../utils/types';
-import type { ScreenMapContext } from '../../composables/game/useScreenMap';
+import type { GameMapCell } from '../map';
+import type { Point } from '../../utils/geometry';
+
+export type ScreenMapContext = {
+  rotatedCells: ComputedRef<
+    {
+      gameCell: GameMapCell;
+      tileId: number;
+      screenX: number;
+      screenY: number;
+    }[]
+  >;
+  getRotatedPosition(point: Point): Point;
+};
 
 export type EventHandler<
   TName extends string,

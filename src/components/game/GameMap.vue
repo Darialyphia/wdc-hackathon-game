@@ -1,22 +1,12 @@
 <script setup lang="ts">
-import { createTiledMap } from '../../utils/tiled';
-import type { ITiledMap } from '@workadventure/tiled-map-type-guard';
 import type { Point } from '../../utils/geometry';
 import { getCellAt } from '../../sdk/utils/map.helpers';
 
 const { resolveTileset } = useAssets();
 const textures = computed(() => Object.values(resolveTileset('iso').textures));
 
-const {
-  state,
-  selectedSummon,
-  selectedSkill,
-  summon,
-  useSkill,
-  move,
-  targetMode,
-  rotation
-} = useGame();
+const { state, selectedSummon, selectedSkill, summon, useSkill, move, targetMode } =
+  useGame();
 
 const onPointerup = ({ x, y }: Point) => {
   const cell = getCellAt(state.value, { x, y });
@@ -32,10 +22,10 @@ const onPointerup = ({ x, y }: Point) => {
   targetMode.value = null;
 };
 
-const { rotatedCells, map } = useScreenMap();
+const { rotatedCells } = useScreenMap();
 const offset = computed(() => ({
-  x: (state.value.map.width - map.width) / 2,
-  y: (state.value.map.height - map.height) / 2
+  x: (state.value.map.width - state.value.map.width) / 2,
+  y: (state.value.map.height - state.value.map.height) / 2
 }));
 </script>
 
@@ -50,7 +40,7 @@ const offset = computed(() => ({
     <GameMapCell
       :x="cell.gameCell.x + offset.x"
       :y="cell.gameCell.y + offset.y"
-      :texture="textures[cell.tileId]"
+      :texture="textures[cell.gameCell.tile]"
       @pointerup="
         onPointerup({ x: cell.gameCell.x + offset.x, y: cell.gameCell.y + offset.y })
       "

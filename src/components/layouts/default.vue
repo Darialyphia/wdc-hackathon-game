@@ -12,7 +12,7 @@ const isMenuOpened = ref(false);
 </script>
 <template>
   <div class="layout">
-    <header class="lt-lg:p-inline-3">
+    <header class="lt-lg:p-inline-3 bg-surface-1">
       <CurrentGameBanner />
 
       <div class="container">
