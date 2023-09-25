@@ -106,6 +106,7 @@ export const useReplayProvider = (
     canCastAt,
     canCast,
     isInCastRange,
+    rotation: ref(0),
     surrender() {
       return null;
     },

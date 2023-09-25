@@ -67,3 +67,6 @@ export const getEntityDistance = (entity1: Entity, entity2: Entity) => {
     y: Math.abs(entity1.position.y - entity2.position.y)
   };
 };
+
+export const hasFinishedTurn = (entity: Entity) =>
+  entity.hasDoneAction && entity.movedAmount === entity.speed;

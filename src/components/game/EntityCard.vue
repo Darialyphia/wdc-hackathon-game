@@ -57,6 +57,13 @@ const { entity } = defineProps<{
           {{ entity.initiative }}
         </span>
       </div>
+
+      <div>
+        <div class="i-material-symbols-alarm-outline" />
+        <span>
+          {{ entity.atb.toFixed(2) }}
+        </span>
+      </div>
     </div>
 
     <div v-for="skill in entity.blueprint.skills" :key="skill.id" class="skill">

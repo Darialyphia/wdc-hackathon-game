@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { defineAction } from '.';
-import { getActiveEntity } from '../utils/entity.helpers';
+import { getActiveEntity, hasFinishedTurn } from '../utils/entity.helpers';
 import { createPlayerAbility } from '../abilities/player.ability';
 import { subject } from '@casl/ability';
 import { endTurnEvent } from '../events/endTurn.event';
@@ -46,7 +46,7 @@ export const createSkillAction = defineAction({
     state.reducer(state, skillUsedEvent.create(entity.id, skill.id));
     skill.execute({ state, caster: entity, target: input.target });
 
-    if (entity.ap === 0) {
+    if (hasFinishedTurn(entity)) {
       state.reducer(state, endTurnEvent.create(state.activeEntityId));
     }
   }

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { defineAction } from '.';
 import { createPlayerAbility } from '../abilities/player.ability';
-import { getGeneral } from '../utils/entity.helpers';
+import { getGeneral, hasFinishedTurn } from '../utils/entity.helpers';
 import { subject } from '@casl/ability';
 import { soldierSummonedEvent } from '../events/soldierSummoned.event';
 import { endTurnEvent } from '../events/endTurn.event';
@@ -44,7 +44,7 @@ export const createSummonAction = defineAction({
       )
     );
 
-    if (general.ap === 0) {
+    if (hasFinishedTurn(general)) {
       state.reducer(state, endTurnEvent.create(state.activeEntityId));
     }
   }

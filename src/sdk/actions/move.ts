@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { defineAction } from '.';
-import { getActiveEntity } from '../utils/entity.helpers';
+import { getActiveEntity, hasFinishedTurn } from '../utils/entity.helpers';
 import { createPlayerAbility } from '../abilities/player.ability';
 import { subject } from '@casl/ability';
 import { entityMovedEvent } from '../events/entityMoved.event';
@@ -43,7 +43,7 @@ export const createMoveAction = defineAction({
       )
     );
 
-    if (entity.ap === 0) {
+    if (hasFinishedTurn(entity)) {
       state.reducer(state, endTurnEvent.create(state.activeEntityId));
     }
   }

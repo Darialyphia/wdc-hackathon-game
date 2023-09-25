@@ -22,7 +22,6 @@ const {
   state,
   activeEntity,
   isMyTurn,
-  isInCastRange,
   canSummonAt,
   canMoveTo,
   pathfinder,
@@ -76,7 +75,10 @@ const isHighlighted = computed(() => {
     case 'summon':
       return isValidSummonTarget.value;
     case 'move':
-      return isValidMoveTarget(cell.value);
+      return (
+        isValidMoveTarget(cell.value) &&
+        activeEntity.value.movedAmount < activeEntity.value.speed
+      );
     default:
       return isHoveringActiveEntity.value && isValidMoveTarget(cell.value);
   }

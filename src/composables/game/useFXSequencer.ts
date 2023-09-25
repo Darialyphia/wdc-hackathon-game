@@ -10,13 +10,12 @@ import {
   SOLDIER_SUMMONED,
   soldierSummonedEvent
 } from '../../sdk/events/soldierSummoned.event';
-import { type Container, AnimatedSprite, DisplayObject } from 'pixi.js';
+import { type Container, AnimatedSprite } from 'pixi.js';
 import type { EntityId } from '../../sdk/entity';
 import type { MaybeRefOrGetter } from '@vueuse/core';
 import type { AssetsContext } from './useAssets';
-import type { EventSequence } from '../../sdk/events';
+import type { EventSequence, ScreenMapContext } from '../../sdk/events';
 import { HEAL, healEvent } from '../../sdk/events/healEvent';
-import type { ScreenMapContext } from './useScreenMap';
 
 export type FXSequenceStep<T extends { type: string; payload: any }> = {
   event: T;
@@ -24,7 +23,10 @@ export type FXSequenceStep<T extends { type: string; payload: any }> = {
 };
 
 export type FXSequence = {
-  play(state: Ref<GameState>, onStepComplete: (event: GameEvent) => void): Promise<void>;
+  play(
+    state: MaybeRefOrGetter<GameState>,
+    onStepComplete: (event: GameEvent) => void
+  ): Promise<void>;
 };
 
 export type FXSequenceContext = {
@@ -90,7 +92,10 @@ export const useFXSequencerProvider = (assetsCtx: AssetsContext): FXSequenceCont
     });
 
     return {
-      async play(state: Ref<GameState>, onStepComplete: (event: GameEvent) => void) {
+      async play(
+        state: MaybeRefOrGetter<GameState>,
+        onStepComplete: (event: GameEvent) => void
+      ) {
         isPlaying.value = true;
         const _fxContainer = unref(fxContainer);
         if (!_fxContainer) {
@@ -104,7 +109,7 @@ export const useFXSequencerProvider = (assetsCtx: AssetsContext): FXSequenceCont
           );
         }
         for (const step of steps) {
-          await step.play(state.value, step.event as any, {
+          await step.play(toValue(state), step.event as any, {
             assets: assetsCtx,
             fxContainer: _fxContainer as Container,
             screenMap: screenMapContext,

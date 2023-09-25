@@ -76,19 +76,22 @@ export const useGameProvider = (
   me: Nullable<Id<'users'>>,
   sequencer: FXSequenceContext
 ) => {
-  const state = ref(fromSerializedState(game.value.serializedState));
+  const state = ref<GameState>(fromSerializedState(game.value.serializedState));
+  // VSCode ts bug freaking out not recognizing state.value as GameState,no clue whu
+  const getState = () => state.value as GameState;
+
   watch(
     () => game.value.latestEvents,
     newEvents => {
       const sequence = sequencer.buildSequence(newEvents);
 
-      sequence.play(state, event => {
-        state.value.reducer(state.value, event);
+      sequence.play(getState, event => {
+        state.value.reducer(getState(), event);
       });
     }
   );
 
-  const activeEntity = computed(() => getActiveEntity(state.value));
+  const activeEntity = computed(() => getActiveEntity(getState()));
 
   const selectedSummon = ref<Nullable<SoldierData>>();
   const selectedSkill = ref<Nullable<SkillData>>();
@@ -107,7 +110,7 @@ export const useGameProvider = (
   const isMyTurn = computed(() => activeEntity.value.owner === me);
 
   const pathfinder = computed(() =>
-    createPathFinder(state.value, state.value.activeEntityId)
+    createPathFinder(getState(), state.value.activeEntityId)
   );
 
   const isInCastRange = (cell: GameMapCell) => {
@@ -121,7 +124,7 @@ export const useGameProvider = (
   };
 
   const canSummonAt = ({ x, y }: GameMapCell) => {
-    const ability = createPlayerAbility(state.value, activeEntity.value.owner);
+    const ability = createPlayerAbility(getState(), activeEntity.value.owner);
     return ability.can('summon_at', subject('position', { x, y }));
   };
 
@@ -139,14 +142,17 @@ export const useGameProvider = (
       cell.y === activeEntity.value.position.y;
     if (isSameCell) return true;
 
-    return path.length > 0 && path.length <= activeEntity.value.ap;
+    return (
+      path.length > 0 &&
+      path.length + activeEntity.value.movedAmount <= activeEntity.value.speed
+    );
   };
 
   const canCastAt = (cell: GameMapCell) => {
     if (!selectedSkill.value) return false;
 
     const ability = createSkillAbility(
-      state.value,
+      getState(),
       selectedSkill.value,
       activeEntity.value
     );
@@ -154,7 +160,7 @@ export const useGameProvider = (
   };
 
   const canCast = (skill: SkillData) => {
-    return createEntityAbility(state.value, activeEntity.value).can(
+    return createEntityAbility(getState(), activeEntity.value).can(
       'cast',
       subject('skill', skill)
     );
@@ -213,7 +219,7 @@ export const useGameProvider = (
   };
 
   const atbTimeline = computed(() => {
-    const timelineState = fromSerializedState(serializeGameState(state.value));
+    const timelineState = fromSerializedState(serializeGameState(getState()));
 
     const timelineReducer = createReducer({ transient: false });
     const timeline = [getActiveEntity(timelineState)];
@@ -227,7 +233,7 @@ export const useGameProvider = (
   const targetMode = ref(null);
   const hoveredCell = ref(null);
   const api: Game = {
-    state,
+    state: state as Ref<GameState>,
     game,
     pathfinder,
     me,
