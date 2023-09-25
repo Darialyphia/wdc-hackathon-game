@@ -25,7 +25,7 @@ export const necroSkeleton: SoldierData = {
       iconUrl: '/icons/melee_attack.png',
       name: 'Melee attack',
       description: 'Deals damage to a close enemy',
-      cost: 2,
+      cost: 0,
       minRange: 0,
       range: 1,
       targetZone: TARGET_ZONES.RADIUS,

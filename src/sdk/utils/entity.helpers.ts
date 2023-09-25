@@ -45,12 +45,10 @@ export const resetEntity = (entity: Entity) => {
   switch (kind) {
     case 'general':
       entity.atb = entity.atbSeed;
-      entity.hasDoneAction = false;
       entity.movedAmount = 0;
       break;
     case 'soldier':
       entity.atb = entity.atbSeed;
-      entity.hasDoneAction = false;
       entity.movedAmount = 0;
       break;
     default:
@@ -69,4 +67,4 @@ export const getEntityDistance = (entity1: Entity, entity2: Entity) => {
 };
 
 export const hasFinishedTurn = (entity: Entity) =>
-  entity.hasDoneAction && entity.movedAmount === entity.speed;
+  entity.ap === 0 && entity.movedAmount === entity.speed;

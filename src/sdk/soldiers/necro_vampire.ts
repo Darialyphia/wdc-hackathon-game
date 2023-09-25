@@ -9,7 +9,7 @@ export const necroVampire: SoldierData = {
   iconUrl: '/icons/necro_vampire.gif',
   factionId: FACTIONS_IDS.NECRO,
   name: 'Vampire',
-  cost: 1,
+  cost: 3,
   initiative: 8,
   maxHp: 8,
   maxAp: 4,
@@ -26,7 +26,7 @@ export const necroVampire: SoldierData = {
       name: 'Melee attack',
       description:
         'Deals damage to a close enemy and heals for the amount of damage dealt',
-      cost: 2,
+      cost: 0,
       minRange: 0,
       range: 1,
       targetZone: TARGET_ZONES.RADIUS,

@@ -38,7 +38,7 @@ const onSummonPointerdown = (summon: SoldierData) => {
 </script>
 
 <template>
-  <div v-if="activeEntity.owner === me" class="action-bar fancy-surface" @mousemove.stop>
+  <div v-if="activeEntity.owner === me" class="action-bar fancy-surface">
     <button
       v-for="skill in activeEntity.blueprint.skills"
       :key="skill.id"

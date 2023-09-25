@@ -46,14 +46,12 @@ export const createPlayerAbility = (
       return isOwnedAndActive(subject);
     });
 
-    if (!general.hasDoneAction) {
-      can('summon', 'soldier', (subject: SoldierData) => {
-        const { summonBlueprints } = general.blueprint;
-        if (!Object.values(summonBlueprints).includes(subject)) return false;
+    can('summon', 'soldier', (subject: SoldierData) => {
+      const { summonBlueprints } = general.blueprint;
+      if (!Object.values(summonBlueprints).includes(subject)) return false;
 
-        return isActive(state, general) && subject.cost <= general.ap;
-      });
-    }
+      return isActive(state, general) && subject.cost <= general.ap;
+    });
 
     can('summon_at', 'position', (subject: Point) => {
       if (!isCellWalkable(state, subject)) return false;

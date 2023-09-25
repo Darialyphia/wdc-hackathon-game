@@ -44,7 +44,6 @@ export type EntityBase = {
   modifiers: Modifier[];
   auras: Aura[];
   movedAmount: number;
-  hasDoneAction: boolean;
 };
 export type Soldier = EntityBase & {
   readonly kind: 'soldier';
@@ -80,7 +79,6 @@ export const addGeneral = (
     blueprint,
     kind: 'general',
     id: ++state.nextEntityId,
-    hasDoneAction: false,
     movedAmount: 0,
     atbSeed: options.atbSeed,
     atb: MAX_ATB + options.atbSeed,
@@ -119,7 +117,6 @@ export const addSoldier = (
     triggers: [...blueprint.triggers],
     modifiers: [],
     auras: blueprint.auras,
-    hasDoneAction: false,
     movedAmount: 0,
     initiative: blueprint.initiative,
     attack: blueprint.attack,

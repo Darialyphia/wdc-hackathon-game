@@ -27,7 +27,7 @@ export const havenGeneral01: GeneralData = {
       iconUrl: '/icons/melee_attack.png',
       name: 'Melee attack',
       description: 'Deals damage to a close enemy',
-      cost: 1,
+      cost: 0,
       minRange: 0,
       range: 1,
       targetZone: TARGET_ZONES.RADIUS,

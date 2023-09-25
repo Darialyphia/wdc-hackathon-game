@@ -49,8 +49,6 @@ export const soldierSummonedEvent = defineEvent({
       position: event.position
     });
 
-    activeEntity.hasDoneAction = true;
-
     applyAuras(state);
 
     return state;
