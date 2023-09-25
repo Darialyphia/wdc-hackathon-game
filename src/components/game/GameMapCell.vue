@@ -9,6 +9,8 @@ import { ColorMatrixFilter } from 'pixi.js';
 import type { GameMapCell } from '../../sdk/map';
 import { CELL_SIZE } from '../../sdk/constants';
 import { Polygon } from 'pixi.js';
+import { createSkillAbility } from '../../sdk/abilities/skill.ability';
+import { subject } from '@casl/ability';
 
 const { x, y, texture } = defineProps<{
   texture: Texture;
@@ -26,7 +28,8 @@ const {
   pathfinder,
   targetMode,
   hoveredCell,
-  rotation
+  rotation,
+  selectedSkill
 } = useGame();
 const { isPlaying } = useFXSequencer();
 const cell = computed(() => getCellAt(state.value, { x, y }));
@@ -51,15 +54,32 @@ const isValidMoveTarget = (cell: GameMapCell) => {
   );
 };
 
+const isSkillHighlighted = (cell: GameMapCell) => {
+  if (!selectedSkill.value) return false;
+
+  const ability = createSkillAbility(
+    state.value,
+    selectedSkill.value,
+    activeEntity.value
+  );
+
+  return ability.can('highlight', subject('cell', { x: cell.x, y: cell.y }));
+};
+
 const isHighlighted = computed(() => {
   if (!cell.value) return;
   if (!isMyTurn.value) return;
 
-  if (targetMode.value === 'skill') return isInCastRange(cell.value);
-  if (targetMode.value === 'summon') return isValidSummonTarget.value;
-  if (targetMode.value === 'move') return isValidMoveTarget(cell.value);
-
-  return isHoveringActiveEntity.value && isValidMoveTarget(cell.value);
+  switch (targetMode.value) {
+    case 'skill':
+      return isSkillHighlighted(cell.value);
+    case 'summon':
+      return isValidSummonTarget.value;
+    case 'move':
+      return isValidMoveTarget(cell.value);
+    default:
+      return isHoveringActiveEntity.value && isValidMoveTarget(cell.value);
+  }
 });
 
 const pathFilter = new ColorOverlayFilter(0x7777ff, 0.5);
@@ -102,7 +122,7 @@ const bitMask = computed(() => {
   return getBitMask(state.value, cell.value, rotation.value, neighbor => {
     if (!neighbor) return false;
     if (targetMode.value === 'skill') {
-      return isInCastRange(neighbor);
+      return isSkillHighlighted(neighbor);
     }
     if (targetMode.value === 'summon') {
       return canSummonAt(neighbor) && !getEntityAt(state.value, neighbor);

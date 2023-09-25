@@ -20,7 +20,11 @@ watch(
   newPos => {
     gsap.to(tweened.value, {
       duration: isPlaying.value ? 0.3 : props.speed ?? 0.3,
-      ...newPos
+      x: newPos.x
+    });
+    gsap.to(tweened.value, {
+      duration: isPlaying.value ? 0.3 : props.speed ?? 0.3,
+      y: newPos.y
     });
   }
 );
