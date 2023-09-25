@@ -19,6 +19,7 @@ const { entity } = defineProps<{
 const {
   game,
   state,
+  rotation,
   useSkill,
   selectedSkill,
   activeEntity,
@@ -58,8 +59,12 @@ const onPointerleave = () => {
 };
 const { linkSprite } = useFXSequencer();
 
-const textures = computed(() =>
-  createSpritesheetFrameObject('idle', resolveSprite(entity.blueprint.characterId))
+const textures = computed(
+  () =>
+    createSpritesheetFrameObject(
+      'idle',
+      resolveSprite(entity.blueprint.characterId)
+    ) as unknown as Texture[]
 );
 
 const sprite = ref<AnimatedSprite>();
@@ -152,6 +157,14 @@ const cursor = computed(() => {
   }
   return undefined;
 });
+
+const scaleX = computed(() => {
+  if (rotation.value === 90 || rotation.value === 180) {
+    return entity.owner === game.value.players[0].userId ? -1 : 1;
+  }
+
+  return entity.owner === game.value.players[0].userId ? 1 : -1;
+});
 </script>
 
 <template>
@@ -170,10 +183,10 @@ const cursor = computed(() => {
       <animated-sprite
         v-if="textures?.length"
         ref="sprite"
+        :textures="textures"
         :z-index="2"
-        :textures="textures as unknown as Texture[]"
         :filters="filters"
-        :scale-x="entity.owner === game.players[0].userId ? 1 : -1"
+        :scale-x="scaleX"
         :anchor="0.5"
         loop
         playing
@@ -181,10 +194,10 @@ const cursor = computed(() => {
     </PTransition>
     <animated-sprite
       v-if="textures?.length"
+      :textures="textures"
       :z-index="1"
-      :textures="textures as unknown as Texture[]"
       :filters="shadowFilters"
-      :scale-x="entity.owner === game.players[0].userId ? 1 : -1"
+      :scale-x="scaleX"
       :scale-y="0.3"
       :skew-x="-1"
       :x="5"
