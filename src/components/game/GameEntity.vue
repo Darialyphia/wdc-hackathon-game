@@ -13,6 +13,7 @@ import type { Cursor } from 'pixi.js';
 import { AdjustmentFilter } from '@pixi/filter-adjustment';
 import type { AsepriteMeta } from '../../utils/spritesheet-parser';
 import { Polygon } from 'pixi.js';
+import { me } from '../../../convex/users';
 
 const { entity } = defineProps<{
   entity: Entity;
@@ -170,6 +171,7 @@ const scaleX = computed(() => {
 
 const hitArea = computed(() => {
   const sprite = resolveSprite(entity.characterId);
+  console.log(sprite);
   const meta = sprite.data.meta as AsepriteMeta;
   if (!meta.slices) return undefined;
 
@@ -179,11 +181,16 @@ const hitArea = computed(() => {
   const {
     bounds: { x, y, w, h }
   } = hitAreaSlice.keys[0];
+  // we need to offset the slice because the sprite has its anchor in the center
+  const offset = {
+    x: meta.size.w / Object.keys(sprite.data.frames).length / 2,
+    y: meta.size.h / 2
+  };
   return new Polygon([
-    { x: x, y: y },
-    { x: x + w, y: y },
-    { x: x + w, y: y + h },
-    { x: x, y: y + h }
+    { x: x - offset.x, y: y - offset.y },
+    { x: x + w - offset.x, y: y - offset.y },
+    { x: x + w - offset.x, y: y + h - offset.y },
+    { x: x - offset.x, y: y + h - offset.y }
   ]);
 });
 </script>

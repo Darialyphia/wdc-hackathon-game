@@ -46,10 +46,12 @@ export const resetEntity = (entity: Entity) => {
     case 'general':
       entity.atb = entity.atbSeed;
       entity.movedAmount = 0;
+      entity.skillsUsed = [];
       break;
     case 'soldier':
       entity.atb = entity.atbSeed;
       entity.movedAmount = 0;
+      entity.skillsUsed = [];
       break;
     default:
       exhaustiveSwitch(kind);
