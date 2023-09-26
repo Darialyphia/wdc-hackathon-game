@@ -50,7 +50,7 @@ export const havenGeneral01: GeneralData = {
       description: 'Increase all allies initiative for 3 turns',
       cost: 3,
       minRange: 0,
-      range: 1,
+      range: Infinity,
       targetZone: TARGET_ZONES.RADIUS,
       targetType: TARGET_TYPES.ANYWHERE,
       areaType: AREA_TYPE.RADIUS,

@@ -67,23 +67,38 @@ const { entity } = defineProps<{
       <p>{{ skill.description }}</p>
     </div>
 
-    <div
-      v-for="trigger in entity.triggers"
-      :key="trigger.id"
-      class="flex gap-2 items-center text-0"
-    >
-      <div class="i-game-icons-time-trap" />
-      {{ trigger.name }}
-    </div>
+    <ul>
+      <li
+        v-for="trigger in entity.triggers"
+        :key="trigger.id"
+        class="flex gap-2 items-center text-0 my-2"
+      >
+        <div class="i-game-icons-time-trap" />
+        {{ trigger.name }}
+      </li>
+    </ul>
 
-    <div
-      v-for="aura in entity.blueprint.auras"
-      :key="aura.id"
-      class="flex gap-2 items-center text-0"
-    >
-      <div class="i-game-icons-beams-aura" />
-      {{ aura.name }}
-    </div>
+    <ul>
+      <li
+        v-for="aura in entity.auras"
+        :key="aura.id"
+        class="flex gap-2 items-center text-0 my-2"
+      >
+        <div class="i-game-icons-beams-aura" />
+        {{ aura.name }}
+      </li>
+    </ul>
+
+    <ul>
+      <li
+        v-for="modifier in entity.modifiers"
+        :key="modifier.id"
+        class="flex gap-2 items-center text-0 my-2"
+      >
+        <div class="i-game-icons-abstract-086" />
+        {{ modifier.name }}
+      </li>
+    </ul>
   </article>
 </template>
 
@@ -149,7 +164,7 @@ const { entity } = defineProps<{
     grid-row: 1 / span 2;
     aspect-ratio: 1;
     width: var(--size-8);
-    border: var(--border);
+    border: var(--fancy-border);
   }
 
   p {
@@ -182,5 +197,17 @@ const { entity } = defineProps<{
       border-radius: var(--radius-round);
     }
   }
+}
+
+ul > li {
+  display: flex;
+  gap: var(--size-2);
+  align-items: center;
+
+  margin-top: var(--size-2);
+  margin-bottom: var(--size-2);
+
+  font-size: var(--font-size-0);
+  line-height: 1;
 }
 </style>

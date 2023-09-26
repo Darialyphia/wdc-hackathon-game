@@ -79,8 +79,8 @@ const activeFilter = new OutlineFilter(2, 0xffffff, 0.2, 0.6);
 const targetedOutlineFilter = new OutlineFilter(3, 0xff0000, 0.2, 0.5);
 const targetedOverlayFilter = new ColorOverlayFilter(0xff0000, 0.35);
 const selectedfilter = new AdjustmentFilter({
-  gamma: 1.4,
-  contrast: 1.4,
+  gamma: 1.3,
+  contrast: 1.25,
   saturation: 1.25
 });
 
@@ -109,13 +109,6 @@ const filters = computed(() => {
 });
 
 const shadowFilters = [new ColorOverlayFilter(0x000000)];
-
-// const circleSize = 6;
-// const textStyle = {
-//   fontSize: 22,
-//   fontFamily: 'monospace',
-//   fill: 'white'
-// };
 
 const onBeforeEnter = (el: AnimatedSprite) => {
   nextTick(() => {
@@ -169,6 +162,7 @@ const scaleX = computed(() => {
 
   return entity.owner === game.value.players[0].userId ? 1 : -1;
 });
+
 const hitArea = computed(() => {
   const sprite = resolveSprite(entity.characterId);
   const meta = sprite.data.meta as AsepriteMeta;
@@ -256,55 +250,5 @@ const hitArea = computed(() => {
       :max-value="entity.maxAp"
       :filled-color="0x0000cc"
     />
-
-    <!-- <graphics
-      v-if="entity.state === 'ALIVE'"
-      :z-index="entity.position.y * 2 + 1"
-      :x="-CELL_SIZE / 3"
-      :y="-CELL_SIZE / 4"
-      @render="
-        g => {
-          g.clear();
-
-          g.lineStyle({
-            width: 1,
-            color: 'yellow'
-          });
-
-          g.beginFill('black');
-          g.drawCircle(0, 0, circleSize);
-          g.endFill();
-        }
-      "
-    >
-      <text :style="textStyle" :anchor="0.5" :scale-x="0.5" :scale-y="0.5">
-        {{ entity.attack }}
-      </text>
-    </graphics>
-
-    <graphics
-      v-if="entity.state === 'ALIVE'"
-      :z-index="entity.position.y * 2 + 1"
-      :x="CELL_SIZE / 3"
-      :y="-CELL_SIZE / 4"
-      @render="
-        g => {
-          g.clear();
-
-          g.lineStyle({
-            width: 1,
-            color: 'red'
-          });
-
-          g.beginFill('black');
-          g.drawCircle(0, 0, circleSize);
-          g.endFill();
-        }
-      "
-    >
-      <text :style="textStyle" :anchor="0.5" :scale-x="0.5" :scale-y="0.5">
-        {{ entity.defense }}
-      </text>
-    </graphics> -->
   </container>
 </template>

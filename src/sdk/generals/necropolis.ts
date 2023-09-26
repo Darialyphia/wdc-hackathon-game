@@ -50,7 +50,7 @@ export const necroGeneral01: GeneralData = {
       description: 'Summon 2 skeletons on random squares',
       cost: 3,
       minRange: 0,
-      range: 1,
+      range: Infinity,
       targetZone: TARGET_ZONES.RADIUS,
       targetType: TARGET_TYPES.ANYWHERE,
       areaType: AREA_TYPE.RADIUS,
