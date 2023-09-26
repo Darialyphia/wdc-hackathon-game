@@ -43,6 +43,7 @@ const onPointerup = () => {
 };
 
 const onPointerdown = (event: FederatedPointerEvent) => {
+  console.log('pointerdown');
   if (event.button !== 0) return;
   if (isMyTurn.value && entity.id === activeEntity.value.id) {
     targetMode.value = 'move';
@@ -168,10 +169,8 @@ const scaleX = computed(() => {
 
   return entity.owner === game.value.players[0].userId ? 1 : -1;
 });
-
 const hitArea = computed(() => {
   const sprite = resolveSprite(entity.characterId);
-  console.log(sprite);
   const meta = sprite.data.meta as AsepriteMeta;
   if (!meta.slices) return undefined;
 
@@ -202,6 +201,9 @@ const hitArea = computed(() => {
     :sortable-children="true"
     :cursor="cursor"
     :pivot-x="-CELL_SIZE / 2"
+    :event-mode="
+      targetMode === 'move' && entity.id !== activeEntity.id ? 'none' : 'static'
+    "
     @pointerenter="onPointerenter"
     @pointerleave="onPointerleave"
     @pointerdown="onPointerdown($event)"
