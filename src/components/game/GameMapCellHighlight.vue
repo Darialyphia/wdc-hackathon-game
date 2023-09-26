@@ -4,11 +4,9 @@ import type { Resource, Texture, Container, Cursor } from 'pixi.js';
 import { getCellAt } from '../../sdk/utils/map.helpers';
 import { getEntityAt } from '../../sdk/utils/entity.helpers';
 import { getBitMask, getTextureIndexFromBitMask } from '../../sdk/utils/bit-maksing';
-import { ColorMatrixFilter } from 'pixi.js';
 import type { GameMapCell } from '../../sdk/map';
 import { createSkillAbility } from '../../sdk/abilities/skill.ability';
 import { subject } from '@casl/ability';
-import { HslAdjustmentFilter } from '@pixi/filter-hsl-adjustment';
 
 const { cell, cursor } = defineProps<{
   cursor?: Cursor;
@@ -82,7 +80,7 @@ const isHighlighted = computed(() => {
 
 const { resolveTileset } = useAssets();
 
-const bitMask = computed(() => {
+const getBitCellBitmask = () => {
   if (!cell) return null;
   if (!isMyTurn.value) return null;
   if (isPlaying.value) return null;
@@ -98,33 +96,24 @@ const bitMask = computed(() => {
 
     return isValidMoveTarget(neighbor);
   });
-});
+};
 
 const targetableTileset = resolveTileset('targetable_cell');
-const bitMaskTexture = ref<Texture<Resource>>();
-
-watch(
-  bitMask,
-  (newBitMask, oldBitMask) => {
-    if (newBitMask === oldBitMask) return;
-    if (!isDefined(newBitMask)) return;
-
-    bitMaskTexture.value = getTextureIndexFromBitMask(newBitMask, targetableTileset);
-  },
-  { immediate: true }
+const movableTileset = resolveTileset('movable_cell');
+const tileset = computed(() =>
+  targetMode.value === 'skill' ? targetableTileset : movableTileset
 );
 
-const overlay = ref<Container>();
-// const skillTargetFilter = new ColorMatrixFilter();
-// skillTargetFilter.hue(100, true);
-// skillTargetFilter.saturate(1, true);
-const skillTargetFilter = new HslAdjustmentFilter({
-  hue: 150,
-  lightness: -0.4,
-  saturation: 0.8
+const texture = computed(() => {
+  const bitMask = getBitCellBitmask();
+  if (!bitMask) return;
+
+  if (bitMask === 124) {
+    console.log(tileset.value);
+  }
+  return getTextureIndexFromBitMask(bitMask, tileset.value);
 });
 
-const filters = computed(() => (targetMode.value === 'skill' ? [skillTargetFilter] : []));
 const onBeforeEnter = (el: Container) => {
   nextTick(() => {
     gsap.set(el, {
@@ -155,12 +144,14 @@ const onLeave = (el: Container, done: () => void) => {
     }
   });
 };
+
+const { autoDestroyRef } = useAutoDestroy();
 </script>
 
 <template>
   <PTransition appear @before-enter="onBeforeEnter" @enter="onEnter" @leave="onLeave">
-    <container v-if="bitMaskTexture && isHighlighted" ref="overlay" :filters="filters">
-      <sprite :texture="bitMaskTexture" :cursor="cursor" event-mode="none" />
+    <container v-if="texture && isHighlighted" :ref="autoDestroyRef">
+      <sprite :texture="texture" :cursor="cursor" event-mode="none" />
     </container>
   </PTransition>
 </template>

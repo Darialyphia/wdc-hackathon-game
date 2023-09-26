@@ -13,7 +13,7 @@ import type { Cursor } from 'pixi.js';
 import { AdjustmentFilter } from '@pixi/filter-adjustment';
 import type { AsepriteMeta } from '../../utils/spritesheet-parser';
 import { Polygon } from 'pixi.js';
-import { me } from '../../../convex/users';
+import { GlowFilter } from '@pixi/filter-glow';
 
 const { entity } = defineProps<{
   entity: Entity;
@@ -43,7 +43,6 @@ const onPointerup = () => {
 };
 
 const onPointerdown = (event: FederatedPointerEvent) => {
-  console.log('pointerdown');
   if (event.button !== 0) return;
   if (isMyTurn.value && entity.id === activeEntity.value.id) {
     targetMode.value = 'move';
@@ -76,8 +75,13 @@ const sprite = ref<AnimatedSprite>();
 linkSprite(entity.id, sprite);
 
 const activeFilter = new OutlineFilter(2, 0xffffff, 0.2, 0.6);
-const targetedOutlineFilter = new OutlineFilter(3, 0xff0000, 0.2, 0.5);
-const targetedOverlayFilter = new ColorOverlayFilter(0xff0000, 0.35);
+const targetedOutlineFilter = new GlowFilter({
+  outerStrength: 2,
+  innerStrength: 1,
+  color: 0xff0000,
+  alpha: 0.75
+});
+// const targetedOverlayFilter = new ColorOverlayFilter(0xff0000, 0.35);
 const selectedfilter = new AdjustmentFilter({
   gamma: 1.3,
   contrast: 1.25,
@@ -103,7 +107,7 @@ const filters = computed(() => {
     canCastAt(cell) &&
     isInCastRange(cell)
   ) {
-    _filters.push(targetedOutlineFilter, targetedOverlayFilter);
+    _filters.push(targetedOutlineFilter);
   }
   return _filters;
 });
