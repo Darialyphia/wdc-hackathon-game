@@ -30,7 +30,8 @@ export const havenArcher: SoldierData = {
       minRange: 2,
       targetZone: TARGET_ZONES.LINE,
       targetType: TARGET_TYPES.ENEMY,
-      areaType: AREA_TYPE.RADIUS,
+      areaType: AREA_TYPE.SQUARE,
+      areaSize: 1,
       execute({ state, caster, target }) {
         dealSingleTargetDamage(state, state.reducer, {
           from: caster.id,

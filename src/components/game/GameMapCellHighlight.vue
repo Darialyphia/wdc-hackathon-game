@@ -108,9 +108,6 @@ const texture = computed(() => {
   const bitMask = getBitCellBitmask();
   if (!bitMask) return;
 
-  if (bitMask === 124) {
-    console.log(tileset.value);
-  }
   return getTextureIndexFromBitMask(bitMask, tileset.value);
 });
 

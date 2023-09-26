@@ -3,7 +3,7 @@ const { selectedEntity, surrender } = useGame();
 </script>
 
 <template>
-  <PlayersUi />
+  <PlayersInfos />
   <AtbTimeline />
 
   <Transition>

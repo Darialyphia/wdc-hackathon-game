@@ -38,8 +38,8 @@ const { entity } = defineProps<{
         <div class="i-game-icons-rosa-shield" style="--color: var(--defense)" />
         <span
           :class="{
-            'is-buffed': entity.attack > entity.blueprint.attack,
-            'is-debuffed': entity.attack < entity.blueprint.attack
+            'is-buffed': entity.defense > entity.blueprint.defense,
+            'is-debuffed': entity.defense < entity.blueprint.defense
           }"
         >
           {{ entity.defense }}
@@ -96,7 +96,10 @@ const { entity } = defineProps<{
         class="flex gap-2 items-center text-0 my-2"
       >
         <div class="i-game-icons-abstract-086" />
-        {{ modifier.name }} ({{ modifier.duration }} turns left)
+        {{ modifier.name }}
+        <template v-if="modifier.duration !== Infinity">
+          ({{ modifier.duration }} turns left)
+        </template>
       </li>
     </ul>
   </article>

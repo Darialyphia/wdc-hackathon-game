@@ -57,6 +57,7 @@ declare module 'vue' {
     PaginatedQueryInner: typeof import('./src/components/convex/PaginatedQueryInner.vue')['default']
     PixiApp: typeof import('./src/components/game/PixiApp.vue')['default']
     PixiRenderer: typeof import('./src/components/game/PixiRenderer.vue')['default']
+    PlayersInfos: typeof import('./src/components/game/ui/PlayersInfos.vue')['default']
     PlayersUi: typeof import('./src/components/game/ui/PlayersUi.vue')['default']
     Query: typeof import('./src/components/convex/Query.vue')['default']
     QueryInner: typeof import('./src/components/convex/QueryInner.vue')['default']

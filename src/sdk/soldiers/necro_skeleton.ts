@@ -30,7 +30,8 @@ export const necroSkeleton: SoldierData = {
       range: 1,
       targetZone: TARGET_ZONES.RADIUS,
       targetType: TARGET_TYPES.ENEMY,
-      areaType: AREA_TYPE.RADIUS,
+      areaType: AREA_TYPE.SQUARE,
+      areaSize: 1,
       execute({ state, caster, target }) {
         dealSingleTargetDamage(state, state.reducer, {
           from: caster.id,

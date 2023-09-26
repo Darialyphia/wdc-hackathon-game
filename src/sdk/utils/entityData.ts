@@ -22,11 +22,10 @@ export const TARGET_ZONES = {
 export type TargetZone = Values<typeof TARGET_ZONES>;
 
 export const AREA_TYPE = {
-  RADIUS: 'RADIUS',
-  CROSS: 'SINGLE',
+  CROSS: 'CROSS',
   LINE: 'LINE',
   SQUARE: 'SQUARE'
-};
+} as const;
 export type AreaType = Values<typeof AREA_TYPE>;
 
 export type SkillId = string;
@@ -47,6 +46,7 @@ export type SkillData = {
   targetZone: TargetZone;
   targetType: TargetType;
   areaType: AreaType;
+  areaSize: number;
   iconUrl: string;
   execute(ctx: SkillExecutionContext): void;
 };

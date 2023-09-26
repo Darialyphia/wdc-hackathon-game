@@ -14,6 +14,9 @@ import { AdjustmentFilter } from '@pixi/filter-adjustment';
 import type { AsepriteMeta } from '../../utils/spritesheet-parser';
 import { Polygon } from 'pixi.js';
 import { GlowFilter } from '@pixi/filter-glow';
+import { isTargetTypeValid } from '../../sdk/utils/skill.helpers';
+import { stat } from 'fs';
+import { AREA_TYPE } from '../../sdk/utils/entityData';
 
 const { entity } = defineProps<{
   entity: Entity;
@@ -88,6 +91,64 @@ const selectedfilter = new AdjustmentFilter({
   saturation: 1.25
 });
 
+const distanceFromHoveredCell = computed(() => {
+  if (!hoveredCell.value)
+    return { x: Number.POSITIVE_INFINITY, y: Number.POSITIVE_INFINITY };
+  return {
+    x: Math.abs(hoveredCell.value.x - entity.position.x),
+    y: Math.abs(hoveredCell.value.y - entity.position.y)
+  };
+});
+
+const isInSkillArea = computed(() => {
+  if (!isMyTurn.value) return false;
+  if (!hoveredCell.value) return false;
+  if (targetMode.value !== 'skill') return false;
+  if (!selectedSkill.value) return false;
+  if (!canCastAt(hoveredCell.value)) return false;
+  if (!isInCastRange(hoveredCell.value)) return false;
+  if (
+    !isTargetTypeValid(entity.position, {
+      state: state.value,
+      caster: activeEntity.value,
+      skill: selectedSkill.value
+    })
+  ) {
+    return false;
+  }
+  const { areaType } = selectedSkill.value;
+  switch (areaType) {
+    case AREA_TYPE.CROSS:
+      return (
+        (entity.position.x === hoveredCell.value.x &&
+          distanceFromHoveredCell.value.x <= selectedSkill.value.areaSize) ||
+        (entity.position.y === hoveredCell.value.y &&
+          distanceFromHoveredCell.value.y <= selectedSkill.value.areaSize)
+      );
+    case AREA_TYPE.LINE:
+      if (hoveredCell.value.x === activeEntity.value.position.x) {
+        return (
+          entity.position.x === hoveredCell.value.x &&
+          distanceFromHoveredCell.value.x <= selectedSkill.value.areaSize
+        );
+      } else if (hoveredCell.value.y === activeEntity.value.position.y) {
+        return (
+          entity.position.y === hoveredCell.value.y &&
+          distanceFromHoveredCell.value.y <= selectedSkill.value.areaSize
+        );
+      }
+      return false;
+
+    case AREA_TYPE.SQUARE:
+      return (
+        distanceFromHoveredCell.value.x <= selectedSkill.value.areaSize &&
+        distanceFromHoveredCell.value.y <= selectedSkill.value.areaSize
+      );
+
+    default:
+      return exhaustiveSwitch(areaType);
+  }
+});
 const filters = computed(() => {
   const _filters = [];
 
@@ -97,16 +158,8 @@ const filters = computed(() => {
   if (activeEntity.value.id === entity.id) {
     _filters.push(activeFilter);
   }
-  const cell = getCellAt(state.value, entity.position);
 
-  if (
-    targetMode.value === 'skill' &&
-    hoveredCell.value?.x === entity.position.x &&
-    hoveredCell.value?.y === entity.position.y &&
-    cell &&
-    canCastAt(cell) &&
-    isInCastRange(cell)
-  ) {
+  if (isInSkillArea.value) {
     _filters.push(targetedOutlineFilter);
   }
   return _filters;

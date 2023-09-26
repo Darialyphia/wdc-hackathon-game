@@ -42,7 +42,6 @@ export const soldierSummonedEvent = defineEvent({
     const blueprint = soldiersLookup[event.characterId as keyof typeof soldiersLookup];
     if (!blueprint) return state;
 
-    console.log(event.isExtraSummon);
     if (!event.isExtraSummon) {
       general.ap -= blueprint.cost;
     }

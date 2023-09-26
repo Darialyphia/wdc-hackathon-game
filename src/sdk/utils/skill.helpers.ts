@@ -1,4 +1,4 @@
-import type { SkillExecutionContext, SkillId } from './entityData';
+import type { SkillData, SkillId } from './entityData';
 import type { Entity, EntityId } from '../entity';
 import { dealDamageEvent } from '../events/dealDamage.event';
 import { entityDiedEvent } from '../events/entityDied.event';
@@ -6,9 +6,34 @@ import { getEntityAt, getEntityById } from './entity.helpers';
 import { healEvent } from '../events/healEvent';
 import type { GameState } from '..';
 import type { GameReducer } from '../events/reducer';
+import type { Point } from '../../utils/geometry';
+import { exhaustiveSwitch } from '../../utils/assertions';
 
 export const getSkillById = (entity: Entity, skillId: SkillId) => {
   return entity.blueprint.skills.find(skill => skill.id === skillId);
+};
+
+export const isTargetTypeValid = (
+  point: Point,
+  { state, skill, caster }: { state: GameState; skill: SkillData; caster: Entity }
+) => {
+  const { targetType } = skill;
+  const entity = getEntityAt(state, point);
+
+  switch (targetType) {
+    case 'ALLY':
+      return entity && entity?.owner === caster.owner;
+    case 'ENEMY':
+      return !!(entity && entity?.owner !== caster.owner);
+    case 'SELF':
+      return entity?.id === state.activeEntityId;
+    case 'EMPTY':
+      return entity === undefined;
+    case 'ANYWHERE':
+      return true;
+    default:
+      exhaustiveSwitch(targetType);
+  }
 };
 
 export const dealSingleTargetDamage = (

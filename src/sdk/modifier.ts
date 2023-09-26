@@ -21,6 +21,7 @@ export type Modifier = ModifierData & {
 export type SerializedModifier = {
   id: ModifierId;
   from: EntityId;
+  duration: number;
 };
 
 export const addModifier = ({

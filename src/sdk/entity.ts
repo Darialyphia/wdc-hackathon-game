@@ -155,7 +155,8 @@ export const serializeEntity = (entity: Entity): SerializedEntity => {
     })),
     modifiers: entity.modifiers.map(modifier => ({
       id: modifier.id,
-      from: modifier.from
+      from: modifier.from,
+      duration: modifier.duration
     }))
   };
 };

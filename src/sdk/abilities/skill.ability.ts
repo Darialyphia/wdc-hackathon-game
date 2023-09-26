@@ -6,10 +6,11 @@ import type { Entity } from '../entity';
 import { getActiveEntity, getEntityAt } from '../utils/entity.helpers';
 import { createAbility } from '../../utils/casl';
 import type { SkillData } from '../utils/entityData';
+import { isTargetTypeValid } from '../utils/skill.helpers';
 
-type TargetActions = 'target' | 'highlight';
+type CellActions = 'target' | 'highlight';
 
-type Abilities = [TargetActions, 'cell' | Point];
+type Abilities = [CellActions, 'cell' | Point];
 
 export type SkillAbility = PureAbility<Abilities>;
 
@@ -18,25 +19,6 @@ export const createSkillAbility = (
   skill: SkillData,
   caster: Entity
 ): SkillAbility => {
-  const isTargetTypeValid = (subject: Point) => {
-    const { targetType } = skill;
-    const entity = getEntityAt(state, subject);
-    switch (targetType) {
-      case 'ALLY':
-        return entity && entity?.owner === caster.owner;
-      case 'ENEMY':
-        return !!(entity && entity?.owner !== caster.owner);
-      case 'SELF':
-        return entity?.id === state.activeEntityId;
-      case 'EMPTY':
-        return entity === undefined;
-      case 'ANYWHERE':
-        return true;
-      default:
-        exhaustiveSwitch(targetType);
-    }
-  };
-
   const isTargetZoneValid = (subject: Point) => {
     const { targetZone } = skill;
     const activeEntity = getActiveEntity(state);
@@ -53,7 +35,7 @@ export const createSkillAbility = (
     }
   };
 
-  const isInRange = ({ x, y }: Point) => {
+  const isInCastRange = ({ x, y }: Point) => {
     const isMaxRangeOk =
       Math.abs(x - caster.position.x) <= skill.range &&
       Math.abs(y - caster.position.y) <= skill.range;
@@ -67,12 +49,14 @@ export const createSkillAbility = (
   return createAbility<SkillAbility>(({ can }) => {
     can('target', 'cell', (subject: Point) => {
       return (
-        isTargetTypeValid(subject) && isTargetZoneValid(subject) && isInRange(subject)
+        isTargetTypeValid(subject, { state, caster, skill }) &&
+        isTargetZoneValid(subject) &&
+        isInCastRange(subject)
       );
     });
 
     can('highlight', 'cell', (subject: Point) => {
-      return isTargetZoneValid(subject) && isInRange(subject);
+      return isTargetZoneValid(subject) && isInCastRange(subject);
     });
   });
 };
