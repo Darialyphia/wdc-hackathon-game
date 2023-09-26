@@ -6,7 +6,6 @@ export const callToArms: ModifierData = {
   description: 'This unit has +3 initiative',
   duration: 3,
   execute(state, entity) {
-    console.log('apply call to arms', entity.characterId);
     entity.initiative += 3;
   },
   cleanup(state, entity) {

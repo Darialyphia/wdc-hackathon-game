@@ -1,14 +1,23 @@
 { "columns":7,
  "image":"..\/..\/tilesets\/iso\/iso.png",
- "imageheight":64,
+ "imageheight":128,
  "imagewidth":448,
  "margin":0,
  "name":"iso",
  "spacing":0,
- "tilecount":7,
+ "tilecount":14,
  "tiledversion":"1.9.2",
  "tileheight":64,
  "tiles":[
+        {
+         "id":0,
+         "properties":[
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
         {
          "id":1,
          "properties":[
@@ -59,6 +68,24 @@
          "properties":[
                 {
                  "name":"walkabke",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":7,
+         "properties":[
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":8,
+         "properties":[
+                {
+                 "name":"walkable",
                  "type":"bool",
                  "value":false
                 }]

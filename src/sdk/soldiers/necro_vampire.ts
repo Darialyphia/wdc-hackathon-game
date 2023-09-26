@@ -12,7 +12,7 @@ export const necroVampire: SoldierData = {
   cost: 3,
   initiative: 7,
   maxHp: 8,
-  maxAp: 4,
+  maxAp: 3,
   attack: 2,
   defense: 0,
   speed: 3,

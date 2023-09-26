@@ -15,7 +15,6 @@ import type { AsepriteMeta } from '../../utils/spritesheet-parser';
 import { Polygon } from 'pixi.js';
 import { GlowFilter } from '@pixi/filter-glow';
 import { isTargetTypeValid } from '../../sdk/utils/skill.helpers';
-import { stat } from 'fs';
 import { AREA_TYPE } from '../../sdk/utils/entityData';
 
 const { entity } = defineProps<{
@@ -121,28 +120,28 @@ const isInSkillArea = computed(() => {
     case AREA_TYPE.CROSS:
       return (
         (entity.position.x === hoveredCell.value.x &&
-          distanceFromHoveredCell.value.x <= selectedSkill.value.areaSize) ||
+          distanceFromHoveredCell.value.x < selectedSkill.value.areaSize) ||
         (entity.position.y === hoveredCell.value.y &&
-          distanceFromHoveredCell.value.y <= selectedSkill.value.areaSize)
+          distanceFromHoveredCell.value.y < selectedSkill.value.areaSize)
       );
     case AREA_TYPE.LINE:
       if (hoveredCell.value.x === activeEntity.value.position.x) {
         return (
           entity.position.x === hoveredCell.value.x &&
-          distanceFromHoveredCell.value.x <= selectedSkill.value.areaSize
+          distanceFromHoveredCell.value.x < selectedSkill.value.areaSize
         );
       } else if (hoveredCell.value.y === activeEntity.value.position.y) {
         return (
           entity.position.y === hoveredCell.value.y &&
-          distanceFromHoveredCell.value.y <= selectedSkill.value.areaSize
+          distanceFromHoveredCell.value.y < selectedSkill.value.areaSize
         );
       }
       return false;
 
     case AREA_TYPE.SQUARE:
       return (
-        distanceFromHoveredCell.value.x <= selectedSkill.value.areaSize &&
-        distanceFromHoveredCell.value.y <= selectedSkill.value.areaSize
+        distanceFromHoveredCell.value.x < selectedSkill.value.areaSize &&
+        distanceFromHoveredCell.value.y < selectedSkill.value.areaSize
       );
 
     default:

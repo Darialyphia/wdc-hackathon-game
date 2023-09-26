@@ -57,7 +57,11 @@ export const necroGeneral01: GeneralData = {
       areaType: AREA_TYPE.SQUARE,
       areaSize: 1,
       execute({ state, caster }) {
-        const positions = [getRandomWalkableCell(state), getRandomWalkableCell(state)];
+        const positions = [
+          getRandomWalkableCell(state),
+          getRandomWalkableCell(state),
+          getRandomWalkableCell(state)
+        ];
 
         positions.forEach(position => {
           state.reducer(

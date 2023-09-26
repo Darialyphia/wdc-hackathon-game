@@ -22,7 +22,8 @@ const {
   canMoveTo,
   pathfinder,
   targetMode,
-  hoveredCell
+  hoveredCell,
+  rotation
 } = useGame();
 const app = useApplication();
 const cell = computed(() => getCellAt(state.value, { x, y }));
@@ -103,7 +104,7 @@ const hitArea = new Polygon([
     @pointerenter="hoveredCell = cell"
     @pointerleave="hoveredCell = null"
   >
-    <sprite :texture="texture">
+    <sprite :texture="texture" :scale-x="rotation === 90 || rotation === 270 ? -1 : 1">
       <HoveredCell v-if="cell" :cell="cell" />
     </sprite>
 

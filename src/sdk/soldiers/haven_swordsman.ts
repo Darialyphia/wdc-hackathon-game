@@ -12,7 +12,7 @@ export const havenSwordsman: SoldierData = {
   cost: 2,
   initiative: 6,
   maxHp: 6,
-  maxAp: 4,
+  maxAp: 1,
   attack: 2,
   defense: 1,
   speed: 3,
