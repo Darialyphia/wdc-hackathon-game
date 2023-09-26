@@ -23,12 +23,25 @@ export type SerializedModifier = {
   from: EntityId;
 };
 
-export const addModifier = (
-  state: GameState,
-  source: Entity,
-  target: Entity,
-  modifier: Omit<Modifier, 'from'>
-) => {
+export const addModifier = ({
+  state,
+  source,
+  target,
+  modifier,
+  canStack
+}: {
+  state: GameState;
+  source: Entity;
+  target: Entity;
+  modifier: Omit<Modifier, 'from'>;
+  canStack?: boolean;
+}) => {
+  const hasModifier = target.modifiers.some(
+    m => m.id === modifier.id && m.from === source.id
+  );
+
+  if (!canStack && hasModifier) return;
+
   modifier.execute(state, target, source);
   target.modifiers.push({ ...modifier, from: source.id });
 };

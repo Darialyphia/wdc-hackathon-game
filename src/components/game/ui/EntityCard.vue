@@ -96,7 +96,7 @@ const { entity } = defineProps<{
         class="flex gap-2 items-center text-0 my-2"
       >
         <div class="i-game-icons-abstract-086" />
-        {{ modifier.name }}
+        {{ modifier.name }} ({{ modifier.duration }} turns left)
       </li>
     </ul>
   </article>

@@ -65,7 +65,9 @@ const isMovePathHighlighted = computed(() => {
   );
   const isInPath = path.some(
     ([pathX, pathY], index) =>
-      x === pathX && y === pathY && index <= activeEntity.value.ap
+      x === pathX &&
+      y === pathY &&
+      index <= activeEntity.value.speed - activeEntity.value.movedAmount
   );
 
   const isActiveEntityPosition =

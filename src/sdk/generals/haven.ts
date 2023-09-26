@@ -57,7 +57,12 @@ export const havenGeneral01: GeneralData = {
       execute({ state, caster }) {
         state.entities.forEach(entity => {
           if (isAlly(caster.owner, entity)) {
-            addModifier(state, caster, entity, modifiersLookup.callToArms);
+            addModifier({
+              state,
+              source: caster,
+              target: entity,
+              modifier: modifiersLookup.callToArms
+            });
           }
         });
       }

@@ -53,7 +53,7 @@ export const applyAuras = (state: GameState) => {
 
         if (hasAura) return;
 
-        addModifier(state, source, target, aura.modifier);
+        addModifier({ state, source, target, modifier: aura.modifier });
       });
     });
   });
