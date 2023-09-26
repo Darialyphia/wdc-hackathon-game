@@ -11,6 +11,7 @@ import { triggersLookup } from './triggers';
 import { aurasLookup } from './auras';
 import { modifiersLookup } from './modifiers';
 import { exhaustiveSwitch } from '../utils/assertions';
+import type { SkillId } from './utils/entityData';
 
 export type EntityId = number;
 export type GameId = string;
@@ -24,27 +25,40 @@ export const ENTITY_STATES = {
 
 export type EntityState = Values<typeof ENTITY_STATES>;
 
-export type EntityBase = {
-  readonly id: EntityId;
-  readonly atbSeed: number;
-  characterId: CharacterId;
-  owner: PlayerId;
-  state: EntityState;
-  position: Point;
+type EntityApStats = {
   maxAp: number;
   ap: number;
   apRegenRate: number;
-  atb: number;
+};
+
+type EntityCombatstats = {
   attack: number;
   defense: number;
   speed: number;
   initiative: number;
   hp: number;
-  triggers: Trigger[];
-  modifiers: Modifier[];
-  auras: Aura[];
-  movedAmount: number;
 };
+
+type EntityAtbStats = {
+  atb: number;
+  readonly atbSeed: number;
+};
+
+export type EntityBase = EntityAtbStats &
+  EntityApStats &
+  EntityCombatstats & {
+    readonly id: EntityId;
+    characterId: CharacterId;
+    owner: PlayerId;
+    state: EntityState;
+    position: Point;
+    triggers: Trigger[];
+    modifiers: Modifier[];
+    auras: Aura[];
+    movedAmount: number;
+    skillsUsed: SkillId[];
+  };
+
 export type Soldier = EntityBase & {
   readonly kind: 'soldier';
   readonly blueprint: SoldierData;
@@ -80,6 +94,7 @@ export const addGeneral = (
     kind: 'general',
     id: ++state.nextEntityId,
     movedAmount: 0,
+    skillsUsed: [],
     atbSeed: options.atbSeed,
     atb: MAX_ATB + options.atbSeed,
     maxAp: blueprint.maxAp,
@@ -108,6 +123,7 @@ export const addSoldier = (
     blueprint,
     kind: 'soldier',
     id: ++state.nextEntityId,
+    skillsUsed: [],
     atbSeed: options.atbSeed,
     atb: MAX_ATB / 4 + options.atbSeed,
     maxAp: blueprint.maxAp,

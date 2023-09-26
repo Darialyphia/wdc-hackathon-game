@@ -22,6 +22,7 @@ export const skillUsedEvent = defineEvent({
     const entity = getEntityById(state, sourceId)!;
     const skill = getSkillById(entity, skillId)!;
     entity.ap -= skill.cost;
+    entity.skillsUsed.push(skillId);
 
     return state;
   },
