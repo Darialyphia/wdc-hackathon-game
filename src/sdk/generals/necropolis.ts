@@ -5,6 +5,9 @@ import { FACTIONS_IDS } from '../enums';
 import { getEntityAt } from '../utils/entity.helpers';
 import { triggersLookup } from '../triggers';
 import { soldiersLookup } from '../soldiers';
+import { getRandomWalkableCell } from '../utils/map.helpers';
+import { soldierSummonedEvent } from '../events/soldierSummoned.event';
+import { necroSkeleton } from '../soldiers/necro_skeleton';
 
 export const necroGeneral01: GeneralData = {
   characterId: 'necroGeneral01',
@@ -36,6 +39,33 @@ export const necroGeneral01: GeneralData = {
           from: caster.id,
           to: getEntityAt(state, target)!.id,
           basePower: 1
+        });
+      }
+    },
+    {
+      id: 'raise-dead',
+      iconUrl: '/icons/raise_dead.png',
+      name: 'Raise dead',
+      description: 'Summon 2 skeletons on random squares',
+      cost: 3,
+      minRange: 0,
+      range: 1,
+      targetZone: TARGET_ZONES.RADIUS,
+      targetType: TARGET_TYPES.SELF,
+      execute({ state, caster }) {
+        const positions = [getRandomWalkableCell(state), getRandomWalkableCell(state)];
+
+        positions.forEach(position => {
+          state.reducer(
+            state,
+            soldierSummonedEvent.create(
+              caster.id,
+              necroSkeleton.characterId,
+              position,
+              Math.random(),
+              true
+            )
+          );
         });
       }
     }

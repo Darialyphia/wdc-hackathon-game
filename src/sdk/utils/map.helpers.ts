@@ -45,3 +45,18 @@ export const getSurroundingCells = (state: GameState, { x, y }: Point) => {
     getCellAt(state, { x: x + 1, y: y + 1 }) // bottom right
   ].filter(isDefined);
 };
+
+export const getRandomWalkableCell = (state: GameState) => {
+  let found: GameMapCell | undefined = undefined;
+
+  while (!found) {
+    const x = Math.floor(Math.random() * state.map.width);
+    const y = Math.floor(Math.random() * state.map.height);
+
+    if (isCellWalkable(state, { x, y })) {
+      found = getCellAt(state, { x, y });
+    }
+  }
+
+  return found;
+};

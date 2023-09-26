@@ -18,6 +18,7 @@ export type SoldierSummonedEvent = {
     characterId: CharacterId;
     position: Point;
     atbSeed: number;
+    isExtraSummon?: boolean; // does the summon comes from a skill instead of a normal general summon
   };
 };
 
@@ -26,10 +27,11 @@ export const soldierSummonedEvent = defineEvent({
     sourceId: EntityId,
     characterId: CharacterId,
     position: Point,
-    atbSeed: number
+    atbSeed: number,
+    isExtraSummon?: boolean
   ): SoldierSummonedEvent => ({
     type: SOLDIER_SUMMONED,
-    payload: { sourceId, characterId, position, atbSeed }
+    payload: { sourceId, characterId, position, atbSeed, isExtraSummon }
   }),
 
   execute: (state, event) => {
@@ -40,7 +42,9 @@ export const soldierSummonedEvent = defineEvent({
     const blueprint = soldiersLookup[event.characterId as keyof typeof soldiersLookup];
     if (!blueprint) return state;
 
-    general.ap -= blueprint.cost;
+    if (!event.isExtraSummon) {
+      general.ap -= blueprint.cost;
+    }
 
     addSoldier(state, blueprint, {
       atbSeed: event.atbSeed,

@@ -24,8 +24,7 @@ export const necroVampire: SoldierData = {
       id: 'melee_attack',
       iconUrl: '/icons/melee_attack.png',
       name: 'Melee attack',
-      description:
-        'Deals damage to a close enemy and heals for the amount of damage dealt',
+      description: 'Deals damage to a close enemy',
       cost: 0,
       minRange: 0,
       range: 1,
@@ -35,7 +34,25 @@ export const necroVampire: SoldierData = {
         dealSingleTargetDamage(state, state.reducer, {
           from: caster.id,
           to: getEntityAt(state, target)!.id,
-          basePower: 1,
+          basePower: 1
+        });
+      }
+    },
+    {
+      id: 'life_drain',
+      iconUrl: '/icons/life_drain.png',
+      name: 'Life drain',
+      description: 'Drains HP from a close enemy',
+      cost: 2,
+      minRange: 0,
+      range: 2,
+      targetZone: TARGET_ZONES.RADIUS,
+      targetType: TARGET_TYPES.ENEMY,
+      execute({ state, caster, target }) {
+        dealSingleTargetDamage(state, state.reducer, {
+          from: caster.id,
+          to: getEntityAt(state, target)!.id,
+          basePower: 2,
           lifeDrainRatio: 1
         });
       }
