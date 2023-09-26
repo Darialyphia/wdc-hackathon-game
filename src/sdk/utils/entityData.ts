@@ -8,20 +8,26 @@ import type { Aura } from '../aura';
 
 export const TARGET_TYPES = {
   SELF: 'SELF',
-  GROUND: 'GROUND',
   ALLY: 'ALLY',
   ENEMY: 'ENEMY',
-  EMPTY: 'EMPTY'
+  EMPTY: 'EMPTY',
+  ANYWHERE: 'ANYWHERE'
 } as const;
-
 export type TargetType = Values<typeof TARGET_TYPES>;
 
 export const TARGET_ZONES = {
   LINE: 'LINE',
   RADIUS: 'RADIUS'
 } as const;
-
 export type TargetZone = Values<typeof TARGET_ZONES>;
+
+export const AREA_TYPE = {
+  RADIUS: 'RADIUS',
+  CROSS: 'SINGLE',
+  LINE: 'LINE',
+  SQUARE: 'SQUARE'
+};
+export type AreaType = Values<typeof AREA_TYPE>;
 
 export type SkillId = string;
 
@@ -40,6 +46,7 @@ export type SkillData = {
   minRange: number;
   targetZone: TargetZone;
   targetType: TargetType;
+  areaType: AreaType;
   iconUrl: string;
   execute(ctx: SkillExecutionContext): void;
 };

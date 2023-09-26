@@ -1,8 +1,10 @@
 import type { ModifierData, ModifierId } from '../modifier';
 import { divineInspiration } from './divine_inspiration';
+import { callToArms } from './call_to_arms';
 
 export const modifiersLookup = {
-  divineInspiration
+  divineInspiration,
+  callToArms
 } satisfies Record<ModifierId, ModifierData>;
 
 Object.entries(modifiersLookup).forEach(([k, v]) => {

@@ -1,6 +1,6 @@
 import type { GeneralData } from '.';
 import { dealSingleTargetDamage } from '../utils/skill.helpers';
-import { TARGET_TYPES, TARGET_ZONES } from '../utils/entityData';
+import { AREA_TYPE, TARGET_TYPES, TARGET_ZONES } from '../utils/entityData';
 import { FACTIONS_IDS } from '../enums';
 import { getEntityAt } from '../utils/entity.helpers';
 import { triggersLookup } from '../triggers';
@@ -15,7 +15,7 @@ export const necroGeneral01: GeneralData = {
   factionId: FACTIONS_IDS.NECRO,
   name: 'Necromancer',
   initiative: 10,
-  maxHp: 20,
+  maxHp: 15,
   maxAp: 5,
   attack: 3,
   defense: 1,
@@ -34,6 +34,7 @@ export const necroGeneral01: GeneralData = {
       range: 1,
       targetZone: TARGET_ZONES.RADIUS,
       targetType: TARGET_TYPES.ENEMY,
+      areaType: AREA_TYPE.RADIUS,
       execute({ state, caster, target }) {
         dealSingleTargetDamage(state, state.reducer, {
           from: caster.id,
@@ -51,7 +52,8 @@ export const necroGeneral01: GeneralData = {
       minRange: 0,
       range: 1,
       targetZone: TARGET_ZONES.RADIUS,
-      targetType: TARGET_TYPES.SELF,
+      targetType: TARGET_TYPES.ANYWHERE,
+      areaType: AREA_TYPE.RADIUS,
       execute({ state, caster }) {
         const positions = [getRandomWalkableCell(state), getRandomWalkableCell(state)];
 

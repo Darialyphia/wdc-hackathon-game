@@ -69,4 +69,8 @@ export const getEntityDistance = (entity1: Entity, entity2: Entity) => {
 };
 
 export const hasFinishedTurn = (entity: Entity) =>
-  entity.ap === 0 && entity.movedAmount === entity.speed;
+  entity.movedAmount === entity.speed &&
+  entity.ap === 0 &&
+  entity.blueprint.skills.every(
+    skill => skill.cost > 0 || entity.skillsUsed.includes(skill.id)
+  );

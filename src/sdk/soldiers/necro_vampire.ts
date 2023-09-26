@@ -1,7 +1,7 @@
 import type { SoldierData } from '.';
 import { FACTIONS_IDS } from '../enums';
 import { getEntityAt } from '../utils/entity.helpers';
-import { TARGET_TYPES, TARGET_ZONES } from '../utils/entityData';
+import { AREA_TYPE, TARGET_TYPES, TARGET_ZONES } from '../utils/entityData';
 import { dealSingleTargetDamage } from '../utils/skill.helpers';
 
 export const necroVampire: SoldierData = {
@@ -10,7 +10,7 @@ export const necroVampire: SoldierData = {
   factionId: FACTIONS_IDS.NECRO,
   name: 'Vampire',
   cost: 3,
-  initiative: 8,
+  initiative: 7,
   maxHp: 8,
   maxAp: 4,
   attack: 2,
@@ -30,6 +30,7 @@ export const necroVampire: SoldierData = {
       range: 1,
       targetZone: TARGET_ZONES.RADIUS,
       targetType: TARGET_TYPES.ENEMY,
+      areaType: AREA_TYPE.RADIUS,
       execute({ state, caster, target }) {
         dealSingleTargetDamage(state, state.reducer, {
           from: caster.id,
@@ -48,11 +49,12 @@ export const necroVampire: SoldierData = {
       range: 2,
       targetZone: TARGET_ZONES.RADIUS,
       targetType: TARGET_TYPES.ENEMY,
+      areaType: AREA_TYPE.RADIUS,
       execute({ state, caster, target }) {
         dealSingleTargetDamage(state, state.reducer, {
           from: caster.id,
           to: getEntityAt(state, target)!.id,
-          basePower: 2,
+          basePower: 1,
           lifeDrainRatio: 1
         });
       }

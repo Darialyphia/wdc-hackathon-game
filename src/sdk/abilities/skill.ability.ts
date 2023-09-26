@@ -22,8 +22,6 @@ export const createSkillAbility = (
     const { targetType } = skill;
     const entity = getEntityAt(state, subject);
     switch (targetType) {
-      case 'GROUND':
-        return true;
       case 'ALLY':
         return entity && entity?.owner === caster.owner;
       case 'ENEMY':
@@ -32,6 +30,8 @@ export const createSkillAbility = (
         return entity?.id === state.activeEntityId;
       case 'EMPTY':
         return entity === undefined;
+      case 'ANYWHERE':
+        return true;
       default:
         exhaustiveSwitch(targetType);
     }

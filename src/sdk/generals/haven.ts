@@ -1,10 +1,12 @@
 import type { GeneralData } from '.';
 import { dealSingleTargetDamage } from '../utils/skill.helpers';
-import { TARGET_TYPES, TARGET_ZONES } from '../utils/entityData';
+import { AREA_TYPE, TARGET_TYPES, TARGET_ZONES } from '../utils/entityData';
 import { FACTIONS_IDS } from '../enums';
-import { getEntityAt } from '../utils/entity.helpers';
+import { getEntityAt, isAlly } from '../utils/entity.helpers';
 import { aurasLookup } from '../auras';
 import { soldiersLookup } from '../soldiers';
+import { addModifier } from '../modifier';
+import { modifiersLookup } from '../modifiers';
 
 export const havenGeneral01: GeneralData = {
   characterId: 'havenGeneral01',
@@ -12,7 +14,7 @@ export const havenGeneral01: GeneralData = {
   factionId: FACTIONS_IDS.HAVEN,
   name: 'Paladin',
   initiative: 10,
-  maxHp: 20,
+  maxHp: 15,
   maxAp: 5,
   attack: 3,
   defense: 1,
@@ -32,11 +34,31 @@ export const havenGeneral01: GeneralData = {
       range: 1,
       targetZone: TARGET_ZONES.RADIUS,
       targetType: TARGET_TYPES.ENEMY,
+      areaType: AREA_TYPE.RADIUS,
       execute({ state, caster, target }) {
         dealSingleTargetDamage(state, state.reducer, {
           from: caster.id,
           to: getEntityAt(state, target)!.id,
           basePower: 1
+        });
+      }
+    },
+    {
+      id: 'call_to_arms',
+      iconUrl: '/icons/call_to_arms.png',
+      name: 'Call to arms',
+      description: 'Increase all allies initiative for 3 turns',
+      cost: 3,
+      minRange: 0,
+      range: 1,
+      targetZone: TARGET_ZONES.RADIUS,
+      targetType: TARGET_TYPES.ANYWHERE,
+      areaType: AREA_TYPE.RADIUS,
+      execute({ state, caster }) {
+        state.entities.forEach(entity => {
+          if (isAlly(caster.owner, entity)) {
+            addModifier(state, caster, entity, modifiersLookup.callToArms);
+          }
         });
       }
     }
