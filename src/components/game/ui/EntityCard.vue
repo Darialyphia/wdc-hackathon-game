@@ -98,7 +98,7 @@ const { entity } = defineProps<{
         <div class="i-game-icons-abstract-086" />
         {{ modifier.name }}
         <template v-if="modifier.duration !== Infinity">
-          ({{ modifier.duration }} turns left)
+          ({{ modifier.duration.toFixed(1) }} turns left)
         </template>
       </li>
     </ul>

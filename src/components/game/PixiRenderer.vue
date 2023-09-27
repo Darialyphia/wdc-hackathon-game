@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { Viewport } from 'pixi-viewport';
-import { useApplication } from 'vue3-pixi';
+import { onTick, useApplication } from 'vue3-pixi';
 import { CELL_SIZE } from '../../sdk/constants';
 import { Container } from 'pixi.js';
+import type { Point } from '../../utils/geometry';
 
-const { state } = useGame();
+const { state, selectedSkill } = useGame();
 const app = useApplication();
 
 const { setFxContainer, setScreenMapContext } = useFXSequencer();

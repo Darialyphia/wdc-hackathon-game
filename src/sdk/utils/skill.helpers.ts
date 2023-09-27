@@ -61,7 +61,7 @@ export const dealSingleTargetDamage = (
   const amount = isFlat
     ? basePower
     : Math.max(1, basePower + caster.attack - target.defense);
-  reducer(state, dealDamageEvent.create(state.activeEntityId, target.id, amount));
+  reducer(state, dealDamageEvent.create(state.activeEntityId, [target.id], amount));
 
   if (lifeDrainRatio) {
     healSingleTarget(state, reducer, {
@@ -85,7 +85,7 @@ export const healSingleTarget = (
   const entity = getEntityById(state, to);
   if (!entity) return;
 
-  reducer(state, healEvent.create(state.activeEntityId, entity.id, baseAmount));
+  reducer(state, healEvent.create(state.activeEntityId, [entity.id], baseAmount));
 
   if (entity.hp <= 0) {
     reducer(state, entityDiedEvent.create(from, entity.id));

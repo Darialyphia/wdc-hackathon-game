@@ -48,7 +48,7 @@ export type EventSequence<T extends AnyEvent> = (
     };
     screenMap: ScreenMapContext;
   }
-) => Promise<void>;
+) => Promise<any>;
 
 export const defineEvent = <
   TName extends string,

@@ -64,7 +64,7 @@ export const fromSerializedState = (serializedState: SerializedGameState): GameS
   return {
     ...serializedState,
     map: createGameMap(serializedState.map.map, serializedState.map.tileset),
-    reducer: createReducer({ transient: false }),
+    reducer: createReducer(),
     entities: serializedState.entities.map(deserializeEntity)
   };
 };
@@ -85,7 +85,7 @@ export const createGameState = ({
     history: [],
     globalAtb: 0,
     turn: 1,
-    reducer: createReducer({ transient: false })
+    reducer: createReducer()
   };
 
   players.forEach((player, i) => {
@@ -105,9 +105,7 @@ export const createGameState = ({
 
   if (history) {
     history.forEach(event => {
-      if (!event.transient) {
-        state.reducer(state, event);
-      }
+      state.reducer(state, event);
     });
   }
   return state;

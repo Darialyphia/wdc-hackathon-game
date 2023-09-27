@@ -10,40 +10,52 @@ export type DealDamageEvent = {
   type: typeof DEAL_DAMAGE;
   payload: {
     sourceId: EntityId;
-    targetId: EntityId;
+    targetIds: EntityId[];
     amount: number;
   };
 };
 
 export const dealDamageEvent = defineEvent({
-  create: (sourceId: EntityId, targetId: EntityId, amount: number): DealDamageEvent => ({
+  create: (
+    sourceId: EntityId,
+    targetIds: EntityId[],
+    amount: number
+  ): DealDamageEvent => ({
     type: DEAL_DAMAGE,
-    payload: { sourceId, targetId, amount }
+    payload: { sourceId, targetIds, amount }
   }),
-  execute: (state, { targetId, amount }) => {
-    const entity = getEntityById(state, targetId);
-    if (!entity) return state;
+  execute: (state, { targetIds, amount }) => {
+    targetIds.forEach(targetId => {
+      const entity = getEntityById(state, targetId);
+      if (!entity) return state;
 
-    entity.hp = Math.max(0, entity.hp - amount);
+      entity.hp = Math.max(0, entity.hp - amount);
+    });
 
     return state;
   },
-  sequence: (state, { payload }, { assets, fxContainer, sprites }) =>
-    new Promise(resolve => {
-      const targetSprite = sprites.resolve(payload.targetId);
+  sequence: (state, { payload }, { assets, sprites }) =>
+    Promise.all(
+      payload.targetIds.map(
+        targetId =>
+          new Promise<void>(resolve => {
+            payload.targetIds;
+            const targetSprite = sprites.resolve(targetId);
 
-      const sheet = assets.resolveFx('blood01');
-      const blood = new AnimatedSprite(createSpritesheetFrameObject('idle', sheet));
-      blood.position.set(0, 0);
-      blood.loop = false;
+            const sheet = assets.resolveFx('blood01');
+            const blood = new AnimatedSprite(createSpritesheetFrameObject('idle', sheet));
+            blood.position.set(0, 0);
+            blood.loop = false;
 
-      blood.onComplete = () => {
-        blood.destroy();
-      };
-      blood.anchor.set(0.5);
+            blood.onComplete = () => {
+              blood.destroy();
+            };
+            blood.anchor.set(0.5);
 
-      targetSprite?.addChild(blood);
-      blood.play();
-      resolve();
-    })
+            targetSprite?.addChild(blood);
+            blood.play();
+            resolve();
+          })
+      )
+    )
 });

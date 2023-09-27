@@ -34,7 +34,7 @@ export const executeTrigger = (state: GameState, event: TriggerEvent) => {
     entity.triggers.forEach(trigger => {
       if (trigger.on === event.type) {
         trigger.execute({
-          reducer: createReducer({ transient: true }),
+          reducer: createReducer(),
           state,
           from: entity
         });

@@ -15,30 +15,30 @@ const getReadyEntity = (state: GameState) => {
 };
 
 const tickGlobalAtb = (state: GameState) => {
-  state.globalAtb += GLOBAL_ATB_INITIATIVE;
+  const oldAtb = state.globalAtb;
+  state.globalAtb = Math.max(MAX_ATB, state.globalAtb + GLOBAL_ATB_INITIATIVE);
+  const diff = state.globalAtb - oldAtb;
+  const diffPercentage = diff / MAX_ATB;
 
-  if (state.globalAtb >= MAX_ATB) {
+  state.entities.forEach(e => {
+    e.triggers = e.triggers
+      .map(trigger => ({
+        ...trigger,
+        duration: trigger.duration - diffPercentage
+      }))
+      .filter(trigger => trigger.duration !== 0);
+
+    e.modifiers.forEach(modifier => {
+      modifier.duration -= diffPercentage;
+      if (modifier.duration === 0) {
+        removeModifier(state, e, modifier);
+      }
+    });
+  });
+
+  if (state.globalAtb === MAX_ATB) {
     executeTrigger(state, { type: 'new_turn', payload: {} });
     state.globalAtb = 0;
-    state.entities.forEach(e => {
-      e.triggers = e.triggers
-        .map(trigger => ({
-          ...trigger,
-          duration: trigger.duration - 1
-        }))
-        .filter(trigger => trigger.duration !== 0);
-
-      e.modifiers = e.modifiers.map(modifier => ({
-        ...modifier,
-        duration: modifier.duration - 1
-      }));
-
-      e.modifiers.forEach(modifier => {
-        if (modifier.duration === 0) {
-          removeModifier(state, e, modifier);
-        }
-      });
-    });
 
     state.turn++;
   }

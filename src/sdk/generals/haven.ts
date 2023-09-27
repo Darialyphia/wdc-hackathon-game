@@ -7,6 +7,7 @@ import { aurasLookup } from '../auras';
 import { soldiersLookup } from '../soldiers';
 import { addModifier } from '../modifier';
 import { modifiersLookup } from '../modifiers';
+import { modifierAddedEvent } from '../events/modifierAdded.event';
 
 export const havenGeneral01: GeneralData = {
   characterId: 'havenGeneral01',
@@ -57,17 +58,14 @@ export const havenGeneral01: GeneralData = {
       areaType: AREA_TYPE.SQUARE,
       areaSize: Infinity,
       execute({ state, caster }) {
-        state.entities.forEach(entity => {
-          if (isAlly(caster.owner, entity)) {
-            console.log('add modifier to', entity.characterId);
-            addModifier({
-              state,
-              source: caster,
-              target: entity,
-              modifier: modifiersLookup.callToArms
-            });
-          }
-        });
+        state.reducer(
+          state,
+          modifierAddedEvent.create(
+            caster.id,
+            state.entities.filter(entity => isAlly(caster.owner, entity)).map(e => e.id),
+            modifiersLookup.callToArms.id
+          )
+        );
       }
     }
   ]

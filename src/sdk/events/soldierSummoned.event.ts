@@ -59,7 +59,7 @@ export const soldierSummonedEvent = defineEvent({
   },
 
   sequence: (state, { payload }, { assets, fxContainer, screenMap }) =>
-    new Promise(resolve => {
+    new Promise<void>(resolve => {
       const sheet = assets.resolveFx('summoningCircle');
       const summonCircle = new AnimatedSprite(
         createSpritesheetFrameObject('idle', sheet)

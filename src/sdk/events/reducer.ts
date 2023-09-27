@@ -16,8 +16,13 @@ import {
 import { HEAL, type HealEvent, healEvent } from './healEvent';
 import { exhaustiveSwitch } from '../../utils/assertions';
 import { executeTrigger } from '../trigger';
+import {
+  MODIFIER_ADDED,
+  modifierAddedEvent,
+  type ModifierAddedEvent
+} from './modifierAdded.event';
 
-export type GameEvent = (
+export type GameEvent =
   | EntityMovedEvent
   | EntityDiedEvent
   | SoldierSummonedEvent
@@ -25,40 +30,41 @@ export type GameEvent = (
   | DealDamageEvent
   | SkillUsedEvent
   | HealEvent
-) & { transient?: boolean };
+  | ModifierAddedEvent;
 
 export type GameReducer = ReturnType<typeof createReducer>;
-export const createReducer =
-  ({ transient }: { transient: boolean }) =>
-  (state: GameState, event: GameEvent) => {
-    const { type, payload } = event;
+export const createReducer = () => (state: GameState, event: GameEvent) => {
+  const { type, payload } = event;
 
-    switch (type) {
-      case ENTITY_MOVED:
-        entityMovedEvent.execute(state, payload);
-        break;
-      case SOLDIER_SUMMONED:
-        soldierSummonedEvent.execute(state, payload);
-        break;
-      case END_TURN:
-        endTurnEvent.execute(state, payload);
-        break;
-      case DEAL_DAMAGE:
-        dealDamageEvent.execute(state, payload);
-        break;
-      case SKILL_USED:
-        skillUsedEvent.execute(state, payload);
-        break;
-      case ENTITY_DIED:
-        entityDiedEvent.execute(state, payload);
-        break;
-      case HEAL:
-        healEvent.execute(state, payload);
-        break;
-      default:
-        exhaustiveSwitch(type);
-    }
+  switch (type) {
+    case ENTITY_MOVED:
+      entityMovedEvent.execute(state, payload);
+      break;
+    case SOLDIER_SUMMONED:
+      soldierSummonedEvent.execute(state, payload);
+      break;
+    case END_TURN:
+      endTurnEvent.execute(state, payload);
+      break;
+    case DEAL_DAMAGE:
+      dealDamageEvent.execute(state, payload);
+      break;
+    case SKILL_USED:
+      skillUsedEvent.execute(state, payload);
+      break;
+    case ENTITY_DIED:
+      entityDiedEvent.execute(state, payload);
+      break;
+    case HEAL:
+      healEvent.execute(state, payload);
+      break;
+    case MODIFIER_ADDED:
+      modifierAddedEvent.execute(state, payload);
+      break;
+    default:
+      exhaustiveSwitch(type);
+  }
 
-    executeTrigger(state, event);
-    state.history.push(event);
-  };
+  executeTrigger(state, event);
+  state.history.push(event);
+};

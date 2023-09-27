@@ -28,7 +28,7 @@ export const skillUsedEvent = defineEvent({
   },
 
   sequence: (state, { payload }, { assets, sprites }) => {
-    return new Promise(resolve => {
+    return new Promise<void>(resolve => {
       const entity = getEntityById(state, payload.sourceId)!;
 
       // play attack animation

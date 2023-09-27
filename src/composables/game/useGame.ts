@@ -221,7 +221,7 @@ export const useGameProvider = (
   const atbTimeline = computed(() => {
     const timelineState = fromSerializedState(serializeGameState(getState()));
 
-    const timelineReducer = createReducer({ transient: false });
+    const timelineReducer = createReducer();
     const timeline = [getActiveEntity(timelineState)];
     for (let i = 0; i < 10; i++) {
       timelineReducer(timelineState, endTurnEvent.create(timelineState.activeEntityId));
