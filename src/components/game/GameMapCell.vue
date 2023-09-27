@@ -101,11 +101,16 @@ const hitArea = new Polygon([
   <container
     :filters="isMovePathHighlighted ? [pathFilter] : []"
     :hit-area="hitArea"
+    :cursor="cursor"
     @pointerenter="hoveredCell = cell"
     @pointerleave="hoveredCell = null"
   >
-    <sprite :texture="texture" :scale-x="rotation === 90 || rotation === 270 ? -1 : 1">
-      <HoveredCell v-if="cell" :cell="cell" />
+    <sprite
+      :texture="texture"
+      :scale-x="rotation === 90 || rotation === 270 ? -1 : 1"
+      :cursor="cursor"
+    >
+      <HoveredCell v-if="cell" :cell="cell" :cursor="cursor" />
     </sprite>
 
     <GameMapCellHighlight v-if="cell" :cell="cell" :cursor="cursor" />

@@ -20,11 +20,13 @@ watch(
   newPos => {
     gsap.to(tweened.value, {
       duration: isPlaying.value ? 0.3 : props.speed ?? 0.3,
-      x: newPos.x
+      x: newPos.x,
+      ease: isPlaying.value ? Power0.easeNone : Power2.easeOut
     });
     gsap.to(tweened.value, {
       duration: isPlaying.value ? 0.3 : props.speed ?? 0.3,
-      y: newPos.y
+      y: newPos.y,
+      ease: isPlaying.value ? Power0.easeNone : Power2.easeOut
     });
   }
 );

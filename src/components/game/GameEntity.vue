@@ -250,7 +250,7 @@ const hitArea = computed(() => {
     :z-index="entity.position.y"
     :sortable-children="true"
     :cursor="cursor"
-    :pivot-x="-CELL_SIZE / 2"
+    :pivot-x="rotation % 180 === 90 ? CELL_SIZE / 2 : -CELL_SIZE / 2"
     :event-mode="
       targetMode === 'move' && entity.id !== activeEntity.id ? 'none' : 'static'
     "
