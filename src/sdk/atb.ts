@@ -16,7 +16,7 @@ const getReadyEntity = (state: GameState) => {
 
 const tickGlobalAtb = (state: GameState) => {
   const oldAtb = state.globalAtb;
-  state.globalAtb = Math.max(MAX_ATB, state.globalAtb + GLOBAL_ATB_INITIATIVE);
+  state.globalAtb = Math.min(MAX_ATB, state.globalAtb + GLOBAL_ATB_INITIATIVE);
   const diff = state.globalAtb - oldAtb;
   const diffPercentage = diff / MAX_ATB;
 

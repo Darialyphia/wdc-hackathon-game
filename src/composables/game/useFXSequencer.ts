@@ -16,6 +16,7 @@ import type { MaybeRefOrGetter } from '@vueuse/core';
 import type { AssetsContext } from './useAssets';
 import type { EventSequence, ScreenMapContext } from '../../sdk/events';
 import { HEAL, healEvent } from '../../sdk/events/healEvent';
+import { MODIFIER_ADDED, modifierAddedEvent } from '../../sdk/events/modifierAdded.event';
 
 export type FXSequenceStep<T extends { type: string; payload: any }> = {
   event: T;
@@ -85,6 +86,9 @@ export const useFXSequencerProvider = (assetsCtx: AssetsContext): FXSequenceCont
 
         case HEAL:
           return { event, play: healEvent.sequence };
+
+        case MODIFIER_ADDED:
+          return { event, play: modifierAddedEvent.sequence };
 
         default:
           return exhaustiveSwitch(type);

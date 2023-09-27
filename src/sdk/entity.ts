@@ -174,7 +174,8 @@ export const deserializeGeneral = (serializedEntity: SerializedGeneral): General
     })),
     modifiers: serializedEntity.modifiers.map(modifier => ({
       ...modifiersLookup[modifier.id as keyof typeof modifiersLookup],
-      from: modifier.from
+      from: modifier.from,
+      duration: modifier.duration
     }))
   };
 };
@@ -192,7 +193,8 @@ export const deserializeSoldier = (serializedEntity: SerializedSoldier): Soldier
     })),
     modifiers: serializedEntity.modifiers.map(modifier => ({
       ...modifiersLookup[modifier.id as keyof typeof modifiersLookup],
-      from: modifier.from
+      from: modifier.from,
+      duration: modifier.duration
     }))
   };
 };
