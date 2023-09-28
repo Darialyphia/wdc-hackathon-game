@@ -1,11 +1,10 @@
 <script lang="ts" setup>
 import { Viewport } from 'pixi-viewport';
-import { onTick, useApplication } from 'vue3-pixi';
+import { useApplication } from 'vue3-pixi';
 import { CELL_SIZE } from '../../sdk/constants';
 import { Container } from 'pixi.js';
-import type { Point } from '../../utils/geometry';
 
-const { state, selectedSkill } = useGame();
+const { state } = useGame();
 const app = useApplication();
 
 const { setFxContainer, setScreenMapContext } = useFXSequencer();
@@ -17,13 +16,15 @@ setScreenMapContext(screenMap);
 
 const viewport = ref<Viewport>();
 
-const rotatedEntities = computed(() => {
-  return state.value.entities.map(entity => {
-    return {
-      entity,
-      position: screenMap.getRotatedPosition(entity.position)
-    };
-  });
+const displayedEntities = computed(() => {
+  return state.value.entities
+    .filter(e => e.state === 'ALIVE')
+    .map(entity => {
+      return {
+        entity,
+        position: screenMap.getRotatedPosition(entity.position)
+      };
+    });
 });
 
 until(viewport)
@@ -54,7 +55,7 @@ until(viewport)
       <GameMap />
 
       <IsoPositioner
-        v-for="entity in rotatedEntities"
+        v-for="entity in displayedEntities"
         :key="entity.entity.id"
         :x="entity.position.x"
         :y="entity.position.y"

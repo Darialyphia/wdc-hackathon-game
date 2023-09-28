@@ -1,5 +1,5 @@
 import type { GameState } from '.';
-import type { Entity } from './entity';
+import { ENTITY_STATES, type Entity } from './entity';
 import { createReducer, type GameEvent, type GameReducer } from './events/reducer';
 
 export type TriggerEvent =
@@ -29,7 +29,7 @@ export type SerializedTrigger = {
 
 export const executeTrigger = (state: GameState, event: TriggerEvent) => {
   state.entities.forEach(entity => {
-    if (entity.state === 'DEAD') return;
+    if (entity.state !== ENTITY_STATES.ALIVE) return;
 
     entity.triggers.forEach(trigger => {
       if (trigger.on === event.type) {

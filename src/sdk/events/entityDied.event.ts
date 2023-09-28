@@ -22,7 +22,7 @@ export const entityDiedEvent = defineEvent({
   execute: (state, { targetId }) => {
     const entity = getEntityById(state, targetId)!;
     entity.state = ENTITY_STATES.DEAD;
-    entity.position = { x: -1, y: -1 };
+    entity.position = { x: Infinity, y: Infinity };
 
     applyAuras(state);
 

@@ -9,6 +9,6 @@ export const callToArms: ModifierData = {
     entity.initiative += 3;
   },
   cleanup(state, entity) {
-    entity.defense -= 3;
+    entity.initiative -= 3;
   }
 };

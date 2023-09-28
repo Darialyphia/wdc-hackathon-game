@@ -2,25 +2,24 @@ import type { GeneralData } from '.';
 import { dealSingleTargetDamage } from '../utils/skill.helpers';
 import { AREA_TYPE, TARGET_TYPES, TARGET_ZONES } from '../utils/entityData';
 import { FACTIONS_IDS } from '../enums';
-import { getEntityAt, isAlly } from '../utils/entity.helpers';
+import { getAllies, getEntityAt } from '../utils/entity.helpers';
 import { aurasLookup } from '../auras';
 import { soldiersLookup } from '../soldiers';
-import { addModifier } from '../modifier';
 import { modifiersLookup } from '../modifiers';
 import { modifierAddedEvent } from '../events/modifierAdded.event';
 
 export const havenGeneral01: GeneralData = {
   characterId: 'havenGeneral01',
+  name: 'Paladin',
   iconUrl: '/icons/haven_general_01.gif',
   factionId: FACTIONS_IDS.HAVEN,
-  name: 'Paladin',
-  initiative: 10,
-  maxHp: 15,
   maxAp: 5,
+  apRegenRate: 1,
+  maxHp: 15,
+  initiative: 10,
   attack: 3,
   defense: 1,
   speed: 3,
-  apRegenRate: 1,
   summonBlueprints: [soldiersLookup.havenSwordsman, soldiersLookup.havenArcher],
   auras: [aurasLookup.divineInspiration],
   triggers: [],
@@ -62,7 +61,7 @@ export const havenGeneral01: GeneralData = {
           state,
           modifierAddedEvent.create(
             caster.id,
-            state.entities.filter(entity => isAlly(caster.owner, entity)).map(e => e.id),
+            getAllies(state, caster).map(e => e.id),
             modifiersLookup.callToArms.id
           )
         );

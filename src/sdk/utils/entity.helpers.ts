@@ -1,7 +1,14 @@
 import { isObject } from '../../utils/assertions';
 import { exhaustiveSwitch } from '../../utils/assertions';
 import type { GameState } from '..';
-import type { Entity, EntityId, General, PlayerId, Soldier } from '../entity';
+import {
+  ENTITY_STATES,
+  type Entity,
+  type EntityId,
+  type General,
+  type PlayerId,
+  type Soldier
+} from '../entity';
 import { tickUntilActiveEntity } from '../atb';
 import type { Point } from '../../utils/geometry';
 
@@ -19,6 +26,18 @@ export const isEnemy = (playerId: PlayerId, entity: Entity) => {
 export const isActive = (state: GameState, entity: Entity) => {
   return entity.id === state.activeEntityId;
 };
+
+export const getAllies = (state: GameState, entity: Entity, includeDead?: boolean) =>
+  state.entities.filter(e => {
+    if (!includeDead && e.state === ENTITY_STATES.DEAD) return false;
+    return e.owner === entity.owner;
+  });
+
+export const getEnemies = (state: GameState, entity: Entity, includeDead?: boolean) =>
+  state.entities.filter(e => {
+    if (!includeDead && e.state === ENTITY_STATES.DEAD) return false;
+    return e.owner !== entity.owner;
+  });
 
 export const isSoldier = (e: unknown): e is Soldier =>
   isObject(e) && 'kind' in e && e.kind === 'soldier';

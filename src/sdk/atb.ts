@@ -21,6 +21,8 @@ const tickGlobalAtb = (state: GameState) => {
   const diffPercentage = diff / MAX_ATB;
 
   state.entities.forEach(e => {
+    if (e.state !== ENTITY_STATES.ALIVE) return;
+
     e.triggers = e.triggers
       .map(trigger => ({
         ...trigger,
@@ -30,7 +32,7 @@ const tickGlobalAtb = (state: GameState) => {
 
     e.modifiers.forEach(modifier => {
       modifier.duration -= diffPercentage;
-      if (modifier.duration === 0) {
+      if (modifier.duration <= 0) {
         removeModifier(state, e, modifier);
       }
     });

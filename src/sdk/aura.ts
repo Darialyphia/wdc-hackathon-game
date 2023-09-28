@@ -1,5 +1,6 @@
 import type { GameState } from '.';
 import type { Values } from '../utils/types';
+import { ENTITY_STATES } from './entity';
 import { addModifier, removeModifier, type ModifierData } from './modifier';
 import { getEntityDistance, isAlly, isEnemy } from './utils/entity.helpers';
 
@@ -31,6 +32,8 @@ export const applyAuras = (state: GameState) => {
   state.entities.forEach(source => {
     source.auras.forEach(aura => {
       state.entities.forEach(target => {
+        if (target.state !== ENTITY_STATES.ALIVE) return;
+
         if (target.id === source.id && !aura.applyToSelf) return;
 
         const isValidTarget =
@@ -39,6 +42,9 @@ export const applyAuras = (state: GameState) => {
           (aura.targetType === AURA_TARGET_TYPES.ALLY && isAlly(source.owner, target));
 
         if (!isValidTarget) return;
+        if (source.state !== ENTITY_STATES.ALIVE) {
+          return removeModifier(state, target, { ...aura.modifier, from: source.id });
+        }
 
         const dist = getEntityDistance(source, target);
         const isOutOfRange = dist.x > aura.range || dist.y > aura.range;

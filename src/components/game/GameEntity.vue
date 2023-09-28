@@ -38,6 +38,7 @@ const {
 const { resolveSprite } = useAssets();
 
 const onPointerup = () => {
+  console.log(targetMode.value);
   if (selectedSkill.value) {
     useSkill(getCellAt(state.value, entity.position)!);
   }
