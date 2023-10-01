@@ -6,7 +6,6 @@ const isReady = ref(false);
 until(isLoading)
   .not.toBe(true)
   .then(() => {
-    console.log('is ready');
     isReady.value = true;
   });
 </script>
@@ -20,7 +19,7 @@ until(isLoading)
       <RouterView v-else v-slot="{ Component }">
         <template v-if="Component">
           <Suspense>
-            <component :is="Component"></component>
+            <component :is="Component" />
 
             <template #fallback>
               <main class="container">Loading...</main>

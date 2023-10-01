@@ -56,7 +56,8 @@ export type EntityBase = EntityAtbStats &
     modifiers: Modifier[];
     auras: Aura[];
     movedAmount: number;
-    skillsUsed: SkillId[];
+    maxActions: number;
+    actionsTaken: number;
   };
 
 export type Soldier = EntityBase & {
@@ -94,11 +95,12 @@ export const addGeneral = (
     kind: 'general',
     id: ++state.nextEntityId,
     movedAmount: 0,
-    skillsUsed: [],
+    actionsTaken: 0,
     atbSeed: options.atbSeed,
     atb: MAX_ATB + options.atbSeed,
     maxAp: blueprint.maxAp,
     ap: blueprint.maxAp,
+    maxActions: blueprint.maxActions,
     apRegenRate: blueprint.apRegenRate,
     hp: blueprint.maxHp,
     triggers: [...blueprint.triggers],
@@ -123,17 +125,18 @@ export const addSoldier = (
     blueprint,
     kind: 'soldier',
     id: ++state.nextEntityId,
-    skillsUsed: [],
     atbSeed: options.atbSeed,
     atb: MAX_ATB / 4 + options.atbSeed,
     maxAp: blueprint.maxAp,
     ap: blueprint.maxAp,
     apRegenRate: blueprint.apRegenRate,
+    maxActions: blueprint.maxActions,
     hp: blueprint.maxHp,
     triggers: [...blueprint.triggers],
     modifiers: [],
     auras: blueprint.auras,
     movedAmount: 0,
+    actionsTaken: 0,
     initiative: blueprint.initiative,
     attack: blueprint.attack,
     defense: blueprint.defense,

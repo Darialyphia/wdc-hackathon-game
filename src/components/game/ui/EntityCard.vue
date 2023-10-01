@@ -119,7 +119,12 @@ const { entity } = defineProps<{
 
   > img {
     transform: translateY(-25%);
+
+    aspect-ratio: 1;
+    width: var(--size-11);
     padding: var(--size-1);
+
+    object-fit: cover;
     border-radius: var(--radius-round);
     & + * {
       margin-top: calc(-1 * var(--size-3));

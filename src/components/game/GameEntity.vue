@@ -38,7 +38,6 @@ const {
 const { resolveSprite } = useAssets();
 
 const onPointerup = () => {
-  console.log(targetMode.value);
   if (selectedSkill.value) {
     useSkill(getCellAt(state.value, entity.position)!);
   }
@@ -236,13 +235,7 @@ const hitArea = computed(() => {
     x: meta.size.w / Object.keys(sprite.data.frames).length / 2,
     y: meta.size.h / 2
   };
-  console.log(
-    entity.characterId,
-    { x: x - offset.x, y: y - offset.y },
-    { x: x + w - offset.x, y: y - offset.y },
-    { x: x + w - offset.x, y: y + h - offset.y },
-    { x: x - offset.x, y: y + h - offset.y }
-  );
+
   return new Polygon([
     { x: x - offset.x, y: y - offset.y },
     { x: x + w - offset.x, y: y - offset.y },

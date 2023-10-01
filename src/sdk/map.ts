@@ -6,6 +6,7 @@ import {
 } from '@workadventure/tiled-map-type-guard';
 import type { Point } from '../utils/geometry';
 import { isDefined, isNumber } from '../utils/assertions';
+import type { MapData, MapId } from './maps';
 
 export type GameMapCell = Point & {
   isWalkable: boolean;
@@ -14,6 +15,7 @@ export type GameMapCell = Point & {
 };
 
 export type GameMap = GameTiledMap & {
+  id: MapId;
   raw: { map: ITiledMap; tileset: ITiledMapTileset };
 };
 export type SerializedMap = { map: ITiledMap; tileset: ITiledMapTileset };
@@ -108,15 +110,13 @@ export const createTiledMap = (
   };
 };
 
-export const createGameMap = (
-  tiledMap: ITiledMap,
-  tileset: ITiledMapTileset
-): GameMap => {
-  const map = createTiledMap(tiledMap, tileset);
+export const createGameMap = ({ layout, id, tileset }: MapData): GameMap => {
+  const map = createTiledMap(layout, tileset);
 
   return {
     ...map,
-    raw: { map: tiledMap, tileset }
+    id,
+    raw: { map: layout, tileset }
   };
 };
 

@@ -65,12 +65,12 @@ export const resetEntity = (entity: Entity) => {
     case 'general':
       entity.atb = entity.atbSeed;
       entity.movedAmount = 0;
-      entity.skillsUsed = [];
+      entity.actionsTaken = 0;
       break;
     case 'soldier':
       entity.atb = entity.atbSeed;
       entity.movedAmount = 0;
-      entity.skillsUsed = [];
+      entity.actionsTaken = 0;
       break;
     default:
       exhaustiveSwitch(kind);
@@ -87,9 +87,6 @@ export const getEntityDistance = (entity1: Entity, entity2: Entity) => {
   };
 };
 
-export const hasFinishedTurn = (entity: Entity) =>
-  entity.movedAmount === entity.speed &&
-  entity.ap === 0 &&
-  entity.blueprint.skills.every(
-    skill => skill.cost > 0 || entity.skillsUsed.includes(skill.id)
-  );
+export const hasFinishedTurn = (entity: Entity) => {
+  return entity.movedAmount === entity.speed && entity.actionsTaken === entity.maxActions;
+};

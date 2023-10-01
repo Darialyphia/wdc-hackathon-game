@@ -64,6 +64,7 @@ export type EntityData = {
   defense: number;
   speed: number;
   initiative: number;
+  maxActions: number;
   triggers: Trigger[];
   auras: Aura[];
 };

@@ -44,6 +44,7 @@ export const soldierSummonedEvent = defineEvent({
 
     if (!event.isExtraSummon) {
       general.ap -= blueprint.cost;
+      activeEntity.actionsTaken++;
     }
 
     addSoldier(state, blueprint, {

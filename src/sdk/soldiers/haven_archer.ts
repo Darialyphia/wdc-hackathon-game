@@ -18,6 +18,7 @@ export const havenArcher: SoldierData = {
   defense: 0,
   speed: 3,
   apRegenRate: 1,
+  maxActions: 1,
   triggers: [],
   auras: [],
   skills: [

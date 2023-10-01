@@ -15,7 +15,7 @@ type Abilities = [MapActions, 'cell' | GameMapCell] | [SkillActions, 'skill' | S
 export type EntityAbility = PureAbility<Abilities>;
 
 export const createEntityAbility = (state: GameState, entity: Entity): EntityAbility => {
-  return createAbility<EntityAbility>(({ can, cannot }) => {
+  return createAbility<EntityAbility>(({ can }) => {
     can('move', 'cell', (subject: GameMapCell) => {
       return isCellWalkable(state, subject);
     });
@@ -24,10 +24,6 @@ export const createEntityAbility = (state: GameState, entity: Entity): EntityAbi
       const skill = getSkillById(entity, subject.id);
 
       return skill && entity.ap >= subject.cost;
-    });
-
-    cannot('cast', 'skill', (subject: SkillData) => {
-      return entity.skillsUsed.includes(subject.id);
     });
   });
 };

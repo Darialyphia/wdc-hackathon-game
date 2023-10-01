@@ -22,7 +22,7 @@ export const skillUsedEvent = defineEvent({
     const entity = getEntityById(state, sourceId)!;
     const skill = getSkillById(entity, skillId)!;
     entity.ap -= skill.cost;
-    entity.skillsUsed.push(skillId);
+    entity.actionsTaken++;
 
     return state;
   },
@@ -42,7 +42,7 @@ export const skillUsedEvent = defineEvent({
       sprite.loop = false;
 
       sprite.onFrameChange = frame => {
-        if (frame > sprite.totalFrames * 0.75) {
+        if (frame > sprite.totalFrames * 0.5) {
           resolve();
           sprite.onFrameChange = undefined;
         }

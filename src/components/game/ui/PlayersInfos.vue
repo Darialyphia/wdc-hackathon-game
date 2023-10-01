@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { General } from '../../../sdk/entity';
+
 const { game, state } = useGame();
 
 const players = computed(() =>
@@ -6,14 +8,14 @@ const players = computed(() =>
     ...player,
     general: state.value.entities.find(
       e => e.kind === 'general' && e.owner === player.userId
-    )
+    ) as General
   }))
 );
 </script>
 
 <template>
   <div class="player player-1">
-    <img :src="players[0].general?.blueprint.iconUrl" class="fancy-surface" />
+    <img :src="players[0].general?.blueprint.portraitUrl" class="fancy-surface" />
     <div>
       <div class="player-name">{{ players[0].user.name }}</div>
 
@@ -25,7 +27,7 @@ const players = computed(() =>
   </div>
 
   <div class="player player-2">
-    <img :src="players[1].general?.blueprint.iconUrl" class="fancy-surface" />
+    <img :src="players[1].general?.blueprint.portraitUrl" class="fancy-surface" />
     <div>
       <div class="player-name">{{ players[1].user.name }}</div>
 
@@ -45,10 +47,16 @@ const players = computed(() =>
   text-shadow: black 1px 0 5px;
 
   img {
+    aspect-ratio: 1;
+    width: var(--size-11);
     margin-inline: auto;
     padding: var(--size-1);
+
+    object-fit: cover;
     border-width: 3px;
     border-radius: var(--radius-round);
+
+    image-rendering: pixelated;
   }
   [class^='i'] {
     font-size: var(--font-size-4);

@@ -8,12 +8,13 @@ import {
   type SerializedEntity,
   deserializeEntity
 } from './entity';
-import { createGameMap, type GameMap, type SerializedMap } from './map';
+import { createGameMap, type GameMap } from './map';
 import { tickUntilActiveEntity } from './atb';
 import { type GameLifecycleState, GAME_LIFECYCLE_STATES } from './constants';
 import { createReducer, type GameEvent, type GameReducer } from './events/reducer';
 import type { Nullable, Override } from '../utils/types';
 import { generalsLookup } from './generals';
+import { mapsLookup, type MapId } from './maps';
 
 export type GameState = {
   lifecycleState: GameLifecycleState;
@@ -32,7 +33,7 @@ export type GameState = {
 export type SerializedGameState = Override<
   GameState,
   {
-    map: SerializedMap;
+    map: MapId;
     entities: SerializedEntity[];
     reducer?: undefined;
   }
@@ -45,7 +46,7 @@ type CreateGameOptionsPlayer = {
 export type CreateGameOptions = {
   players: [CreateGameOptionsPlayer, CreateGameOptionsPlayer];
   history?: GameEvent[];
-  map: SerializedMap;
+  mapId: MapId;
 };
 
 export const serializeGameState = (state: GameState): SerializedGameState => {
@@ -54,7 +55,7 @@ export const serializeGameState = (state: GameState): SerializedGameState => {
 
   return {
     ...rest,
-    map: state.map.raw,
+    map: state.map.id,
     entities: state.entities.map(serializeEntity),
     history: []
   };
@@ -63,7 +64,7 @@ export const serializeGameState = (state: GameState): SerializedGameState => {
 export const fromSerializedState = (serializedState: SerializedGameState): GameState => {
   return {
     ...serializedState,
-    map: createGameMap(serializedState.map.map, serializedState.map.tileset),
+    map: createGameMap(mapsLookup[serializedState.map as keyof typeof mapsLookup]),
     reducer: createReducer(),
     entities: serializedState.entities.map(deserializeEntity)
   };
@@ -72,7 +73,7 @@ export const fromSerializedState = (serializedState: SerializedGameState): GameS
 export const createGameState = ({
   players,
   history = [],
-  map
+  mapId
 }: CreateGameOptions): GameState => {
   const state: GameState = {
     winner: null,
@@ -80,7 +81,7 @@ export const createGameState = ({
     players: [players[0].id, players[1].id],
     nextEntityId: 0,
     activeEntityId: 0,
-    map: createGameMap(map.map, map.tileset),
+    map: createGameMap(mapsLookup[mapId as keyof typeof mapsLookup]),
     entities: [],
     history: [],
     globalAtb: 0,

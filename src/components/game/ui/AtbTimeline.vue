@@ -31,7 +31,7 @@ const rotateCw = () => {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="postcss">
 .timeline {
   position: absolute;
   top: var(--size-4);
@@ -44,29 +44,20 @@ const rotateCw = () => {
 
   padding-inline: var(--size-2);
 
-  background-color: hsl(0 0% 0% / 0.6);
-  backdrop-filter: blur(5px);
   border-radius: var(--radius-3);
+
+  img {
+    aspect-ratio: 1;
+    object-fit: contain;
+  }
+
   button:not(.ui-icon-button) {
     all: initial;
-
     aspect-ratio: 1;
-    width: 48px;
     padding: 0;
-
-    background: radial-gradient(
-      circle at center,
-      rgba(255, 255, 255, 0.5),
-      transparent 65%
-    );
-
     image-rendering: pixelated;
     &:hover {
       filter: brightness(130%);
-    }
-
-    &:first-of-type {
-      width: 64px;
     }
   }
 }
@@ -87,5 +78,6 @@ const rotateCw = () => {
 
 .ui-icon-button {
   transform: rotateZ(90deg);
+  flex-shrink: 0;
 }
 </style>

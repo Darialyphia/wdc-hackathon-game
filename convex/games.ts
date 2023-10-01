@@ -23,9 +23,6 @@ import { parse, stringify } from 'zipson';
 import { ITiledMap, ITiledMapTileset } from '@workadventure/tiled-map-type-guard';
 import pkgJson from '../package.json';
 
-import hardcodedMap from '../src/assets/maps/iso/iso.json';
-import hardcodedTileset from '../src/assets/maps/iso/tileset.json';
-
 // Create a new task with the given text
 export const create = mutation({
   args: {
@@ -179,10 +176,7 @@ export const confirm = mutation({
         state: stringify(
           serializeGameState(
             createGameState({
-              map: {
-                map: hardcodedMap as ITiledMap,
-                tileset: hardcodedTileset as ITiledMapTileset
-              },
+              mapId: 'map1',
               players: [
                 {
                   id: gamePlayers[0].userId,

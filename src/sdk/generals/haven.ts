@@ -21,6 +21,7 @@ export const havenGeneral01: GeneralData = {
   attack: 3,
   defense: 1,
   speed: 3,
+  maxActions: 1,
   summonBlueprints: [soldiersLookup.havenSwordsman, soldiersLookup.havenArcher],
   auras: [aurasLookup.divineInspiration],
   triggers: [],
