@@ -9,63 +9,67 @@ const { version } = useConfig();
 </script>
 
 <template>
-  <PaginatedQuery
-    v-slot="{ data: games }"
-    :query="api => api.games.latestGames"
-    :num-items="10"
-    :args="{}"
-  >
-    <div class="grid gap-2">
-      <article v-for="game in games" :key="game._id" class="surface">
-        <div class="game-players">
-          <div>
-            <img :src="getGeneralIcon(game.players[0].generalId)" draggable="false" />
-            <RouterLink
-              :to="{ name: 'Profile', params: { id: game.players[0].user._id } }"
-            >
-              {{ game.players[0].user.name }}
-            </RouterLink>
-          </div>
-          VS
-          <div>
-            <img :src="getGeneralIcon(game.players[1].generalId)" draggable="false" />
-            <RouterLink
-              :to="{ name: 'Profile', params: { id: game.players[1].user._id } }"
-            >
-              {{ game.players[1].user.name }}
-            </RouterLink>
-          </div>
-        </div>
+  <PaginatedQuery :query="api => api.games.latestGames" :num-items="10" :args="{}">
+    <template #loading>
+      <div />
+    </template>
 
-        <time :datetime="dayjs(game._creationTime).format('l')">
-          {{ dayjs(game._creationTime).fromNow() }}
-        </time>
+    <template #default="{ data: games }">
+      <div class="grid gap-2">
+        <Transition v-for="game in games" :key="game._id" appear>
+          <article class="surface fancy-surface">
+            <div class="game-players">
+              <div>
+                <img :src="getGeneralIcon(game.players[0].generalId)" draggable="false" />
+                <RouterLink
+                  :to="{ name: 'Profile', params: { id: game.players[0].user._id } }"
+                >
+                  {{ game.players[0].user.name }}
+                </RouterLink>
+              </div>
+              VS
+              <div>
+                <img :src="getGeneralIcon(game.players[1].generalId)" draggable="false" />
+                <RouterLink
+                  :to="{ name: 'Profile', params: { id: game.players[1].user._id } }"
+                >
+                  {{ game.players[1].user.name }}
+                </RouterLink>
+              </div>
+            </div>
 
-        <ArkTooltip>
-          <ArkTooltipTrigger>
-            <RouterLink
-              v-slot="{ href, navigate }"
-              custom
-              :to="{ name: 'Replay', params: { id: game._id } }"
-            >
-              <UiGhostButton
-                :href="game.version === version && href"
-                left-icon="ic:baseline-remove-red-eye"
-                :disabled="game.version === version"
-                @click="navigate"
-              >
-                Replay
-              </UiGhostButton>
-            </RouterLink>
-          </ArkTooltipTrigger>
-          <ArkTooltipPositioner>
-            <ArkTooltipContent v-if="game.version !== version" class="surface">
-              This game was played in a current version of the game and can't be replayed
-            </ArkTooltipContent>
-          </ArkTooltipPositioner>
-        </ArkTooltip>
-      </article>
-    </div>
+            <time :datetime="dayjs(game._creationTime).format('l')">
+              {{ dayjs(game._creationTime).fromNow() }}
+            </time>
+
+            <ArkTooltip>
+              <ArkTooltipTrigger>
+                <RouterLink
+                  v-slot="{ href, navigate }"
+                  custom
+                  :to="{ name: 'Replay', params: { id: game._id } }"
+                >
+                  <UiGhostButton
+                    :href="game.version === version && href"
+                    left-icon="ic:baseline-remove-red-eye"
+                    :disabled="game.version === version"
+                    @click="navigate"
+                  >
+                    Replay
+                  </UiGhostButton>
+                </RouterLink>
+              </ArkTooltipTrigger>
+              <ArkTooltipPositioner>
+                <ArkTooltipContent v-if="game.version !== version" class="surface">
+                  This game was played in a current version of the game and can't be
+                  replayed
+                </ArkTooltipContent>
+              </ArkTooltipPositioner>
+            </ArkTooltip>
+          </article>
+        </Transition>
+      </div>
+    </template>
   </PaginatedQuery>
 </template>
 
@@ -113,5 +117,16 @@ article {
 
     image-rendering: pixelated;
   }
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: all 0.5s;
+}
+
+.v-enter-from,
+.v-leave-to {
+  transform: translateY(calc(-1 * var(--size-3)));
+  opacity: 0;
 }
 </style>

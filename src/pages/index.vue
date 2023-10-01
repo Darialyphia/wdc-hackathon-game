@@ -1,18 +1,21 @@
 <script setup lang="ts">
 definePage({
-  name: 'Home'
+  name: 'Home',
+  meta: {
+    bg: '/backgrounds/home.jpg'
+  }
 });
 </script>
 
 <template>
   <main>
-    <section class="container surface">
+    <section class="surface">
       <h2>Games</h2>
       <GameList />
     </section>
 
-    <section class="container surface">
-      <h2>Latest finished games</h2>
+    <section class="surface">
+      <h2>Latest games</h2>
       <LatestReplays />
     </section>
   </main>
@@ -20,8 +23,13 @@ definePage({
 
 <style scoped>
 main {
-  display: grid;
-  gap: var(--size-6);
+  section {
+    background-color: transparent;
+  }
+}
+
+section {
+  max-inline-size: var(--size-md);
 }
 
 h2 {

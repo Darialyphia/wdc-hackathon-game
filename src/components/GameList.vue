@@ -46,7 +46,7 @@ const onTryJoin = (id: Id<'games'>) => {
 <template>
   <div class="grid gap-3">
     <p v-if="games.length === 0">There are not ongoing game at the moment.</p>
-    <article v-for="game in games" :key="game._id">
+    <article v-for="game in games" :key="game._id" class="fancy-surface">
       <h3>{{ game.creator?.name }}'s game</h3>
       <span class="ml-auto">{{ game.state }}</span>
       <UiButton

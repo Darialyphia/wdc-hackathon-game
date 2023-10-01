@@ -11,12 +11,14 @@ import gsap from 'gsap';
 declare module 'vue-router/auto' {
   interface RouteMeta {
     needsAuth?: boolean;
+    bg?: string;
   }
 }
 
 declare module 'vue-router' {
   interface RouteMeta {
     needsAuth?: boolean;
+    bg?: string;
   }
 }
 gsap.install(window);

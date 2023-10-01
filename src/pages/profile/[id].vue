@@ -2,7 +2,10 @@
 import { generalsLookup } from '../../sdk/generals';
 
 definePage({
-  name: 'Profile'
+  name: 'Profile',
+  meta: {
+    bg: '/backgrounds/profile.jpg'
+  }
 });
 
 const route = useRoute('Profile');
@@ -20,9 +23,7 @@ const { version } = useConfig();
       :query="api => api.users.getProfile"
       :args="{ userId: route.params.id }"
     >
-      <h2 class="mb-5 text-center">{{ user.name }}</h2>
-
-      <section class="stats surface">
+      <section class="stats surface fancy-surface">
         <div class="flex flex-col gap-3">
           <div class="flex-1 grid place-content-center">
             <UiDonutChart :value="user.winrate" label="Win rate" />
@@ -30,6 +31,7 @@ const { version } = useConfig();
         </div>
 
         <dl class="flex flex-col justify-center">
+          <h2 class="mb-5 text-center">{{ user.name }}</h2>
           <div>
             <dt>Elo</dt>
             <dd>{{ user.elo }}</dd>
@@ -45,13 +47,13 @@ const { version } = useConfig();
         </dl>
       </section>
 
-      <section>
-        <h3 class="mb-4">Games history</h3>
+      <section class="grid gap-2">
+        <h3 class="mb-2">Games history</h3>
 
         <article
           v-for="game in user.games"
           :key="game._id"
-          class="surface"
+          class="surface fancy-surface"
           :class="game.isWinner ? 'is-win' : 'is-loss'"
         >
           <div class="game-players">
@@ -113,6 +115,9 @@ const { version } = useConfig();
 </template>
 
 <style scoped lang="postcss">
+main {
+  margin-block-start: var(--size-5);
+}
 .stats {
   display: flex;
   gap: var(--size-10);
@@ -135,14 +140,6 @@ article {
   }
   *:nth-child(3) {
     justify-self: flex-end;
-  }
-
-  &.is-win {
-    background-color: hsl(var(--green-7-hsl) / 0.05);
-  }
-
-  &.is-loss {
-    background-color: hsl(var(--red-7-hsl) / 0.05);
   }
 }
 

@@ -18,9 +18,6 @@ const layoutComponent = computed(() => {
 
   return layout || layoutMap.get('default');
 });
-const router = useRouter();
-
-await router.isReady();
 </script>
 
 <template>

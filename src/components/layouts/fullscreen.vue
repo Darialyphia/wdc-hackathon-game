@@ -7,8 +7,6 @@ until(isLoading)
   .then(() => {
     isReady.value = true;
   });
-
-const isMenuOpened = ref(false);
 </script>
 <template>
   <div class="layout">

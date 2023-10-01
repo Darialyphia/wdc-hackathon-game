@@ -3,6 +3,13 @@ const { isLoading } = useConvexAuth();
 
 const isReady = ref(false);
 
+const route = useRoute();
+
+const bodyBg = useCssVar('--body-bg');
+watchEffect(() => {
+  bodyBg.value = route.meta.bg ? `url(${route.meta.bg})` : 'var(--surface-2)';
+});
+
 until(isLoading)
   .not.toBe(true)
   .then(() => {
@@ -36,6 +43,13 @@ until(isLoading)
 </template>
 
 <style scoped>
+:global(body) {
+  background: var(--body-bg);
+  background-attachment: fixed;
+  background-size: cover;
+  /* transition: background-image 0.5s ease; */
+}
+
 header {
   display: flex;
   gap: var(--size-3);

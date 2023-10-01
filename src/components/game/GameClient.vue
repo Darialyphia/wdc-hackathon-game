@@ -146,19 +146,6 @@ const resetTargetMode = () => {
   font-family: monospace;
   color: var(--gray-0);
 
-  .fancy-surface {
-    --fancy-bg: linear-gradient(130deg, hsl(200 100% 60%), hsl(320 100% 60%)),
-      hsl(250 30% 10%);
-    --fancy-border: solid var(--border-size-2) hsl(var(--color-primary-hsl) / 0.7);
-
-    background: var(--fancy-bg);
-    background-blend-mode: overlay;
-    border: var(--fancy-border);
-    box-shadow:
-      0 5px 15px 3px rgba(0, 0, 0, 0.2),
-      inset 0 0 10px 5px rgba(0, 0, 0, 0.5);
-  }
-
   :where(
       :not(canvas),
       a[href],

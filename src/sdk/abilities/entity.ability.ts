@@ -20,10 +20,12 @@ export const createEntityAbility = (state: GameState, entity: Entity): EntityAbi
       return isCellWalkable(state, subject);
     });
 
-    can('cast', 'skill', (subject: SkillData) => {
-      const skill = getSkillById(entity, subject.id);
+    if (entity.actionsTaken < entity.maxActions) {
+      can('cast', 'skill', (subject: SkillData) => {
+        const skill = getSkillById(entity, subject.id);
 
-      return skill && entity.ap >= subject.cost;
-    });
+        return skill && entity.ap >= subject.cost;
+      });
+    }
   });
 };

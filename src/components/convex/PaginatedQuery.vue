@@ -33,6 +33,8 @@ onErrorCaptured(err => {
 const clearError = () => {
   error.value = null;
 };
+
+const slots = useSlots();
 </script>
 
 <template>
@@ -47,6 +49,10 @@ const clearError = () => {
   <PaginatedQueryInner v-else :query="query" :args="args as any" :num-items="numItems">
     <template #default="slotProps">
       <slot v-bind="slotProps" />
+    </template>
+
+    <template v-if="slots.loading" #loading>
+      <slot name="loading" />
     </template>
   </PaginatedQueryInner>
 </template>

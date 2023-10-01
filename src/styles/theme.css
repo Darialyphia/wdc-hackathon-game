@@ -119,6 +119,16 @@ html.dark {
   --size-lg: 64rem;
   --size-xl: 90rem;
   --size-xxl: 120rem;
+
+  --fancy-bg: linear-gradient(130deg, hsl(200 100% 60%), hsl(320 100% 60%)),
+    hsl(250 30% 10%);
+  --fancy-bg-transparency: linear-gradient(
+      130deg,
+      hsl(200 100% 60% / 0.5),
+      hsl(320 100% 60% / 0.5)
+    ),
+    hsl(250 30% 10%);
+  --fancy-border: solid var(--border-size-2) hsl(var(--color-primary-hsl) / 0.7);
 }
 
 html.dark {
