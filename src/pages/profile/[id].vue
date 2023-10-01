@@ -9,7 +9,9 @@ const route = useRoute('Profile');
 const dayjs = useDayjs();
 
 const getGeneralIcon = (id: string) =>
-  Object.values(generalsLookup).find(g => g.characterId === id)!.iconUrl;
+  Object.values(generalsLookup).find(g => g.characterId === id)!.portraitUrl;
+
+const { version } = useConfig();
 </script>
 <template>
   <main class="container" style="--container-size: var(--size-md)">
@@ -20,7 +22,7 @@ const getGeneralIcon = (id: string) =>
     >
       <h2 class="mb-5 text-center">{{ user.name }}</h2>
 
-      <section class="flex gap-10 mb-5 surface">
+      <section class="stats surface">
         <div class="flex flex-col gap-3">
           <div class="flex-1 grid place-content-center">
             <UiDonutChart :value="user.winrate" label="Win rate" />
@@ -55,7 +57,9 @@ const getGeneralIcon = (id: string) =>
           <div class="game-players">
             <div>
               <img :src="getGeneralIcon(game.myGeneralId)" draggable="false" />
-              {{ user.fullName }}
+              <RouterLink :to="{ name: 'Profile', params: { id: user._id } }">
+                {{ user.fullName }}
+              </RouterLink>
             </div>
             VS
             <div>
@@ -75,19 +79,30 @@ const getGeneralIcon = (id: string) =>
           >
             {{ game.isWinner ? 'WIN' : 'LOSS' }}
 
-            <RouterLink
-              v-slot="{ href, navigate }"
-              custom
-              :to="{ name: 'Replay', params: { id: game._id } }"
-            >
-              <UiGhostButton
-                :href="href"
-                left-icon="ic:baseline-remove-red-eye"
-                @click="navigate"
-              >
-                Replay
-              </UiGhostButton>
-            </RouterLink>
+            <ArkTooltip>
+              <ArkTooltipTrigger>
+                <RouterLink
+                  v-slot="{ href, navigate }"
+                  custom
+                  :to="{ name: 'Replay', params: { id: game._id } }"
+                >
+                  <UiGhostButton
+                    :href="game.version === version && href"
+                    left-icon="ic:baseline-remove-red-eye"
+                    :disabled="game.version === version"
+                    @click="navigate"
+                  >
+                    Replay
+                  </UiGhostButton>
+                </RouterLink>
+              </ArkTooltipTrigger>
+              <ArkTooltipPositioner>
+                <ArkTooltipContent v-if="game.version !== version" class="surface">
+                  This game was played in a current version of the game and can't be
+                  replayed
+                </ArkTooltipContent>
+              </ArkTooltipPositioner>
+            </ArkTooltip>
 
             <ReplayShareButton :game-id="game._id" />
           </div>
@@ -98,6 +113,12 @@ const getGeneralIcon = (id: string) =>
 </template>
 
 <style scoped lang="postcss">
+.stats {
+  display: flex;
+  gap: var(--size-10);
+  margin-bottom: var(--size-5);
+}
+
 article {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -135,9 +156,10 @@ article {
 }
 
 .game-players {
-  display: flex;
-  gap: var(--size-2);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
+  text-align: center;
 
   > div {
     display: flex;
@@ -150,9 +172,19 @@ article {
 
   img {
     align-self: center;
+
     aspect-ratio: 1;
-    width: var(--size-9);
+    width: var(--size-8);
+
+    border: solid var(--border-size-1) var(--primary);
+
     image-rendering: pixelated;
   }
+}
+
+[data-scope='tooltip'][data-part='content'] {
+  padding: var(--size-2);
+  font-weight: var(--font-weight-4);
+  border: solid 1px var(--border);
 }
 </style>

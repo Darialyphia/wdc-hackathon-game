@@ -4,7 +4,10 @@ import type { EntityData } from '../utils/entityData';
 import type { CharacterId } from '../entity';
 import type { SoldierData } from '../soldiers';
 
-export type GeneralData = EntityData & { summonBlueprints: SoldierData[] };
+export type GeneralData = EntityData & {
+  summonBlueprints: SoldierData[];
+  portraitUrl: string;
+};
 
 export const generalsLookup = { havenGeneral01, necroGeneral01 } satisfies Record<
   CharacterId,

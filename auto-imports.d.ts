@@ -195,6 +195,7 @@ declare global {
   const useClipboard: typeof import('@vueuse/core')['useClipboard']
   const useCloned: typeof import('@vueuse/core')['useCloned']
   const useColorMode: typeof import('@vueuse/core')['useColorMode']
+  const useConfig: typeof import('./src/composables/useConfig')['useConfig']
   const useConfirmDialog: typeof import('@vueuse/core')['useConfirmDialog']
   const useConvex: typeof import('./src/composables/convex/useConvex')['useConvex']
   const useConvexAuth: typeof import('./src/composables/convex/useConvex')['useConvexAuth']

@@ -21,6 +21,7 @@ import type { Id } from './_generated/dataModel';
 import { paginationOptsValidator } from 'convex/server';
 import { parse, stringify } from 'zipson';
 import { ITiledMap, ITiledMapTileset } from '@workadventure/tiled-map-type-guard';
+import pkgJson from '../package.json';
 
 import hardcodedMap from '../src/assets/maps/iso/iso.json';
 import hardcodedTileset from '../src/assets/maps/iso/tileset.json';
@@ -37,7 +38,8 @@ export const create = mutation({
 
     const gameId = await db.insert('games', {
       creator: user!._id,
-      state: GAME_STATES.WAITING_FOR_OPPONENT
+      state: GAME_STATES.WAITING_FOR_OPPONENT,
+      version: pkgJson.version
     });
 
     await db.insert('gamePlayers', {

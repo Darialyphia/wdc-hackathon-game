@@ -40,7 +40,7 @@ const showTooltip = async () => {
     Share
   </UiGhostButton>
 
-  <div ref="floatingEl" v-if="isTooltipDisplayed" class="surface tooltip">
+  <div v-if="isTooltipDisplayed" ref="floatingEl" class="surface tooltip">
     Replay URL copied !
   </div>
 </template>

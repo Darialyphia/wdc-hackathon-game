@@ -12,6 +12,7 @@ import { necroSkeleton } from '../soldiers/necro_skeleton';
 export const necroGeneral01: GeneralData = {
   characterId: 'necroGeneral01',
   iconUrl: '/icons/necro_general_01.gif',
+  portraitUrl: '/icons/necro_general_01_portrait.gif',
   factionId: FACTIONS_IDS.NECRO,
   name: 'Necromancer',
   initiative: 10,

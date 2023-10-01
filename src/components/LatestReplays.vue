@@ -2,29 +2,38 @@
 import { generalsLookup } from '../sdk/generals';
 
 const getGeneralIcon = (id: string) =>
-  Object.values(generalsLookup).find(g => g.characterId === id)!.iconUrl;
+  Object.values(generalsLookup).find(g => g.characterId === id)!.portraitUrl;
 
 const dayjs = useDayjs();
+const { version } = useConfig();
 </script>
 
 <template>
   <PaginatedQuery
+    v-slot="{ data: games }"
     :query="api => api.games.latestGames"
     :num-items="10"
     :args="{}"
-    v-slot="{ data: games }"
   >
     <div class="grid gap-2">
       <article v-for="game in games" :key="game._id" class="surface">
         <div class="game-players">
           <div>
             <img :src="getGeneralIcon(game.players[0].generalId)" draggable="false" />
-            {{ game.players[0].user.name }}
+            <RouterLink
+              :to="{ name: 'Profile', params: { id: game.players[0].user._id } }"
+            >
+              {{ game.players[0].user.name }}
+            </RouterLink>
           </div>
           VS
           <div>
             <img :src="getGeneralIcon(game.players[1].generalId)" draggable="false" />
-            {{ game.players[1].user.name }}
+            <RouterLink
+              :to="{ name: 'Profile', params: { id: game.players[1].user._id } }"
+            >
+              {{ game.players[1].user.name }}
+            </RouterLink>
           </div>
         </div>
 
@@ -32,19 +41,29 @@ const dayjs = useDayjs();
           {{ dayjs(game._creationTime).fromNow() }}
         </time>
 
-        <RouterLink
-          v-slot="{ href, navigate }"
-          custom
-          :to="{ name: 'Replay', params: { id: game._id } }"
-        >
-          <UiGhostButton
-            :href="href"
-            left-icon="ic:baseline-remove-red-eye"
-            @click="navigate"
-          >
-            Watch replay
-          </UiGhostButton>
-        </RouterLink>
+        <ArkTooltip>
+          <ArkTooltipTrigger>
+            <RouterLink
+              v-slot="{ href, navigate }"
+              custom
+              :to="{ name: 'Replay', params: { id: game._id } }"
+            >
+              <UiGhostButton
+                :href="game.version === version && href"
+                left-icon="ic:baseline-remove-red-eye"
+                :disabled="game.version === version"
+                @click="navigate"
+              >
+                Replay
+              </UiGhostButton>
+            </RouterLink>
+          </ArkTooltipTrigger>
+          <ArkTooltipPositioner>
+            <ArkTooltipContent v-if="game.version !== version" class="surface">
+              This game was played in a current version of the game and can't be replayed
+            </ArkTooltipContent>
+          </ArkTooltipPositioner>
+        </ArkTooltip>
       </article>
     </div>
   </PaginatedQuery>
@@ -69,9 +88,11 @@ article {
 }
 
 .game-players {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   gap: var(--size-2);
   align-items: center;
+
   text-align: center;
 
   > div {
@@ -84,8 +105,12 @@ article {
   }
   img {
     align-self: center;
+
     aspect-ratio: 1;
-    width: var(--size-9);
+    width: var(--size-8);
+
+    border: solid var(--border-size-1) var(--primary);
+
     image-rendering: pixelated;
   }
 }

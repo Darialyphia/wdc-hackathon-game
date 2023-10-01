@@ -6,6 +6,7 @@ const isReady = ref(false);
 until(isLoading)
   .not.toBe(true)
   .then(() => {
+    console.log('is ready');
     isReady.value = true;
   });
 </script>

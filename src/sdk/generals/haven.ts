@@ -12,6 +12,7 @@ export const havenGeneral01: GeneralData = {
   characterId: 'havenGeneral01',
   name: 'Paladin',
   iconUrl: '/icons/haven_general_01.gif',
+  portraitUrl: '/icons/haven_general_01_portrait.gif',
   factionId: FACTIONS_IDS.HAVEN,
   maxAp: 5,
   apRegenRate: 1,
