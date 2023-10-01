@@ -147,6 +147,7 @@ article {
   a {
     text-decoration: underline;
   }
+
   img {
     align-self: center;
     aspect-ratio: 1;

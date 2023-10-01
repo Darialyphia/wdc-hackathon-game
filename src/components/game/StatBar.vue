@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { CELL_SIZE } from '../../sdk/constants';
-import { fill } from 'lodash-es';
 import type { ColorSource } from 'pixi.js';
 
 const { value, maxValue, filledColor, emptyColor, size } = defineProps<{
@@ -25,10 +24,12 @@ watch(
     });
   }
 );
+const { autoDestroyRef } = useAutoDestroy();
 </script>
 
 <template>
   <graphics
+    :ref="autoDestroyRef"
     :pivot-x="CELL_SIZE / 4"
     :pivot-y="CELL_SIZE / 4"
     @render="

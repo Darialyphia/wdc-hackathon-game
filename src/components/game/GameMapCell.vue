@@ -113,6 +113,8 @@ const hitArea = new Polygon([
       <HoveredCell v-if="cell" :cell="cell" :cursor="cursor" />
     </sprite>
 
-    <GameMapCellHighlight v-if="cell" :cell="cell" :cursor="cursor" />
+    <container :pivot-x="rotation % 180 === 90 ? CELL_SIZE : 0">
+      <GameMapCellHighlight v-if="cell" :cell="cell" :cursor="cursor" />
+    </container>
   </container>
 </template>

@@ -40,12 +40,19 @@ export const skillUsedEvent = defineEvent({
       sprite.textures = createSpritesheetFrameObject('attacking', sheet);
       sprite.gotoAndPlay(0);
       sprite.loop = false;
+
+      sprite.onFrameChange = frame => {
+        if (frame > sprite.totalFrames * 0.75) {
+          resolve();
+          sprite.onFrameChange = undefined;
+        }
+      };
+
       sprite.onComplete = () => {
         sprite.textures = createSpritesheetFrameObject('idle', sheet);
         sprite.gotoAndPlay(0);
         sprite.loop = true;
         sprite.onComplete = undefined;
-        resolve();
       };
     });
   }

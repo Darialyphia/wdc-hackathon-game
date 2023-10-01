@@ -43,6 +43,7 @@ const players = computed(() =>
   gap: var(--size-3);
   padding: var(--size-3);
   text-shadow: black 1px 0 5px;
+
   img {
     margin-inline: auto;
     padding: var(--size-1);
@@ -68,6 +69,9 @@ const players = computed(() =>
 
   text-align: right;
 
+  img {
+    transform: rotateY(0.5turn);
+  }
   .hp {
     flex-direction: row-reverse;
   }

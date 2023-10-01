@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { PTransition } from 'vue3-pixi';
-import type { Resource, Texture, Container, Cursor } from 'pixi.js';
+import type { Container, Cursor } from 'pixi.js';
 import { getCellAt } from '../../sdk/utils/map.helpers';
 import { getEntityAt } from '../../sdk/utils/entity.helpers';
 import { getBitMask, getTextureIndexFromBitMask } from '../../sdk/utils/bit-maksing';
 import type { GameMapCell } from '../../sdk/map';
 import { createSkillAbility } from '../../sdk/abilities/skill.ability';
 import { subject } from '@casl/ability';
+import { CELL_SIZE } from '../../sdk/constants';
 
 const { cell, cursor } = defineProps<{
   cursor?: Cursor;
@@ -147,8 +148,8 @@ const { autoDestroyRef } = useAutoDestroy();
 
 <template>
   <PTransition appear @before-enter="onBeforeEnter" @enter="onEnter" @leave="onLeave">
-    <container v-if="texture && isHighlighted" :ref="autoDestroyRef">
-      <sprite :texture="texture" :cursor="cursor" event-mode="none" />
+    <container v-if="texture && isHighlighted" :ref="autoDestroyRef" event-mode="none">
+      <sprite :texture="texture" :cursor="cursor" />
     </container>
   </PTransition>
 </template>

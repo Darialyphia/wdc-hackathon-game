@@ -236,6 +236,13 @@ const hitArea = computed(() => {
     x: meta.size.w / Object.keys(sprite.data.frames).length / 2,
     y: meta.size.h / 2
   };
+  console.log(
+    entity.characterId,
+    { x: x - offset.x, y: y - offset.y },
+    { x: x + w - offset.x, y: y - offset.y },
+    { x: x + w - offset.x, y: y + h - offset.y },
+    { x: x - offset.x, y: y + h - offset.y }
+  );
   return new Polygon([
     { x: x - offset.x, y: y - offset.y },
     { x: x + w - offset.x, y: y - offset.y },
@@ -252,9 +259,8 @@ const hitArea = computed(() => {
     :sortable-children="true"
     :cursor="cursor"
     :pivot-x="rotation % 180 === 90 ? CELL_SIZE / 2 : -CELL_SIZE / 2"
-    :event-mode="
-      targetMode === 'move' && entity.id !== activeEntity.id ? 'none' : 'static'
-    "
+    :event-mode="targetMode === 'move' ? 'none' : 'static'"
+    :hit-area="hitArea"
     @pointerenter="onPointerenter"
     @pointerleave="onPointerleave"
     @pointerdown="onPointerdown($event)"
@@ -280,32 +286,34 @@ const hitArea = computed(() => {
       :z-index="1"
       :filters="shadowFilters"
       :scale-x="scaleX"
-      :scale-y="0.3"
+      :scale-y="0.45"
       :skew-x="-1"
-      :x="5"
-      :y="12"
+      :x="8"
+      :y="15"
       :anchor="0.5"
       loop
       playing
     />
 
-    <StatBar
-      :z-index="entity.position.y"
-      :y="CELL_SIZE * 0.65 - 6"
-      :size="3"
-      :value="entity.hp"
-      :max-value="entity.blueprint.maxHp"
-      :filled-color="0x00cc00"
-      :empty-color="0xcc0000"
-    />
+    <template v-if="selectedEntity?.id === entity.id">
+      <StatBar
+        :z-index="entity.position.y"
+        :y="CELL_SIZE * 0.65 - 6"
+        :size="3"
+        :value="entity.hp"
+        :max-value="entity.blueprint.maxHp"
+        :filled-color="0x00cc00"
+        :empty-color="0xcc0000"
+      />
 
-    <StatBar
-      :z-index="entity.position.y"
-      :y="CELL_SIZE * 0.65 - 3"
-      :size="3"
-      :value="entity.ap"
-      :max-value="entity.maxAp"
-      :filled-color="0x0000cc"
-    />
+      <StatBar
+        :z-index="entity.position.y"
+        :y="CELL_SIZE * 0.65 - 3"
+        :size="3"
+        :value="entity.ap"
+        :max-value="entity.maxAp"
+        :filled-color="0x0000cc"
+      />
+    </template>
   </container>
 </template>

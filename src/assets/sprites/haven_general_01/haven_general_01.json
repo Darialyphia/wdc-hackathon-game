@@ -150,7 +150,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 128 },
     "sourceSize": { "w": 128, "h": 128 },
-    "duration": 125
+    "duration": 100
    },
    {
     "filename": "haven_general_01 17.aseprite",
@@ -159,7 +159,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 128 },
     "sourceSize": { "w": 128, "h": 128 },
-    "duration": 50
+    "duration": 125
    },
    {
     "filename": "haven_general_01 18.aseprite",
@@ -195,6 +195,24 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 128 },
     "sourceSize": { "w": 128, "h": 128 },
+    "duration": 100
+   },
+   {
+    "filename": "haven_general_01 22.aseprite",
+    "frame": { "x": 2816, "y": 0, "w": 128, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 128 },
+    "sourceSize": { "w": 128, "h": 128 },
+    "duration": 50
+   },
+   {
+    "filename": "haven_general_01 23.aseprite",
+    "frame": { "x": 2944, "y": 0, "w": 128, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 128 },
+    "sourceSize": { "w": 128, "h": 128 },
     "duration": 50
    }
  ],
@@ -203,18 +221,18 @@
   "version": "1.3-rc6-x64",
   "image": "haven_general_01.png",
   "format": "RGBA8888",
-  "size": { "w": 2816, "h": 128 },
+  "size": { "w": 3072, "h": 128 },
   "scale": "1",
   "frameTags": [
    { "name": "idle", "from": 0, "to": 11, "direction": "forward", "color": "#000000ff" },
-   { "name": "attacking", "from": 12, "to": 21, "direction": "forward", "color": "#000000ff" }
+   { "name": "attacking", "from": 12, "to": 23, "direction": "forward", "color": "#000000ff" }
   ],
   "layers": [
    { "name": "v2", "opacity": 255, "blendMode": "normal" },
    { "name": "fx_v2", "opacity": 255, "blendMode": "normal" }
   ],
   "slices": [
-   { "name": "hitArea", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 48, "y": 48, "w": 32, "h": 32 } }, { "frame": 5, "bounds": {"x": 48, "y": 48, "w": 32, "h": 32 } }] }
+   { "name": "hitArea", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 41, "y": 43, "w": 42, "h": 37 } }, { "frame": 2, "bounds": {"x": 41, "y": 40, "w": 42, "h": 40 } }, { "frame": 5, "bounds": {"x": 48, "y": 48, "w": 32, "h": 32 } }] }
   ]
  }
 }
