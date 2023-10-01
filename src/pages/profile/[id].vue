@@ -133,8 +133,6 @@ article {
 
   padding: var(--size-2);
 
-  border: solid var(--border-size-1) var(--border-dimmed);
-
   *:nth-child(2) {
     justify-self: center;
   }

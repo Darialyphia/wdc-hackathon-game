@@ -43,11 +43,11 @@ until(isLoading)
 </template>
 
 <style scoped>
-:global(body) {
+:global(#app) {
   background: var(--body-bg);
   background-attachment: fixed;
   background-size: cover;
-  /* transition: background-image 0.5s ease; */
+  transition: background-image 0.5s ease;
 }
 
 header {

@@ -78,10 +78,7 @@ article {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   align-items: center;
-
   padding: var(--size-2) var(--size-4);
-
-  border: solid var(--border-size-1) var(--border-dimmed);
 
   *:nth-child(2) {
     justify-self: center;
