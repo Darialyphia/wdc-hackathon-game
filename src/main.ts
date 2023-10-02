@@ -24,11 +24,10 @@ declare module 'vue-router' {
 gsap.install(window);
 const app = createApp(App);
 
-app.use(
-  createRouter({
-    history: createWebHistory()
-  })
-);
+const router = createRouter({
+  history: createWebHistory()
+});
+app.use(router);
 app.use(
   createAuth0({
     domain: import.meta.env.VITE_AUTH0_DOMAIN,
@@ -50,4 +49,6 @@ app.use(
   })
 );
 app.use(autoAnimatePlugin);
-app.mount('#app');
+router.isReady().then(() => {
+  app.mount('#app');
+});
